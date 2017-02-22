@@ -10,6 +10,6 @@ public class Controller
 
 	public void sayHelloWorld(ActionEvent actionEvent)
 	{
-		helloworld.setText("WAZZZZZZUUUUUP");
+		helloworld.setText("WAZZZZZZUUUUUP!!!");
 	}
 }
