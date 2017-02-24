@@ -1,0 +1,17 @@
+.root
+{
+    -fx-font-size: 40pt;
+}
+
+.label
+{
+    -fx-font-family: "Courier New";
+    -fx-text-fill: white;
+}
+
+#pane
+{
+    -fx-background-image: url("mainbg.png");
+    -fx-background-position: center center;
+    -fx-background-size: 100%;
+}

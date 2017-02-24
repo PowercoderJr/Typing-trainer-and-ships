@@ -1,4 +1,4 @@
-package sample;
+package typingtrainer;
 
 /**
  * Created by Meow on 22.02.2017.
