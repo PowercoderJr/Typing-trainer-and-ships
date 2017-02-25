@@ -18,12 +18,12 @@
                 <Label text="2" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <Label text="3" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
                 <Label text="4" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <ImageView fx:id="logoimg" fitHeight="100" fitWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"  GridPane.halignment="CENTER">
+                <ImageView fx:id="logoImg" fitHeight="100" fitWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"  GridPane.halignment="CENTER">
                         <Image url="@logo.png"/>
                 </ImageView>
-                <Label fx:id="practicemodelabel" text="ПРАКТИКА" onMouseClicked="#practiceModeLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <Label fx:id="pvpmodelabel" text="БИТВА" onMouseClicked="#labelClicked" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Label fx:id="authorslabel" text="АВТОРЫ" onMouseClicked="#labelClicked" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <Label fx:id="exitlabel" text="ВЫХОД" onMouseClicked="#labelClicked" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <Label fx:id="practiceModeLabel" text="ПРАКТИКА" onMouseClicked="#onPracticeModeLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label fx:id="pvpModeLabel" text="БИТВА" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label fx:id="authorsLabel" text="АВТОРЫ" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label fx:id="exitLabel" text="ВЫХОД" onMouseClicked="#onExitLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
         </children>
 </GridPane>
