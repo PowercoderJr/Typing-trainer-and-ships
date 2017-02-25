@@ -13,14 +13,13 @@ public class Word
 	public static final int LANG_COUNT = 2;
 	public enum Languages {RU, EN};
 
-	public static String GenerateRndWord(int length, int difficulty, Languages language, boolean isShiftIncluding)
-	/**
-	 * @method Генерирует слово из рандомных букв.
-	 * @param length Длина слова.
-	 * @param difficulty Уровень сложности - количество различных букв алфавита, среди которых будет происходить рандом.
-	 *                   Чётное число от 2 до 30, либо 33.
-	 * @param language Язык.
-	 * @param isShiftIncluding Будут ли рандомиться также символы, для набора которых надо держать Shift.
+	public static String generateRndWord(int length, int difficulty, Languages language, boolean isShiftIncluding)
+	/** Генерирует слово из рандомных букв.
+	 * @param length - Длина слова.
+	 * @param difficulty - Уровень сложности - количество различных букв алфавита, среди которых будет происходить рандом.
+	 *                     Чётное число от 2 до 30, либо 33.
+	 * @param language - Язык.
+	 * @param isShiftIncluding - Будут ли рандомиться также символы, для набора которых надо держать Shift.
 	 * @return Слово из рандомных букв (кэп).
 	 */
 	{
@@ -53,8 +52,7 @@ public class Word
 	private String word;
 
 	public Word()
-	/**
-	 * @method Генерирует слово из рандомных букв.
+	/** Генерирует слово из рандомных букв. Длина 2-11, сложность 33, язык случайный, режим с Shift включен.
 	 * @return Слово из рандомных букв.
 	 */
 	{
@@ -69,20 +67,19 @@ public class Word
 				lng = Languages.EN;
 				break;
 		}
-		word = Word.GenerateRndWord((int)(2 + Math.random() * 10), 33, lng, true);
+		word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, lng, true);
 	}
 
 	public Word(int length, int difficulty, Languages language, boolean isShiftIncluding)
-	/**
-	 * @method Генерирует слово из рандомных букв.
-	 * @param length Длина слова.
-	 * @param difficulty Уровень сложности - количество различных букв алфавита, среди которых будет происходить рандом.
+	/** Генерирует слово из рандомных букв.
+	 * @param length - Длина слова.
+	 * @param difficulty - Уровень сложности - количество различных букв алфавита, среди которых будет происходить рандом.
 	 *                   Чётное число от 2 до 30, либо 33.
-	 * @param language Язык.
-	 * @param isShiftIncluding Будут ли рандомиться также символы, для набора которых надо держать Shift.
+	 * @param language - Язык.
+	 * @param isShiftIncluding - Будут ли рандомиться также символы, для набора которых надо держать Shift.
 	 * @return Слово из рандомных букв.
 	 */
 	{
-		word = Word.GenerateRndWord(length, difficulty, language, isShiftIncluding);
+		word = Word.generateRndWord(length, difficulty, language, isShiftIncluding);
 	}
 }

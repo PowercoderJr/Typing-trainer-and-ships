@@ -24,8 +24,3 @@
 {
     -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
 }
-
-#logoimg
-{
-    -fx-margin: 500px;
-}

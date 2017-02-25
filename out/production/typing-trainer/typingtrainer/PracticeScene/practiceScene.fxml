@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" prefHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PracticeScene.PracticeSceneController">
+  <children>
+    <Label fx:id="trainmodelabel" text="HELLO, BITCH!" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="CENTER" minWidth="400.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="149.0" minHeight="0.0" prefHeight="0.0" />
+    <RowConstraints maxHeight="166.0" prefHeight="16.0" />
+  </rowConstraints>
+</GridPane>
