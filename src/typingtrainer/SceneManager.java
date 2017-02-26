@@ -1,7 +1,6 @@
 package typingtrainer;
 
 import javafx.stage.Stage;
-import typingtrainer.MainScene.ManagedScene;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Stack;

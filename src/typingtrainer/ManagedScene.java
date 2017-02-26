@@ -1,4 +1,4 @@
-package typingtrainer.MainScene;
+package typingtrainer;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

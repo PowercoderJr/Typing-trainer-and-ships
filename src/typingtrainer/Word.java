@@ -12,6 +12,7 @@ public class Word
 												{'F', 'J', 'D', 'K', 'S', 'L', 'A', ':', 'G', 'H', 'R', 'U', 'T', 'Y', 'V', 'M', 'B', 'N', 'E', 'I', 'C', '<', 'W', 'O', 'X', '>', 'Q', 'P', 'Z', '?', '{', '}', '\"'}};
 	public static final int LANG_COUNT = 2;
 	public enum Languages {RU, EN};
+	private String word;
 
 	public static String generateRndWord(int length, int difficulty, Languages language, boolean isShiftIncluding)
 	/** Генерирует слово из рандомных букв.
@@ -40,7 +41,7 @@ public class Word
 		for (int c = 0; c < length; c++)
 		{
 			if (isShiftIncluding)
-				i = (int)(Math.random() * LANG_COUNT);
+				i = (int)(Math.random() * 2);
 			else
 				i = 0;
 			j = (int)(Math.random() * difficulty);
@@ -48,8 +49,6 @@ public class Word
 		}
 		return new String(word);
 	}
-
-	private String word;
 
 	public Word()
 	/** Генерирует слово из рандомных букв. Длина 2-11, сложность 33, язык случайный, режим с Shift включен.

@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import typingtrainer.MainScene.ManagedScene;
 
 public class Main extends Application
 {
