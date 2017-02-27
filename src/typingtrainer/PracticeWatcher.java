@@ -5,7 +5,7 @@ package typingtrainer;
  */
 public class PracticeWatcher
 {
-	public static final int DISPLAYABLE_SPACE_SIZE = 10;
+	public static final int DISPLAYABLE_SPACE_SIZE = 20;
 	private StringBuffer taskString;
 	private Word.Languages lang;
 	private int mistakeCount;

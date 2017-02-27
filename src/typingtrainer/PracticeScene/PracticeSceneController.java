@@ -27,12 +27,11 @@ public class PracticeSceneController
 	{
 		System.out.println("Сцена практики готова!");
 		backLabel.setFocusTraversable(true);
-		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, 33, Word.Languages.EN, true)), Word.Languages.EN);
+		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, 33, Word.Languages.RU, true)), Word.Languages.RU);
 		backLabel.setText(watcher.getDisplayableString());
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
-		Locale en = new Locale("en", "US");
-		InCon.selectInputMethod(en);
+		InCon.selectInputMethod(new Locale("en", "US"));
 		System.out.println(InCon.getLocale().toString());
 
 		/*
@@ -69,16 +68,19 @@ public class PracticeSceneController
 				!keyEvent.getCode().toString().equals("ALT_GRAPH"))
 		{
 			boolean isSymbolCorrect;
-			if (keyEvent.getText().length() > 0)
+			System.out.println(keyEvent.getText().charAt(0));
+			if (!keyEvent.getText().isEmpty())
 			{
 				if (watcher.getCurrentChar() == ' ')
+				{
 					isSymbolCorrect = keyEvent.getText().charAt(0) == ' ';
+				}
 				else
 				{
 					if (keyEvent.isShiftDown())
 					{
 						char symbolWithShift;
-						char[][] alphabet;
+						String[] alphabet;
 						switch (watcher.getLang())
 						{
 							case RU:
@@ -89,14 +91,16 @@ public class PracticeSceneController
 								alphabet = Word.ALPH_EN;
 								break;
 						}
-						int symbolIndex = alphabet[0].toString().indexOf(keyEvent.getText().charAt(0)); //Не катит, и Arrays.toString() тоже
+						int symbolIndex = alphabet[0].indexOf(keyEvent.getText().charAt(0));
 						if (symbolIndex >= 0 && symbolIndex < Word.MAX_LEVEL)
 						{
-							symbolWithShift = alphabet[1][symbolIndex];
+							symbolWithShift = alphabet[1].charAt(symbolIndex);
 							isSymbolCorrect = symbolWithShift == watcher.getCurrentChar();
 						}
 						else
+						{
 							isSymbolCorrect = false;
+						}
 					}
 					else
 					{
@@ -119,7 +123,7 @@ public class PracticeSceneController
 					alert.setTitle("Поздравляем");
 					alert.setHeaderText(null);
 
-					alert.setContentText("Kras \n oshibki: " + String.valueOf(watcher.getMistakeCount()) + "\n vremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
+					alert.setContentText("Kras \noshibki: " + String.valueOf(watcher.getMistakeCount()) + "\nvremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
 					alert.showAndWait();
 				}
 				System.out.println("+");

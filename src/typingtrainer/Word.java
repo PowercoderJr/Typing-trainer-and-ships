@@ -5,10 +5,10 @@ package typingtrainer;
  */
 public abstract class Word
 {
-	public static final char[][] ALPH_RU =	{	{'а', 'о', 'в', 'л', 'ы', 'д', 'ф', 'ж', 'п', 'р', 'к', 'г', 'е', 'н', 'м', 'ь', 'и', 'т', 'у', 'ш', 'с', 'б', 'ц', 'щ', 'ч', 'ю', 'й', 'з', 'я', '.', 'х', 'ъ', 'э'},
-												{'А', 'О', 'В', 'Л', 'Ы', 'Д', 'Ф', 'Ж', 'П', 'Р', 'К', 'Г', 'Е', 'Н', 'М', 'Ь', 'И', 'Т', 'У', 'Ш', 'С', 'Б', 'Ц', 'Щ', 'Ч', 'Ю', 'Й', 'З', 'Я', ',', 'Х', 'Ъ', 'Э'}};
-	public static final char[][] ALPH_EN = 	{	{'f', 'j', 'd', 'k', 's', 'l', 'a', ';', 'g', 'h', 'r', 'u', 't', 'y', 'v', 'm', 'b', 'n', 'e', 'i', 'c', ',', 'w', 'o', 'x', '.', 'q', 'p', 'z', '/', '[', ']', '\''},
-												{'F', 'J', 'D', 'K', 'S', 'L', 'A', ':', 'G', 'H', 'R', 'U', 'T', 'Y', 'V', 'M', 'B', 'N', 'E', 'I', 'C', '<', 'W', 'O', 'X', '>', 'Q', 'P', 'Z', '?', '{', '}', '\"'}};
+	public static final String[] ALPH_RU =	{	"аовлыдфжпркгенмьитушсбцщчюйзя.хъэ",
+												"АОВЛЫДФЖПРКГЕНМЬИТУШСБЦЩЧЮЙЗЯ,ХЪЭ"};
+	public static final String[] ALPH_EN = 	{	"fjdksla;ghrutyvmbneic,wox.qpz/[]\'",
+												"FJDKSLA:GHRUTYVMBNEIC<WOX>QPZ?{}\""};
 	public static final int LANG_COUNT = 2;
 	public static final int MAX_LEVEL = 33;
 	public enum Languages {RU, EN};
@@ -24,7 +24,7 @@ public abstract class Word
 	 * @return Слово из рандомных букв (кэп).
 	 */
 	{
-		char[][] alphabet;
+		String[] alphabet;
 		switch (language)
 		{
 			case RU:
@@ -45,7 +45,7 @@ public abstract class Word
 			else
 				i = 0;
 			j = (int)(Math.random() * difficulty);
-			word[c] = alphabet[i][j];
+			word[c] = alphabet[i].charAt(j);
 		}
 		return new String(word);
 	}
