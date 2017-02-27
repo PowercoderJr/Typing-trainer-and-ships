@@ -3,14 +3,14 @@ package typingtrainer;
 /**
  * Created by Meow on 22.02.2017.
  */
-public class Word
+public abstract class Word
 {
-	//Длина каждого алфавита = 33
 	public static final char[][] ALPH_RU =	{	{'а', 'о', 'в', 'л', 'ы', 'д', 'ф', 'ж', 'п', 'р', 'к', 'г', 'е', 'н', 'м', 'ь', 'и', 'т', 'у', 'ш', 'с', 'б', 'ц', 'щ', 'ч', 'ю', 'й', 'з', 'я', '.', 'х', 'ъ', 'э'},
 												{'А', 'О', 'В', 'Л', 'Ы', 'Д', 'Ф', 'Ж', 'П', 'Р', 'К', 'Г', 'Е', 'Н', 'М', 'Ь', 'И', 'Т', 'У', 'Ш', 'С', 'Б', 'Ц', 'Щ', 'Ч', 'Ю', 'Й', 'З', 'Я', ',', 'Х', 'Ъ', 'Э'}};
 	public static final char[][] ALPH_EN = 	{	{'f', 'j', 'd', 'k', 's', 'l', 'a', ';', 'g', 'h', 'r', 'u', 't', 'y', 'v', 'm', 'b', 'n', 'e', 'i', 'c', ',', 'w', 'o', 'x', '.', 'q', 'p', 'z', '/', '[', ']', '\''},
 												{'F', 'J', 'D', 'K', 'S', 'L', 'A', ':', 'G', 'H', 'R', 'U', 'T', 'Y', 'V', 'M', 'B', 'N', 'E', 'I', 'C', '<', 'W', 'O', 'X', '>', 'Q', 'P', 'Z', '?', '{', '}', '\"'}};
 	public static final int LANG_COUNT = 2;
+	public static final int MAX_LEVEL = 33;
 	public enum Languages {RU, EN};
 	private String word;
 
@@ -55,19 +55,18 @@ public class Word
 	 * @return Слово из рандомных букв.
 	 */
 	{
-		Languages lng;
+		Languages lang;
 		switch ((int)(Math.random() * LANG_COUNT))
 		{
 			case 0:
 			default:
-				lng = Languages.RU;
+				lang = Languages.RU;
 				break;
 			case 1:
-				lng = Languages.EN;
+				lang = Languages.EN;
 				break;
 		}
-		//word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, lng, true);
-		word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, Languages.EN, false);
+		word = Word.generateRndWord((int)(2 + Math.random() * 10), MAX_LEVEL, lang, true);
 	}
 
 	public Word(int length, int difficulty, Languages language, boolean isShiftIncluding)

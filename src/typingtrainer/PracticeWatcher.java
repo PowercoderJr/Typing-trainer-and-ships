@@ -5,55 +5,36 @@ package typingtrainer;
  */
 public class PracticeWatcher
 {
-	public int DISPLAYABLE_SPACE_SIZE = 10;
+	public static final int DISPLAYABLE_SPACE_SIZE = 10;
 	private StringBuffer taskString;
+	private Word.Languages lang;
 	private int mistakeCount;
 	private long timeStart;
 
-	public PracticeWatcher(StringBuffer taskString)
+	public PracticeWatcher(StringBuffer taskString, Word.Languages lang)
 	{
 		this.taskString = taskString;
+		this.lang = lang;
 		mistakeCount = 0;
 		timeStart = System.nanoTime();
-		if (taskString.length()>=10)
-		{
-			this.DISPLAYABLE_SPACE_SIZE = 10;
-		}
-		else
-		{
-			if (taskString.length()>=5)
-			{
-				this.DISPLAYABLE_SPACE_SIZE = 5;
-			}
-			else
-			{
-				this.DISPLAYABLE_SPACE_SIZE = 1;
-			}
-
-		}
 	}
 
-	public char GetCurrentChar()
+	public char getCurrentChar()
 	{
 		return taskString.charAt(0);
 	}
 
-	public void PassCurrentChar()
+	public void passCurrentChar()
 	{
 		taskString.deleteCharAt(0);
 	}
-/* временно
-	public String GetDisplayableString()
+
+	public String getDisplayableString()
 	{
-		return taskString.substring(0, DISPLAYABLE_SPACE_SIZE);
-	}
-*/
-	public String GetDisplayableString()
-	{
-		return taskString.toString();
+		return taskString.substring(0, taskString.length() >= DISPLAYABLE_SPACE_SIZE ? DISPLAYABLE_SPACE_SIZE : taskString.length());
 	}
 
-	public void AddMistake()
+	public void addMistake()
 	{
 		this.mistakeCount++;
 	}
@@ -62,7 +43,12 @@ public class PracticeWatcher
 		return mistakeCount;
 	}
 
-	public long GetFinalTime(){
+	public long getFinalTime(){
 		return  System.nanoTime() - timeStart;
+	}
+
+	public Word.Languages getLang()
+	{
+		return lang;
 	}
 }

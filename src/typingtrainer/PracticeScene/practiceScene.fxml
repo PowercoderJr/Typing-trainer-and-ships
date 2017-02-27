@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0"  prefHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PracticeScene.PracticeSceneController">
   <children>
-    <Label  fx:id="backLabel" onKeyPressed="#checkLetter" text="HELLO, BITCH!" GridPane.columnIndex="0" GridPane.rowIndex="1" onMouseClicked="#onBackLabelClicked" />
+    <Label fx:id="backLabel" onKeyPressed="#onKeyPressed" text="HELLO, BITCH!" GridPane.columnIndex="0" GridPane.rowIndex="1" onMouseClicked="#onBackLabelClicked" />
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="CENTER" minWidth="400.0" />
