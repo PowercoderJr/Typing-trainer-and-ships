@@ -66,7 +66,8 @@ public class Word
 				lng = Languages.EN;
 				break;
 		}
-		word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, lng, true);
+		//word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, lng, true);
+		word = Word.generateRndWord((int)(2 + Math.random() * 10), 33, Languages.EN, false);
 	}
 
 	public Word(int length, int difficulty, Languages language, boolean isShiftIncluding)
@@ -80,5 +81,9 @@ public class Word
 	 */
 	{
 		word = Word.generateRndWord(length, difficulty, language, isShiftIncluding);
+	}
+
+	public String GetWord(){
+		return this.word;
 	}
 }
