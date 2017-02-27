@@ -1,6 +1,5 @@
 package typingtrainer.PracticeScene;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -12,6 +11,7 @@ import typingtrainer.Word;
 
 import java.awt.im.InputContext;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -21,31 +21,18 @@ public class PracticeSceneController
 {
 	public GridPane pane;
 	public Label backLabel;
-	private Word currStr;
 	private PracticeWatcher watcher;
-
-
-
 
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
 		backLabel.setFocusTraversable(true);
-		currStr = new Word();
-		StringBuffer stringParam = new StringBuffer(currStr.GetWord());
-		watcher = new PracticeWatcher(stringParam);
-		backLabel.setText(watcher.GetDisplayableString().toString());
-
-
+		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, 33, Word.Languages.RU, true)), Word.Languages.RU);
+		backLabel.setText(watcher.getDisplayableString());
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
-		Locale en = new Locale("en", "US");
-		InCon.selectInputMethod(en);
+		InCon.selectInputMethod(new Locale("en", "US"));
 		System.out.println(InCon.getLocale().toString());
-
-
-
-
 
 		/*
 		pane.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -73,36 +60,79 @@ public class PracticeSceneController
 		}
 	}
 
-	public void checkLetter(KeyEvent keyEvent) {
-
-			if (keyEvent.getText().length()!=0)
+	public void onKeyPressed(KeyEvent keyEvent)
+	{
+		if (!keyEvent.getCode().toString().equals("CONTROL") &&
+				!keyEvent.getCode().toString().equals("SHIFT") &&
+				!keyEvent.getCode().toString().equals("ALT") &&
+				!keyEvent.getCode().toString().equals("ALT_GRAPH"))
+		{
+			boolean isSymbolCorrect;
+			System.out.println(keyEvent.getText().charAt(0));
+			if (!keyEvent.getText().isEmpty())
 			{
-			if (keyEvent.getText().charAt(0) == watcher.GetCurrentChar())
-			{
-				watcher.PassCurrentChar();
-				if (watcher.GetDisplayableString().length()!=0)
+				if (watcher.getCurrentChar() == ' ')
 				{
-					backLabel.setText(watcher.GetDisplayableString());
+					isSymbolCorrect = keyEvent.getText().charAt(0) == ' ';
 				}
 				else
+				{
+					if (keyEvent.isShiftDown())
 					{
-						backLabel.setText("");
-						Alert alert = new Alert(Alert.AlertType.INFORMATION);
-						alert.setTitle("Поздравляем");
-						alert.setHeaderText(null);
-
-						alert.setContentText("Kras \n oshibki: "+ String.valueOf(watcher.getMistakeCount()) + "\n vremya: " + String.format("%.2f", (watcher.GetFinalTime()*1e-9)) + " секундочек");
-						alert.showAndWait();
+						char symbolWithShift;
+						String[] alphabet;
+						switch (watcher.getLang())
+						{
+							case RU:
+							default:
+								alphabet = Word.ALPH_RU;
+								break;
+							case EN:
+								alphabet = Word.ALPH_EN;
+								break;
+						}
+						int symbolIndex = alphabet[0].indexOf(keyEvent.getText().charAt(0));
+						if (symbolIndex >= 0 && symbolIndex < Word.MAX_LEVEL)
+						{
+							symbolWithShift = alphabet[1].charAt(symbolIndex);
+							isSymbolCorrect = symbolWithShift == watcher.getCurrentChar();
+						}
+						else
+						{
+							isSymbolCorrect = false;
+						}
 					}
+					else
+					{
+						isSymbolCorrect = keyEvent.getText().charAt(0) == watcher.getCurrentChar();
+					}
+				}
 			}
-			else{
-				System.out.println("incorrect");
-				watcher.AddMistake();
+			else
+				isSymbolCorrect = false;
+
+			if (isSymbolCorrect)
+			{
+				watcher.passCurrentChar();
+				if (watcher.getDisplayableString().length() != 0)
+					backLabel.setText(watcher.getDisplayableString());
+				else
+				{
+					backLabel.setText("");
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Поздравляем");
+					alert.setHeaderText(null);
+
+					alert.setContentText("Kras \noshibki: " + String.valueOf(watcher.getMistakeCount()) + "\nvremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
+					alert.showAndWait();
+				}
+				System.out.println("+");
 			}
-
+			else
+			{
+				System.out.println("-");
+				watcher.addMistake();
 			}
-
-
-
+		}
 	}
 }
