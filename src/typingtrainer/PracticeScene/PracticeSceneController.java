@@ -1,6 +1,7 @@
 package typingtrainer.PracticeScene;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -23,11 +24,36 @@ public class PracticeSceneController
 	public Label backLabel;
 	private PracticeWatcher watcher;
 
+
+	static int lang;
+	static int difficulti;
+	static int register;
+
+
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
+
+		System.out.println(PracticeSceneController.lang);
+		System.out.println(PracticeSceneController.difficulti);
+		System.out.println(PracticeSceneController.register);
+
+		int diff = 0;
+		if (PracticeSceneController.difficulti==16){
+			 diff = 33;
+		}
+		else {
+			 diff = (PracticeSceneController.difficulti+1)*2;
+		}
+
+
+		Word.Languages lang = PracticeSceneController.lang == 0 ? Word.Languages.RU  : Word.Languages.EN;
+		boolean reg = PracticeSceneController.register == 0 ? true : false;
+
+
+
 		backLabel.setFocusTraversable(true);
-		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, 33, Word.Languages.RU, true)), Word.Languages.RU);
+		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, diff, lang, reg)), lang);
 		backLabel.setText(watcher.getDisplayableString());
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
@@ -122,7 +148,6 @@ public class PracticeSceneController
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Поздравляем");
 					alert.setHeaderText(null);
-
 					alert.setContentText("Kras \noshibki: " + String.valueOf(watcher.getMistakeCount()) + "\nvremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
 					alert.showAndWait();
 				}
@@ -134,5 +159,13 @@ public class PracticeSceneController
 				watcher.addMistake();
 			}
 		}
+	}
+
+
+	public static void setOptions(int lang, int difficulti, int register){
+		PracticeSceneController.lang = lang;
+		PracticeSceneController.difficulti = difficulti;
+		PracticeSceneController.register = register;
+
 	}
 }

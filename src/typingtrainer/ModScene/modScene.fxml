@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" prefHeight="238.0" prefWidth="832.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.ModScene.ModSceneController">
+  <children>
+    <Label fx:id="lableOption1" text="Настройки" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+    <Label fx:id="lableOption2" text="Язык" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+    <Label fx:id="lableOption3" text="Сложность" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+    <Label fx:id="lableOption4" text="Регистр" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
+    <Label fx:id="lableGo" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#onGoClicked" text="Go" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+    <ChoiceBox fx:id="lang"  prefWidth="185.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+    <ChoiceBox fx:id="difficulty" prefWidth="186.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+    <ChoiceBox fx:id="register" prefHeight="21.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+  </children>
+  <columnConstraints>
+
+    <ColumnConstraints  prefWidth="400.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints prefHeight="120.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="122.0" />
+    <RowConstraints prefHeight="125.0" />
+    <RowConstraints prefHeight="137.0" />
+    <RowConstraints prefHeight="132.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="120.0" />
+  </rowConstraints>
+</GridPane>

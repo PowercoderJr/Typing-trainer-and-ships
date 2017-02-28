@@ -27,10 +27,12 @@ public class MainSceneController
 	public void onPracticeModeLabelClicked(MouseEvent mouseEvent) throws IOException
 	{
 		SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
-		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
+		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("ModScene/modScene.fxml"));
 		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
-		practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
+		practiceScene.getStylesheets().add("typingtrainer/ModScene/style.css");
 		sceneManager.pushScene(practiceScene);
+
+
 	}
 
 	public void onExitLabelClicked(MouseEvent mouseEvent)
