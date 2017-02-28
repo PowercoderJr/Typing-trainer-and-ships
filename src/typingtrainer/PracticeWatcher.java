@@ -8,13 +8,17 @@ public class PracticeWatcher
 	public static final int DISPLAYABLE_SPACE_SIZE = 20;
 	private StringBuffer taskString;
 	private Word.Languages lang;
-	private int mistakeCount;
 	private long timeStart;
+	private int mistakeCount;
+	private int difficulty;
+	private boolean register;
 
-	public PracticeWatcher(StringBuffer taskString, Word.Languages lang)
+	public PracticeWatcher(StringBuffer taskString, Word.Languages lang, int difficulty, boolean register)
 	{
 		this.taskString = taskString;
 		this.lang = lang;
+		this.difficulty = difficulty;
+		this.register = register;
 		mistakeCount = 0;
 		timeStart = System.nanoTime();
 	}
@@ -50,5 +54,25 @@ public class PracticeWatcher
 	public Word.Languages getLang()
 	{
 		return lang;
+	}
+
+	public int getDifficulty()
+	{
+		return difficulty;
+	}
+
+	public void setDifficulty(int difficulty)
+	{
+		this.difficulty = difficulty;
+	}
+
+	public boolean isRegister()
+	{
+		return register;
+	}
+
+	public void setRegister(boolean register)
+	{
+		this.register = register;
 	}
 }

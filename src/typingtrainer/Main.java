@@ -18,7 +18,7 @@ public class Main extends Application
         mainScene.getStylesheets().add("typingtrainer/MainScene/style.css");
 
         sceneManager.pushScene(mainScene);
-        primaryStage.setTitle("Hello Bitch trainer");
+        primaryStage.setTitle("Typing trainer");
         primaryStage.show();
     }
 

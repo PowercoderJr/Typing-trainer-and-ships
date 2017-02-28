@@ -11,6 +11,7 @@ import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeScene.PracticeSceneController;
 import typingtrainer.SceneManager;
+import typingtrainer.Word;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -44,9 +45,22 @@ public class ModSceneController {
         }
         else
 		{
-            PracticeSceneController.setOptions(langCB.getSelectionModel().getSelectedIndex(),
-					Integer.parseInt(difficultyCB.getSelectionModel().getSelectedItem().toString()),
-					registerCB.getSelectionModel().getSelectedIndex() == 1);
+			Word.Languages lang;
+			int difficulty;
+			boolean register;
+			switch (langCB.getSelectionModel().getSelectedIndex())
+			{
+				case 0:
+				default:
+					lang = Word.Languages.RU;
+					break;
+				case 1:
+					lang = Word.Languages.EN;
+					break;
+			}
+			difficulty = Integer.parseInt(difficultyCB.getSelectionModel().getSelectedItem().toString());
+			register = registerCB.getSelectionModel().getSelectedIndex() == 1;
+            PracticeSceneController.setOptions(lang, difficulty, register);
 
             SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
             Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));

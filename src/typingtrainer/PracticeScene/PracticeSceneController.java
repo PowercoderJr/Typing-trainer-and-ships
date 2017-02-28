@@ -23,7 +23,7 @@ public class PracticeSceneController
 	public Label displayableStringLabel;
 	private PracticeWatcher watcher;
 
-	static int lang;
+	static Word.Languages lang;
 	static int difficulty;
 	static boolean register;
 
@@ -35,10 +35,9 @@ public class PracticeSceneController
 		System.out.println("Difficulty: " + PracticeSceneController.difficulty);
 		System.out.println("Register: " + PracticeSceneController.register);
 
-		Word.Languages lang = PracticeSceneController.lang == 0 ? Word.Languages.RU  : Word.Languages.EN;
-
 		displayableStringLabel.setFocusTraversable(true);
-		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, lang, PracticeSceneController.register)), lang);
+		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, PracticeSceneController.lang, PracticeSceneController.register)),
+				PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
 		displayableStringLabel.setText(watcher.getDisplayableString());
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
@@ -128,6 +127,16 @@ public class PracticeSceneController
 					displayableStringLabel.setText(watcher.getDisplayableString());
 				else
 				{
+					//Тут будет сцена со статистикой
+					try
+					{
+						((ManagedScene)(displayableStringLabel.getScene())).getManager().popAllExceptFirst();
+					}
+					catch (InvocationTargetException e)
+					{
+						System.out.println(e.getMessage());
+					}
+
 					displayableStringLabel.setText("");
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Поздравляем");
@@ -145,8 +154,7 @@ public class PracticeSceneController
 		}
 	}
 
-
-	public static void setOptions(int lang, int difficulty, boolean register){
+	public static void setOptions(Word.Languages lang, int difficulty, boolean register){
 		PracticeSceneController.lang = lang;
 		PracticeSceneController.difficulty = difficulty;
 		PracticeSceneController.register = register;
