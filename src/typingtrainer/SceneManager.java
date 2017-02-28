@@ -42,4 +42,26 @@ public class SceneManager
 		else
 			stage.setScene(scenes.peek());
 	}
+
+	public void popAllExceptFirst() throws InvocationTargetException
+	{
+		/** Извлекает из стека все сцены, кроме первой (которая была установлена в конструкторе) и переключает на неё stage.
+		 * @throws InvocationTargetException если стек был пуст.
+ 		 */
+		if (scenes.empty())
+			throw new InvocationTargetException(new Throwable(), "Стек сцен пуст!");
+		while (scenes.size() > 1)
+			scenes.pop();
+		stage.setScene(scenes.peek());
+	}
+
+	public ManagedScene getAt(int index)
+	{
+		return scenes.get(index);
+	}
+
+	public int getStackSize()
+	{
+		return scenes.size();
+	}
 }

@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
@@ -14,27 +13,28 @@ import typingtrainer.PracticeScene.PracticeSceneController;
 import typingtrainer.SceneManager;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Никитка on 28.02.2017.
  */
 public class ModSceneController {
 
-    public ChoiceBox lang;
-    public ChoiceBox difficulty;
-    public ChoiceBox register;
+    public ChoiceBox langCB;
+    public ChoiceBox difficultyCB;
+    public ChoiceBox registerCB;
 
     public void initialize()
     {
         System.out.println("Опционная сцена готова!");
-        lang.setItems(FXCollections.observableArrayList("Русский", "English"));
-        difficulty.setItems(FXCollections.observableArrayList("2", "4","6", "8","10", "12","14", "16","18", "20","22", "24","26", "28","30", "32", "33"));
-        register.setItems(FXCollections.observableArrayList("Вкл.", "Выкл."));
+        langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
+        difficultyCB.setItems(FXCollections.observableArrayList("2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "33"));
+        registerCB.setItems(FXCollections.observableArrayList("Выкл.", "Вкл."));
     }
 
-    public void onGoClicked(MouseEvent mouseEvent) throws IOException {
-
-        if ( lang.getSelectionModel().isEmpty() || difficulty.getSelectionModel().isEmpty() || register.getSelectionModel().isEmpty())
+    public void onGoClicked(MouseEvent mouseEvent) throws IOException
+	{
+        if (langCB.getSelectionModel().isEmpty() || difficultyCB.getSelectionModel().isEmpty() || registerCB.getSelectionModel().isEmpty())
         {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ага, конечно");
@@ -42,8 +42,11 @@ public class ModSceneController {
             alert.setContentText("Воу, не так быстро, дружочек");
             alert.showAndWait();
         }
-        else {
-            PracticeSceneController.setOptions(lang.getSelectionModel().getSelectedIndex(),difficulty.getSelectionModel().getSelectedIndex(),register.getSelectionModel().getSelectedIndex());
+        else
+		{
+            PracticeSceneController.setOptions(langCB.getSelectionModel().getSelectedIndex(),
+					Integer.parseInt(difficultyCB.getSelectionModel().getSelectedItem().toString()),
+					registerCB.getSelectionModel().getSelectedIndex() == 1);
 
             SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
             Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
@@ -51,7 +54,17 @@ public class ModSceneController {
             practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
             sceneManager.pushScene(practiceScene);
         }
-
-
     }
+
+	public void onBackClicked(MouseEvent mouseEvent)
+	{
+		try
+		{
+			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popScene();
+		}
+		catch (InvocationTargetException e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
 }

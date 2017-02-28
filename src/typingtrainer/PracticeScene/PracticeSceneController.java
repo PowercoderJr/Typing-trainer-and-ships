@@ -1,7 +1,6 @@
 package typingtrainer.PracticeScene;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -12,7 +11,6 @@ import typingtrainer.Word;
 
 import java.awt.im.InputContext;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -21,40 +19,27 @@ import java.util.Locale;
 public class PracticeSceneController
 {
 	public GridPane pane;
-	public Label backLabel;
+	public Label mainMenuLabel;
+	public Label displayableStringLabel;
 	private PracticeWatcher watcher;
 
-
 	static int lang;
-	static int difficulti;
-	static int register;
-
+	static int difficulty;
+	static boolean register;
 
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
 
-		System.out.println(PracticeSceneController.lang);
-		System.out.println(PracticeSceneController.difficulti);
-		System.out.println(PracticeSceneController.register);
-
-		int diff = 0;
-		if (PracticeSceneController.difficulti==16){
-			 diff = 33;
-		}
-		else {
-			 diff = (PracticeSceneController.difficulti+1)*2;
-		}
-
+		System.out.println("Lang: " + PracticeSceneController.lang);
+		System.out.println("Difficulty: " + PracticeSceneController.difficulty);
+		System.out.println("Register: " + PracticeSceneController.register);
 
 		Word.Languages lang = PracticeSceneController.lang == 0 ? Word.Languages.RU  : Word.Languages.EN;
-		boolean reg = PracticeSceneController.register == 0 ? true : false;
 
-
-
-		backLabel.setFocusTraversable(true);
-		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, diff, lang, reg)), lang);
-		backLabel.setText(watcher.getDisplayableString());
+		displayableStringLabel.setFocusTraversable(true);
+		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, lang, PracticeSceneController.register)), lang);
+		displayableStringLabel.setText(watcher.getDisplayableString());
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
@@ -73,12 +58,11 @@ public class PracticeSceneController
 		*/
 	}
 
-
-	public void onBackLabelClicked(MouseEvent mouseEvent)
+	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
 	{
 		try
 		{
-			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popScene();
+			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -141,10 +125,10 @@ public class PracticeSceneController
 			{
 				watcher.passCurrentChar();
 				if (watcher.getDisplayableString().length() != 0)
-					backLabel.setText(watcher.getDisplayableString());
+					displayableStringLabel.setText(watcher.getDisplayableString());
 				else
 				{
-					backLabel.setText("");
+					displayableStringLabel.setText("");
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Поздравляем");
 					alert.setHeaderText(null);
@@ -162,10 +146,9 @@ public class PracticeSceneController
 	}
 
 
-	public static void setOptions(int lang, int difficulti, int register){
+	public static void setOptions(int lang, int difficulty, boolean register){
 		PracticeSceneController.lang = lang;
-		PracticeSceneController.difficulti = difficulti;
+		PracticeSceneController.difficulty = difficulty;
 		PracticeSceneController.register = register;
-
 	}
 }

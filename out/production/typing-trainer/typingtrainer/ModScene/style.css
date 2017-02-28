@@ -15,16 +15,26 @@
     -fx-effect: dropshadow( gaussian, black, 2, 1, 0, 0);
 }
 
-.label:hover
+#labelGo:hover, #backLabel:hover
 {
     -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);
 }
 
-.label:pressed
+#labelGo:pressed, #backLabel:pressed
 {
     -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
 }
 
-#lableOption1{
+#langCB, #difficultyCB, #registerCB
+{
+    -fx-font-size: 40px;
+    -fx-font-family: "Arial Bold";
+    -fx-font-weight: 400;
+    -fx-font-color: white;
+    -fx-effect: dropshadow( gaussian, black, 0, 0, 0, 0);
+}
+
+#lableOption1
+{
     -fx-margin-bottom: 40px;
 }

@@ -43,7 +43,7 @@ public class MainSceneController
 		}
 		catch (InvocationTargetException e)
 		{
-			System.out.println(e.getMessage() + " Suka!");
+			System.out.println(e.getMessage());
 		}
 	}
 }

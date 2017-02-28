@@ -9,29 +9,28 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" prefHeight="238.0" prefWidth="832.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.ModScene.ModSceneController">
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.ModScene.ModSceneController">
   <children>
-    <Label fx:id="lableOption1" text="Настройки" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-    <Label fx:id="lableOption2" text="Язык" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-    <Label fx:id="lableOption3" text="Сложность" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-    <Label fx:id="lableOption4" text="Регистр" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
-    <Label fx:id="lableGo" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#onGoClicked" text="Go" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-    <ChoiceBox fx:id="lang"  prefWidth="185.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-    <ChoiceBox fx:id="difficulty" prefWidth="186.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-    <ChoiceBox fx:id="register" prefHeight="21.0" prefWidth="185.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+    <Label fx:id="labelOption1" text="Настройки" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+    <Label fx:id="labelOption2" text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <Label fx:id="labelOption3" text="Сложность:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <Label fx:id="labelOption4" text="Регистр:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    <Label fx:id="labelGo" onMouseClicked="#onGoClicked" text="GO" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+    <ChoiceBox fx:id="langCB" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="1" value="Русский"/>
+    <ChoiceBox fx:id="difficultyCB" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="2" value="2"/>
+    <ChoiceBox fx:id="registerCB" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="3" value="Выкл."/>
   </children>
   <columnConstraints>
-
-    <ColumnConstraints  prefWidth="400.0" />
+    <ColumnConstraints halignment="RIGHT" prefWidth="425.0" />
+    <ColumnConstraints halignment="CENTER" />
+    <ColumnConstraints prefWidth="425.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints prefHeight="120.0" />
-    <RowConstraints prefHeight="30.0" />
-    <RowConstraints prefHeight="122.0" />
-    <RowConstraints prefHeight="125.0" />
-    <RowConstraints prefHeight="137.0" />
-    <RowConstraints prefHeight="132.0" />
-    <RowConstraints prefHeight="30.0" />
-    <RowConstraints prefHeight="120.0" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
 </GridPane>
