@@ -5,11 +5,14 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
 
 import java.awt.im.InputContext;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
@@ -22,6 +25,8 @@ public class PracticeSceneController
 	public Label mainMenuLabel;
 	public Label displayableStringLabel;
 	private PracticeWatcher watcher;
+	private Media media;
+	private MediaPlayer mediaPlayer;
 
 	static Word.Languages lang;
 	static int difficulty;
@@ -39,6 +44,8 @@ public class PracticeSceneController
 		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, PracticeSceneController.lang, PracticeSceneController.register)),
 				PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
 		displayableStringLabel.setText(watcher.getDisplayableString());
+		media = new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString());
+		mediaPlayer = new MediaPlayer(media);
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
@@ -67,6 +74,7 @@ public class PracticeSceneController
 		{
 			System.out.println(e.getMessage());
 		}
+		mediaPlayer.stop();
 	}
 
 	public void onKeyPressed(KeyEvent keyEvent)
@@ -122,11 +130,13 @@ public class PracticeSceneController
 
 			if (isSymbolCorrect)
 			{
+				mediaPlayer.play();
 				watcher.passCurrentChar();
 				if (watcher.getDisplayableString().length() != 0)
 					displayableStringLabel.setText(watcher.getDisplayableString());
 				else
 				{
+					mediaPlayer.stop();
 					//Тут будет сцена со статистикой
 					try
 					{
@@ -148,6 +158,7 @@ public class PracticeSceneController
 			}
 			else
 			{
+				mediaPlayer.pause();
 				System.out.println("-");
 				watcher.addMistake();
 			}

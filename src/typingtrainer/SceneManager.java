@@ -26,7 +26,10 @@ public class SceneManager
 	 */
 	{
 		scenes.push(scene);
+		double w = stage.getWidth(), h = stage.getHeight();
 		stage.setScene(scene);
+		stage.setWidth(w);
+		stage.setHeight(h);
 	}
 
 	public void popScene() throws InvocationTargetException
@@ -40,7 +43,12 @@ public class SceneManager
 		if (scenes.empty())
 			stage.close();
 		else
+		{
+			double w = stage.getWidth(), h = stage.getHeight();
 			stage.setScene(scenes.peek());
+			stage.setWidth(w);
+			stage.setHeight(h);
+		}
 	}
 
 	public void popAllExceptFirst() throws InvocationTargetException
@@ -50,9 +58,12 @@ public class SceneManager
  		 */
 		if (scenes.empty())
 			throw new InvocationTargetException(new Throwable(), "Стек сцен пуст!");
+		double w = stage.getWidth(), h = stage.getHeight();
 		while (scenes.size() > 1)
 			scenes.pop();
 		stage.setScene(scenes.peek());
+		stage.setWidth(w);
+		stage.setHeight(h);
 	}
 
 	public ManagedScene getAt(int index)
@@ -63,5 +74,10 @@ public class SceneManager
 	public int getStackSize()
 	{
 		return scenes.size();
+	}
+
+	public ManagedScene getCurrScene()
+	{
+		return scenes.peek();
 	}
 }

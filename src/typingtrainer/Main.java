@@ -19,6 +19,8 @@ public class Main extends Application
 
         sceneManager.pushScene(mainScene);
         primaryStage.setTitle("Typing trainer");
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
         primaryStage.show();
     }
 
