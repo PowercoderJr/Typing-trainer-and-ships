@@ -35,7 +35,7 @@ public class ModSceneController {
 
     public void onGoClicked(MouseEvent mouseEvent) throws IOException
 	{
-        if (langCB.getSelectionModel().isEmpty() || difficultyCB.getSelectionModel().isEmpty() || registerCB.getSelectionModel().isEmpty())
+        /*if (langCB.getSelectionModel().isEmpty() || difficultyCB.getSelectionModel().isEmpty() || registerCB.getSelectionModel().isEmpty())
         {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ага, конечно");
@@ -43,7 +43,7 @@ public class ModSceneController {
             alert.setContentText("Воу, не так быстро, дружочек");
             alert.showAndWait();
         }
-        else
+        else*/
 		{
 			Word.Languages lang;
 			int difficulty;
