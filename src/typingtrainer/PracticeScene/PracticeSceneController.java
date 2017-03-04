@@ -1,5 +1,6 @@
 package typingtrainer.PracticeScene;
 
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -15,37 +16,41 @@ import java.awt.im.InputContext;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Meow on 25.02.2017.
  */
 public class PracticeSceneController
 {
+	@FXML
 	public GridPane pane;
+	@FXML
 	public Label mainMenuLabel;
+	@FXML
 	public Label displayableStringLabel;
 	private PracticeWatcher watcher;
-	private Media media;
-	private MediaPlayer mediaPlayer;
+	volatile private MediaPlayer music;
+	volatile private MediaPlayer falseNote;
+	private TimerTask reduceMusicVolumeTask;
+	private Timer reduceMusicVolumeTimer;
 
 	static Word.Languages lang;
 	static int difficulty;
 	static boolean register;
+	static boolean isReducingCanceled;
 
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
 
-		System.out.println("Lang: " + PracticeSceneController.lang);
-		System.out.println("Difficulty: " + PracticeSceneController.difficulty);
-		System.out.println("Register: " + PracticeSceneController.register);
-
 		displayableStringLabel.setFocusTraversable(true);
 		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, PracticeSceneController.lang, PracticeSceneController.register)),
 				PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
 		displayableStringLabel.setText(watcher.getDisplayableString());
-		media = new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString());
-		mediaPlayer = new MediaPlayer(media);
+		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
@@ -66,6 +71,7 @@ public class PracticeSceneController
 
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
 	{
+		disposeSounds();
 		try
 		{
 			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
@@ -74,7 +80,6 @@ public class PracticeSceneController
 		{
 			System.out.println(e.getMessage());
 		}
-		mediaPlayer.stop();
 	}
 
 	public void onKeyPressed(KeyEvent keyEvent)
@@ -85,7 +90,7 @@ public class PracticeSceneController
 				!keyEvent.getCode().toString().equals("ALT_GRAPH"))
 		{
 			boolean isSymbolCorrect;
-			System.out.println(keyEvent.getText().charAt(0));
+			//System.out.println(keyEvent.getText().charAt(0));
 			if (!keyEvent.getText().isEmpty())
 			{
 				if (watcher.getCurrentChar() == ' ')
@@ -130,13 +135,50 @@ public class PracticeSceneController
 
 			if (isSymbolCorrect)
 			{
-				mediaPlayer.play();
+				try
+				{
+					reduceMusicVolumeTask.cancel();
+					reduceMusicVolumeTimer.cancel();
+				}
+				catch (Exception e)
+				{
+					System.out.println(e.getMessage());
+				}
+				music.play();
+				isReducingCanceled = true;
+				reduceMusicVolumeTask = new TimerTask()
+				{
+					@Override
+					public void run()
+					{
+						isReducingCanceled = false;
+						while (!isReducingCanceled && music.getVolume() > 0)
+						{
+							music.setVolume(music.getVolume() - 0.1);
+							try
+							{
+								TimeUnit.MILLISECONDS.sleep(25);
+							}
+							catch (InterruptedException e)
+							{
+								e.printStackTrace();
+							}
+						}
+
+						if (!isReducingCanceled)
+							music.pause();
+						music.setVolume(1.0);
+					}
+				};
+				reduceMusicVolumeTimer = new Timer();
+				reduceMusicVolumeTimer.schedule(reduceMusicVolumeTask, 2000);
+
 				watcher.passCurrentChar();
 				if (watcher.getDisplayableString().length() != 0)
 					displayableStringLabel.setText(watcher.getDisplayableString());
 				else
 				{
-					mediaPlayer.stop();
+					disposeSounds();
 					//Тут будет сцена со статистикой
 					try
 					{
@@ -154,12 +196,28 @@ public class PracticeSceneController
 					alert.setContentText("Kras \noshibki: " + String.valueOf(watcher.getMistakeCount()) + "\nvremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
 					alert.showAndWait();
 				}
-				System.out.println("+");
+				//System.out.println("+");
 			}
 			else
 			{
-				mediaPlayer.pause();
-				System.out.println("-");
+				if (falseNote != null)
+				{
+					MediaPlayer buf = falseNote;
+					TimerTask disposeTask = new TimerTask()
+					{
+						@Override
+						public void run()
+						{
+							buf.dispose();
+						}
+					};
+					Timer disposeTimer = new Timer();
+					disposeTimer.schedule(disposeTask, 1000);
+				}
+				falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
+				falseNote.play();
+				music.pause();
+				//System.out.println("-");
 				watcher.addMistake();
 			}
 		}
@@ -169,5 +227,28 @@ public class PracticeSceneController
 		PracticeSceneController.lang = lang;
 		PracticeSceneController.difficulty = difficulty;
 		PracticeSceneController.register = register;
+	}
+
+	private void disposeSounds()
+	{
+		try
+		{
+			reduceMusicVolumeTask.cancel();
+			reduceMusicVolumeTimer.cancel();
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		if (music != null)
+		{
+			music.stop();
+			music.dispose();
+		}
+		if (falseNote != null)
+		{
+			falseNote.stop();
+			falseNote.dispose();
+		}
 	}
 }
