@@ -38,7 +38,7 @@ public class SceneManager
 		 * @throws InvocationTargetException если стек был пуст.
 		 */
 		if (scenes.empty())
-			throw new InvocationTargetException(new Throwable(), "Стек сцен пуст!");
+			throw new InvocationTargetException(new Exception("Стек сцен пуст!"), "Стек сцен пуст!");
 		scenes.pop();
 		if (scenes.empty())
 			stage.close();
@@ -57,7 +57,7 @@ public class SceneManager
 		 * @throws InvocationTargetException если стек был пуст.
  		 */
 		if (scenes.empty())
-			throw new InvocationTargetException(new Throwable(), "Стек сцен пуст!");
+			throw new InvocationTargetException(new Exception("Стек сцен пуст!"), "Стек сцен пуст!");
 		double w = stage.getWidth(), h = stage.getHeight();
 		while (scenes.size() > 1)
 			scenes.pop();
