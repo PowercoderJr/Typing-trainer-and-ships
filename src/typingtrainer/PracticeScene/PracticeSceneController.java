@@ -42,7 +42,7 @@ public class PracticeSceneController
 	@FXML
 	public Rectangle highlightRShiftRct;
 	@FXML
-	public Rectangle highlightSpaceRct;
+	private Rectangle highlightSpaceRct;
 	private PracticeWatcher watcher;
 	volatile private MediaPlayer music;
 	volatile private MediaPlayer falseNote;
@@ -92,16 +92,25 @@ public class PracticeSceneController
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
-		displayableStringLabel.setFocusTraversable(true);
-		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, PracticeSceneController.lang, PracticeSceneController.register)),
-				PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
-		updHighlights();
-		displayableStringLabel.setText(watcher.getDisplayableString());
-		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
-
+		//displayableStringLabel.setFocusTraversable(true);
+		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
 		System.out.println(InCon.getLocale().toString());
+	}
+
+	private void restart()
+	{
+		disposeSounds();
+		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15),
+				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
+		while (taskWord.length() < 200)
+			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), PracticeSceneController.difficulty,
+					PracticeSceneController.lang, PracticeSceneController.register));
+		watcher = new PracticeWatcher(taskWord, PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
+		updHighlights();
+		displayableStringLabel.setText(watcher.getDisplayableString());
+		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
 	}
 
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
@@ -217,7 +226,7 @@ public class PracticeSceneController
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 		}
 		music.play();
 		isReducingCanceled = true;
@@ -285,17 +294,19 @@ public class PracticeSceneController
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 		}
 		if (music != null)
 		{
 			music.stop();
 			music.dispose();
+			music = null;
 		}
 		if (falseNote != null)
 		{
 			falseNote.stop();
 			falseNote.dispose();
+			falseNote = null;
 		}
 	}
 
@@ -341,5 +352,10 @@ public class PracticeSceneController
 			highlightRShiftRct.setVisible(isShift);
 			highlightSpaceRct.setVisible(false);
 		}
+	}
+
+	public void onRestartLabelClicked(MouseEvent mouseEvent)
+	{
+		restart();
 	}
 }

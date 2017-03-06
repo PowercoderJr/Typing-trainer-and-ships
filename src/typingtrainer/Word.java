@@ -82,7 +82,7 @@ public abstract class Word
 		word = Word.generateRndWord(length, difficulty, language, isShiftIncluding);
 	}
 
-	public String GetWord(){
+	public String toString(){
 		return this.word;
 	}
 }
