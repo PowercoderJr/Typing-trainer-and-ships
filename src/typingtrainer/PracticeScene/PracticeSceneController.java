@@ -1,6 +1,7 @@
 package typingtrainer.PracticeScene;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -8,10 +9,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
 
+import java.awt.*;
 import java.awt.im.InputContext;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +35,14 @@ public class PracticeSceneController
 	public Label mainMenuLabel;
 	@FXML
 	public Label displayableStringLabel;
+	@FXML
+	public Rectangle highlightRct;
+	@FXML
+	public Rectangle highlightLShiftRct;
+	@FXML
+	public Rectangle highlightRShiftRct;
+	@FXML
+	public Rectangle highlightSpaceRct;
 	private PracticeWatcher watcher;
 	volatile private MediaPlayer music;
 	volatile private MediaPlayer falseNote;
@@ -40,33 +52,56 @@ public class PracticeSceneController
 	static Word.Languages lang;
 	static int difficulty;
 	static boolean register;
-	static boolean isReducingCanceled;
+	private static boolean isReducingCanceled;
+	private static int[][] keyCoordinates = {
+			{396, 180},	//а
+			{649, 180},	//о
+			{311, 180},	//в
+			{733, 180},	//л
+			{227, 180},	//ы
+			{817, 180},	//д
+			{143, 180},	//ф
+			{901, 180},	//ж
+			{480, 180},	//п
+			{564, 180},	//р
+			{370, 93},	//к
+			{623, 93},	//г
+			{455, 93},	//е
+			{539, 93},	//н
+			{426, 268},	//м
+			{682, 268},	//ь
+			{514, 268},	//и
+			{598, 268},	//т
+			{286, 93},	//у
+			{708, 93},	//ш
+			{345, 268},	//с
+			{767, 268},	//б
+			{202, 93},	//ц
+			{792, 93},	//щ
+			{261, 268},	//ч
+			{851, 268},	//ю
+			{117, 93},	//й
+			{876, 93},	//з
+			{176, 268},	//я
+			{936, 268},	//.
+			{961, 93},	//х
+			{1045, 93},	//ъ
+			{986, 180},	//э
+	};
 
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
-
 		displayableStringLabel.setFocusTraversable(true);
 		watcher = new PracticeWatcher(new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficulty, PracticeSceneController.lang, PracticeSceneController.register)),
 				PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
+		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
 		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
 
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
 		System.out.println(InCon.getLocale().toString());
-
-		/*
-		pane.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				System.out.println(event.getCharacter());
-				System.out.println(event.getCode());
-				System.out.println(event.getText());
-				System.out.println("sdfsdf");
-			}
-		});
-		*/
 	}
 
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
@@ -135,47 +170,13 @@ public class PracticeSceneController
 
 			if (isSymbolCorrect)
 			{
-				try
-				{
-					reduceMusicVolumeTask.cancel();
-					reduceMusicVolumeTimer.cancel();
-				}
-				catch (Exception e)
-				{
-					System.out.println(e.getMessage());
-				}
-				music.play();
-				isReducingCanceled = true;
-				reduceMusicVolumeTask = new TimerTask()
-				{
-					@Override
-					public void run()
-					{
-						isReducingCanceled = false;
-						while (!isReducingCanceled && music.getVolume() > 0)
-						{
-							music.setVolume(music.getVolume() - 0.1);
-							try
-							{
-								TimeUnit.MILLISECONDS.sleep(25);
-							}
-							catch (InterruptedException e)
-							{
-								e.printStackTrace();
-							}
-						}
-
-						if (!isReducingCanceled)
-							music.pause();
-						music.setVolume(1.0);
-					}
-				};
-				reduceMusicVolumeTimer = new Timer();
-				reduceMusicVolumeTimer.schedule(reduceMusicVolumeTask, 2000);
-
+				playGoodMusic();
 				watcher.passCurrentChar();
 				if (watcher.getDisplayableString().length() != 0)
+				{
 					displayableStringLabel.setText(watcher.getDisplayableString());
+					updHighlights();
+				}
 				else
 				{
 					disposeSounds();
@@ -200,27 +201,73 @@ public class PracticeSceneController
 			}
 			else
 			{
-				if (falseNote != null)
-				{
-					MediaPlayer buf = falseNote;
-					TimerTask disposeTask = new TimerTask()
-					{
-						@Override
-						public void run()
-						{
-							buf.dispose();
-						}
-					};
-					Timer disposeTimer = new Timer();
-					disposeTimer.schedule(disposeTask, 1000);
-				}
-				falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
-				falseNote.play();
-				music.pause();
+				playBadMusic();
 				//System.out.println("-");
 				watcher.addMistake();
 			}
 		}
+	}
+
+	private void playGoodMusic()
+	{
+		try
+		{
+			reduceMusicVolumeTask.cancel();
+			reduceMusicVolumeTimer.cancel();
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		music.play();
+		isReducingCanceled = true;
+		reduceMusicVolumeTask = new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				isReducingCanceled = false;
+				while (!isReducingCanceled && music.getVolume() > 0)
+				{
+					music.setVolume(music.getVolume() - 0.1);
+					try
+					{
+						TimeUnit.MILLISECONDS.sleep(25);
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+
+				if (!isReducingCanceled)
+					music.pause();
+				music.setVolume(1.0);
+			}
+		};
+		reduceMusicVolumeTimer = new Timer();
+		reduceMusicVolumeTimer.schedule(reduceMusicVolumeTask, 2000);
+	}
+
+	private void playBadMusic()
+	{
+		if (falseNote != null)
+		{
+			MediaPlayer buf = falseNote;
+			TimerTask disposeTask = new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					buf.dispose();
+				}
+			};
+			Timer disposeTimer = new Timer();
+			disposeTimer.schedule(disposeTask, 1000);
+		}
+		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
+		falseNote.play();
+		music.pause();
 	}
 
 	public static void setOptions(Word.Languages lang, int difficulty, boolean register){
@@ -249,6 +296,50 @@ public class PracticeSceneController
 		{
 			falseNote.stop();
 			falseNote.dispose();
+		}
+	}
+
+	private void updHighlights()
+	{
+		char currChar = watcher.getCurrentChar();
+		boolean isShift;
+		if (currChar == ' ')
+		{
+			highlightRct.setVisible(false);
+			highlightLShiftRct.setVisible(false);
+			highlightRShiftRct.setVisible(false);
+			highlightSpaceRct.setVisible(true);
+		}
+		else
+		{
+			String[] alphabet;
+			switch (watcher.getLang())
+			{
+				case RU:
+				default:
+					alphabet = Word.ALPH_RU;
+					break;
+				case EN:
+					alphabet = Word.ALPH_EN;
+			}
+			int i;
+			if (alphabet[0].indexOf(currChar) != -1)
+			{
+				i = alphabet[0].indexOf(currChar);
+				isShift = false;
+			}
+			else
+			{
+				i = alphabet[1].indexOf(currChar);
+				isShift = true;
+			}
+
+			highlightRct.setVisible(true);
+			highlightRct.setLayoutX(keyCoordinates[i][0]);
+			highlightRct.setLayoutY(keyCoordinates[i][1]);
+			highlightLShiftRct.setVisible(isShift);
+			highlightRShiftRct.setVisible(isShift);
+			highlightSpaceRct.setVisible(false);
 		}
 	}
 }

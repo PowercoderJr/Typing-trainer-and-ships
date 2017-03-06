@@ -20,6 +20,18 @@
     -fx-font-family: "Courier New";
 }
 
+#keyboardpane
+{
+    -fx-background-image: url("keyboard.png");
+    -fx-background-position: center center;
+    -fx-background-size: 100% 100%;
+}
+
+#highlightImg, #highlightLShiftImg, #highlightRShiftImg, #highlightSpaceImg
+{
+    -fx-background-color: red;
+}
+
 #mainMenuLabel:hover
 {
     -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);

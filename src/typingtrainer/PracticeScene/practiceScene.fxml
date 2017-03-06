@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" prefWidth="1280" prefHeight="720.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PracticeScene.PracticeSceneController">
+<?import javafx.scene.shape.*?>
+
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" prefHeight="720.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PracticeScene.PracticeSceneController">
   <children>
-    <Label fx:id="mainMenuLabel" onKeyPressed="#onKeyPressed" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.rowIndex="0" onMouseClicked="#onMainMenuLabelClicked"  GridPane.halignment="LEFT"/>
-    <Label fx:id="displayableStringLabel" onKeyPressed="#onKeyPressed" text="HELLO!" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <Label fx:id="mainMenuLabel" onKeyPressed="#onKeyPressed" onMouseClicked="#onMainMenuLabelClicked" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
+    <Label fx:id="displayableStringLabel" onKeyPressed="#onKeyPressed" text="HELLO!" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <AnchorPane fx:id="keyboardpane" maxHeight="446.0" maxWidth="1280.0" minHeight="446.0" minWidth="1280.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+      <children>
+        <Rectangle fx:id="highlightRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="85.0" layoutX="986.0" layoutY="180.0" stroke="BLACK" strokeType="INSIDE" width="85.0" opacity="0.5"/>
+        <Rectangle fx:id="highlightLShiftRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="88.0" layoutX="7.0" layoutY="266.0" stroke="BLACK" strokeType="INSIDE" width="170.0" visible="false" opacity="0.5"/>
+        <Rectangle fx:id="highlightRShiftRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="88.0" layoutX="1020.0" layoutY="266.0" stroke="BLACK" strokeType="INSIDE" width="254.0" visible="false" opacity="0.4"/>
+        <Rectangle fx:id="highlightSpaceRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="86.0" layoutX="332.0" layoutY="355.0" stroke="BLACK" strokeType="INSIDE" width="568.0" visible="false" opacity="0.5"/>
+      </children>
+    </AnchorPane>
   </children>
   <columnConstraints>
-    <ColumnConstraints halignment="CENTER" minWidth="400.0" prefWidth="1280"/>
+    <ColumnConstraints halignment="CENTER" minWidth="400.0" prefWidth="1280.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="100.0" maxHeight="100.0"/>
-    <RowConstraints prefHeight="680"/>
+    <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" />
+    <RowConstraints maxHeight="309.0" prefHeight="213.0" />
+    <RowConstraints maxHeight="450.0" prefHeight="450.0" />
   </rowConstraints>
 </GridPane>
