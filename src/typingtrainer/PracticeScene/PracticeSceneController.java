@@ -43,16 +43,18 @@ public class PracticeSceneController
 	public Rectangle highlightRShiftRct;
 	@FXML
 	private Rectangle highlightSpaceRct;
+
+	private static final int VOLUME_REDUCING_DELAY = 2000;
+	private static final int VOLUME_REDUCING_STEP = 50;
+
 	private PracticeWatcher watcher;
-	volatile private MediaPlayer music;
-	volatile private MediaPlayer falseNote;
-	private TimerTask reduceMusicVolumeTask;
-	private Timer reduceMusicVolumeTimer;
+	private volatile MediaPlayer music;
+	private volatile MediaPlayer falseNote;
+	private volatile int msToReducing;
 
 	static Word.Languages lang;
 	static int difficulty;
 	static boolean register;
-	private static boolean isReducingCanceled;
 	private static int[][] keyCoordinates = {
 			{396, 180},	//а
 			{649, 180},	//о
@@ -111,6 +113,7 @@ public class PracticeSceneController
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
 		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
+		msToReducing = 0;
 	}
 
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
@@ -219,29 +222,34 @@ public class PracticeSceneController
 
 	private void playGoodMusic()
 	{
-		try
-		{
-			reduceMusicVolumeTask.cancel();
-			reduceMusicVolumeTimer.cancel();
-		}
-		catch (Exception e)
-		{
-			//System.out.println(e.getMessage());
-		}
 		music.play();
-		isReducingCanceled = true;
-		reduceMusicVolumeTask = new TimerTask()
+		if (msToReducing > 0)
+			msToReducing = VOLUME_REDUCING_DELAY;
+		else
 		{
-			@Override
-			public void run()
+			new Thread(() ->
 			{
-				isReducingCanceled = false;
-				while (!isReducingCanceled && music.getVolume() > 0)
+				msToReducing = VOLUME_REDUCING_DELAY;
+				//Задержка до начала снижения громкости
+				while (msToReducing > 0)
+				{
+					msToReducing -= VOLUME_REDUCING_STEP;
+					try
+					{
+						Thread.sleep(VOLUME_REDUCING_STEP);
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				//Постепенное снижение громкости
+				while (msToReducing == 0 && music != null && music.getVolume() > 0)
 				{
 					music.setVolume(music.getVolume() - 0.1);
 					try
 					{
-						TimeUnit.MILLISECONDS.sleep(25);
+						Thread.sleep(VOLUME_REDUCING_STEP);
 					}
 					catch (InterruptedException e)
 					{
@@ -249,13 +257,14 @@ public class PracticeSceneController
 					}
 				}
 
-				if (!isReducingCanceled)
-					music.pause();
-				music.setVolume(1.0);
-			}
-		};
-		reduceMusicVolumeTimer = new Timer();
-		reduceMusicVolumeTimer.schedule(reduceMusicVolumeTask, 2000);
+				if (music != null)
+				{
+					if (msToReducing == 0)
+						music.pause();
+					music.setVolume(1.0);
+				}
+			}).start();
+		}
 	}
 
 	private void playBadMusic()
@@ -263,16 +272,18 @@ public class PracticeSceneController
 		if (falseNote != null)
 		{
 			MediaPlayer buf = falseNote;
-			TimerTask disposeTask = new TimerTask()
+			new Thread(() ->
 			{
-				@Override
-				public void run()
+				try
 				{
-					buf.dispose();
+					Thread.sleep(1000);
 				}
-			};
-			Timer disposeTimer = new Timer();
-			disposeTimer.schedule(disposeTask, 1000);
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				buf.dispose();
+			}).start();
 		}
 		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
 		falseNote.play();
@@ -287,15 +298,7 @@ public class PracticeSceneController
 
 	private void disposeSounds()
 	{
-		try
-		{
-			reduceMusicVolumeTask.cancel();
-			reduceMusicVolumeTimer.cancel();
-		}
-		catch (Exception e)
-		{
-			//System.out.println(e.getMessage());
-		}
+		msToReducing = 0;
 		if (music != null)
 		{
 			music.stop();
