@@ -16,12 +16,11 @@ import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
 
 import java.awt.*;
+import java.awt.List;
 import java.awt.im.InputContext;
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,11 +45,14 @@ public class PracticeSceneController
 
 	private static final int VOLUME_REDUCING_DELAY = 2000;
 	private static final int VOLUME_REDUCING_STEP = 50;
+	private static final int SECONDS_MINUTE_CONTAIN = 60;
+	private static final double SECONDS_NANOSECOND_CONTAIN = 1e-9;
 
 	private PracticeWatcher watcher;
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
+	private int length;
 
 	static Word.Languages lang;
 	static int difficulty;
@@ -104,11 +106,23 @@ public class PracticeSceneController
 	private void restart()
 	{
 		disposeSounds();
+		/*Временный фикс
 		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15),
 				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
+				*/
+
+
+		StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
+				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
+
+/*Временный фикс
 		while (taskWord.length() < 200)
 			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), PracticeSceneController.difficulty,
 					PracticeSceneController.lang, PracticeSceneController.register));
+					*/
+
+		this.length = taskWord.length();
+
 		watcher = new PracticeWatcher(taskWord, PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
@@ -129,8 +143,7 @@ public class PracticeSceneController
 		}
 	}
 
-	public void onKeyPressed(KeyEvent keyEvent)
-	{
+	public void onKeyPressed(KeyEvent keyEvent) throws IOException {
 		if (!keyEvent.getCode().toString().equals("CONTROL") &&
 				!keyEvent.getCode().toString().equals("SHIFT") &&
 				!keyEvent.getCode().toString().equals("ALT") &&
@@ -206,8 +219,57 @@ public class PracticeSceneController
 					Alert alert = new Alert(Alert.AlertType.INFORMATION);
 					alert.setTitle("Поздравляем");
 					alert.setHeaderText(null);
-					alert.setContentText("Kras \noshibki: " + String.valueOf(watcher.getMistakeCount()) + "\nvremya: " + String.format("%.2f", (watcher.getFinalTime() * 1e-9)) + " секундочек");
+
+					int mistakes = watcher.getMistakeCount();
+					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
+					double speed = this.length/(time)*PracticeSceneController.SECONDS_MINUTE_CONTAIN;
+
+					String stat = "Ошибки: " + String.valueOf(mistakes) + "\r\nВремя: " + String.format("%.2f", time) + " секунд\r\nСкорость: "
+							+String.valueOf((int)speed)+" зн/мин\r\n ";
+					alert.setContentText(stat);
 					alert.showAndWait();
+
+					FileWriter statistics = new FileWriter("src/typingtrainer/MainScene/Statistics/last_stat.txt");
+					Date curr_date = new Date();
+					stat+="Дата: "+curr_date;
+					statistics.write(stat);
+					statistics.flush();
+
+					FileReader all_stat = new FileReader("src/typingtrainer/MainScene/Statistics/all_stat.txt");
+					BufferedReader reader = new BufferedReader(all_stat);
+					String line;
+					ArrayList<String> lines = new ArrayList<String>();
+					while ((line = reader.readLine())!=null){
+						lines.add(line);
+					}
+
+					/* Отладочная часть. Ещё понадобится
+					for (int i = 0; i < lines.size();i++)
+						System.out.println(lines.get(i));
+					reader.close();
+					*/
+					all_stat.close();
+
+
+
+					FileWriter new_stat = new FileWriter("src/typingtrainer/MainScene/Statistics/all_stat.txt");
+					String new_st;
+					if (lines.isEmpty()){
+						new_st = String.valueOf(mistakes) + "\r\n" + String.valueOf(Double.valueOf(time)) + "\r\n"
+								+String.valueOf(((int)speed));
+					} else {
+
+						new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))+mistakes)/2)+"\r\n"+String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2)+"\r\n"
+								+String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2);
+
+
+
+					}
+					new_stat.write(new_st);
+					new_stat.flush();
+
+
+
 				}
 				//System.out.println("+");
 			}

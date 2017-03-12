@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane fx:id="pane" prefHeight="1500.0" prefWidth="1800.0" alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.StatisticScene.StatisticSceneController">
+<children>
+    <Label fx:id="labelOption1" text="Статистика" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+    <GridPane alignment="TOP_LEFT" prefWidth="1700.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <children>
+            <Label fx:id="labelStat2" text="Общая" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label fx:id="labelStat3" text="Ошибки:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Label fx:id="labelStat4" text="Время:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label fx:id="labelStat5" text="Скорость:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Label fx:id="labelMisAll"  text="1" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="labelTimeAll" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="labelSpeedAll" text="3" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label fx:id="labelStat6" text="Последний сеанс" GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="450" />
+
+            <Label fx:id="labelMisLast"  text="1" GridPane.columnIndex="4" GridPane.rowIndex="1" prefWidth="450" />
+            <Label fx:id="labelTimeLast" text="2" GridPane.columnIndex="4" GridPane.rowIndex="2" prefWidth="450" />
+            <Label fx:id="labelSpeedLast" text="3" GridPane.columnIndex="4" GridPane.rowIndex="3" prefWidth="450" />
+
+        </children>
+        <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="667.0" minWidth="10.0" prefWidth="350.0" />
+            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="400.0" minWidth="10.0" prefWidth="450.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1000.0" minWidth="10.0" prefWidth="50.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+    </GridPane>
+    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <children>
+            <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        </children>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+    </GridPane>
+</children>
+<columnConstraints>
+    <ColumnConstraints halignment="RIGHT" maxWidth="1506.0" prefWidth="1599.0" />
+</columnConstraints>
+<rowConstraints>
+    <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="400.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="26.0" vgrow="SOMETIMES" />
+</rowConstraints>
+</GridPane>

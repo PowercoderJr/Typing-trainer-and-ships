@@ -24,6 +24,7 @@
                 <Label fx:id="practiceModeLabel" text="ПРАКТИКА" onMouseClicked="#onPracticeModeLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                 <Label fx:id="pvpModeLabel" text="БИТВА" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <Label fx:id="authorsLabel" text="АВТОРЫ" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <Label fx:id="exitLabel" text="ВЫХОД" onMouseClicked="#onExitLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <Label fx:id="statLabel" text="СТАТИСТИКА" onMouseClicked="#onStatLableClicked" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <Label fx:id="exitLabel" text="ВЫХОД" onMouseClicked="#onExitLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
         </children>
 </GridPane>

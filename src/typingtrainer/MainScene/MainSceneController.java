@@ -8,14 +8,15 @@ import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.SceneManager;
 
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class MainSceneController
 {
-	public void initialize()
-	{
+	public void initialize() throws IOException {
 		System.out.println("Главная сцена готова!");
+
 	}
 
 	public void onLabelClicked(MouseEvent mouseEvent)
@@ -45,5 +46,14 @@ public class MainSceneController
 		{
 			System.out.println(e.getMessage());
 		}
+	}
+
+	public void onStatLableClicked(MouseEvent mouseEvent) throws IOException {
+		SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
+		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("StatisticScene/statisticScene.fxml"));
+		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+		practiceScene.getStylesheets().add("typingtrainer/statisticScene/style.css");
+		sceneManager.pushScene(practiceScene);
+
 	}
 }
