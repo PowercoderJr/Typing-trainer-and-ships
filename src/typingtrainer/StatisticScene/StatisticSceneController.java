@@ -25,10 +25,8 @@ public class StatisticSceneController {
     public Label labelSpeedLast;
 
 
-    public void initialize() throws IOException {
-
-
-
+    public void initialize() throws IOException
+    {
         FileReader all_stat = new FileReader("src/typingtrainer/MainScene/Statistics/all_stat.txt");
         BufferedReader reader = new BufferedReader(all_stat);
         String line;
@@ -37,15 +35,15 @@ public class StatisticSceneController {
             lines.add(line);
         }
 
-        for (int i = 0; i < lines.size();i++)
+        for (int i = 0; i < lines.size(); i++)
             System.out.println(lines.get(i));
         reader.close();
 
         all_stat.close();
 
         labelMisAll.setText(String.format("%.2f",Double.valueOf(lines.get(0))));
-        labelTimeAll.setText(String.format("%.2f",Double.valueOf(lines.get(1)))+" сек");
-        labelSpeedAll.setText(String.format("%.2f",Double.valueOf(lines.get(2)))+" зн/мин");
+        labelTimeAll.setText(String.format("%.2f",Double.valueOf(lines.get(1))) + " сек");
+        labelSpeedAll.setText(String.format("%.2f",Double.valueOf(lines.get(2))) + " зн/мин");
 
 
         FileReader last_stat = new FileReader("src/typingtrainer/MainScene/Statistics/last_stat.txt");
@@ -56,15 +54,15 @@ public class StatisticSceneController {
             lines_last.add(line_last);
         }
 
-        for (int i = 0; i < lines_last.size();i++)
+        for (int i = 0; i < lines_last.size(); i++)
             System.out.println(lines_last.get(i));
         reader.close();
 
         last_stat.close();
 
         labelMisLast.setText(lines_last.get(0));
-        labelTimeLast.setText(lines_last.get(1));
-        labelSpeedLast.setText(lines_last.get(2));
+        labelTimeLast.setText(lines_last.get(1) + " сек");
+        labelSpeedLast.setText(lines_last.get(2) + " зн/мин");
 
     }
 

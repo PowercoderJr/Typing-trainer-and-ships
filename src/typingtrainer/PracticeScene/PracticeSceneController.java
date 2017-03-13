@@ -222,17 +222,16 @@ public class PracticeSceneController
 
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
-					double speed = this.length/(time)*PracticeSceneController.SECONDS_MINUTE_CONTAIN;
+					int speed = (int)(this.length * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
 
-					String stat = "Ошибки: " + String.valueOf(mistakes) + "\r\nВремя: " + String.format("%.2f", time) + " секунд\r\nСкорость: "
-							+String.valueOf((int)speed)+" зн/мин\r\n ";
-					alert.setContentText(stat);
+					alert.setContentText("Ошибки: " + mistakes + "\r\nВремя: " + String.format("%.2f", time) +
+							" секунд\r\nСкорость: " + speed + " зн/мин");
 					alert.showAndWait();
 
 					FileWriter statistics = new FileWriter("src/typingtrainer/MainScene/Statistics/last_stat.txt");
 					Date curr_date = new Date();
-					stat+="Дата: "+curr_date;
-					statistics.write(stat);
+					statistics.write(mistakes + "\r\n" + String.format("%.2f", time) + "\r\n" +	speed + "\r\n"
+							+ curr_date.toString());
 					statistics.flush();
 
 					FileReader all_stat = new FileReader("src/typingtrainer/MainScene/Statistics/all_stat.txt");
@@ -258,12 +257,9 @@ public class PracticeSceneController
 						new_st = String.valueOf(mistakes) + "\r\n" + String.valueOf(Double.valueOf(time)) + "\r\n"
 								+String.valueOf(((int)speed));
 					} else {
-
-						new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))+mistakes)/2)+"\r\n"+String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2)+"\r\n"
-								+String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2);
-
-
-
+						new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))+mistakes)/2) + "\r\n" +
+								String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
+								String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2);
 					}
 					new_stat.write(new_st);
 					new_stat.flush();
