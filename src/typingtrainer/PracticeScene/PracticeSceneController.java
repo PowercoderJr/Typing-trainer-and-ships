@@ -228,13 +228,13 @@ public class PracticeSceneController
 							" секунд\r\nСкорость: " + speed + " зн/мин");
 					alert.showAndWait();
 
-					FileWriter statistics = new FileWriter("src/typingtrainer/MainScene/Statistics/last_stat.txt");
+					FileWriter statistics = new FileWriter("src/typingtrainer/StatisticScene/Statistics/last_stat.txt");
 					Date curr_date = new Date();
 					statistics.write(mistakes + "\r\n" + String.format("%.2f", time) + "\r\n" +	speed + "\r\n"
 							+ curr_date.toString());
 					statistics.flush();
 
-					FileReader all_stat = new FileReader("src/typingtrainer/MainScene/Statistics/all_stat.txt");
+					FileReader all_stat = new FileReader("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
 					BufferedReader reader = new BufferedReader(all_stat);
 					String line;
 					ArrayList<String> lines = new ArrayList<String>();
@@ -251,15 +251,24 @@ public class PracticeSceneController
 
 
 
-					FileWriter new_stat = new FileWriter("src/typingtrainer/MainScene/Statistics/all_stat.txt");
+					FileWriter new_stat = new FileWriter("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
 					String new_st;
 					if (lines.isEmpty()){
 						new_st = String.valueOf(mistakes) + "\r\n" + String.valueOf(Double.valueOf(time)) + "\r\n"
-								+String.valueOf(((int)speed));
+								+String.valueOf(((int)speed))+"\r\n1";
 					} else {
-						new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))+mistakes)/2) + "\r\n" +
-								String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
-								String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2);
+						int v = Integer.valueOf(lines.get(3));
+						if (v==0) {
+							new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0)) + mistakes)/2) + "\r\n" +
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
+						}
+						else {
+							new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))*v + mistakes)/Double.valueOf(v+1)) + "\r\n" +
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
+						}
+
 					}
 					new_stat.write(new_st);
 					new_stat.flush();
