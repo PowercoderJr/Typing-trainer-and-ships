@@ -265,8 +265,8 @@ public class PracticeSceneController
 						}
 						else {
 							new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))*v + mistakes)/Double.valueOf(v+1)) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))*v+time)/Double.valueOf(v+1)) + "\r\n" +
+									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))*v+speed)/Double.valueOf(v+1)) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
 						}
 
 					}
