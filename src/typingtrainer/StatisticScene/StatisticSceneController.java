@@ -27,7 +27,7 @@ public class StatisticSceneController {
 
     public void initialize() throws IOException
     {
-        FileReader all_stat = new FileReader("src/typingtrainer/MainScene/Statistics/all_stat.txt");
+        FileReader all_stat = new FileReader("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
         BufferedReader reader = new BufferedReader(all_stat);
         String line;
         ArrayList<String> lines = new ArrayList<String>();
@@ -46,7 +46,7 @@ public class StatisticSceneController {
         labelSpeedAll.setText(String.format("%.2f",Double.valueOf(lines.get(2))) + " зн/мин");
 
 
-        FileReader last_stat = new FileReader("src/typingtrainer/MainScene/Statistics/last_stat.txt");
+        FileReader last_stat = new FileReader("src/typingtrainer/StatisticScene/Statistics/last_stat.txt");
         BufferedReader reader_last = new BufferedReader(last_stat);
         String line_last;
         ArrayList<String> lines_last = new ArrayList<String>();
