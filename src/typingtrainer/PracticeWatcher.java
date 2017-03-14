@@ -9,6 +9,7 @@ public class PracticeWatcher
 	private StringBuffer taskString;
 	private Word.Languages lang;
 	private long timeStart;
+	private int initStringLength;
 	private int mistakeCount;
 	private int difficulty;
 	private boolean register;
@@ -19,6 +20,7 @@ public class PracticeWatcher
 		this.lang = lang;
 		this.difficulty = difficulty;
 		this.register = register;
+		initStringLength = taskString.length();
 		mistakeCount = 0;
 		timeStart = System.nanoTime();
 	}
@@ -74,5 +76,10 @@ public class PracticeWatcher
 	public void setRegister(boolean register)
 	{
 		this.register = register;
+	}
+
+	public int getInitStringLength()
+	{
+		return initStringLength;
 	}
 }

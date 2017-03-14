@@ -52,7 +52,6 @@ public class PracticeSceneController
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
-	private int length;
 
 	static Word.Languages lang;
 	static int difficulty;
@@ -106,22 +105,15 @@ public class PracticeSceneController
 	private void restart()
 	{
 		disposeSounds();
-		/*Временный фикс
+		/*Временный фикс*/
 		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15),
 				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
-				*/
-
-
-		StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
-				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
-
-/*Временный фикс
 		while (taskWord.length() < 200)
 			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), PracticeSceneController.difficulty,
 					PracticeSceneController.lang, PracticeSceneController.register));
-					*/
 
-		this.length = taskWord.length();
+		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
+				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));*/
 
 		watcher = new PracticeWatcher(taskWord, PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
 		updHighlights();
@@ -222,7 +214,7 @@ public class PracticeSceneController
 
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
-					int speed = (int)(this.length * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
+					int speed = (int)(watcher.getInitStringLength() * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
 
 					alert.setContentText("Ошибки: " + mistakes + "\r\nВремя: " + String.format("%.2f", time) +
 							" секунд\r\nСкорость: " + speed + " зн/мин");
