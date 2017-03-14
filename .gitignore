@@ -1,2 +1,4 @@
 .idea/workspace.xml
+src/typingtrainer/MainScene/Statistics/all_stat.txt
+src/typingtrainer/MainScene/Statistics/last_stat.txt
 out/*
