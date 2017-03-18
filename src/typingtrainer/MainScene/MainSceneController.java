@@ -14,9 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class MainSceneController
 {
-	public void initialize() throws IOException {
+	public void initialize() throws IOException
+	{
 		System.out.println("Главная сцена готова!");
-
 	}
 
 	public void onLabelClicked(MouseEvent mouseEvent)
@@ -32,8 +32,6 @@ public class MainSceneController
 		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
 		practiceScene.getStylesheets().add("typingtrainer/ModScene/style.css");
 		sceneManager.pushScene(practiceScene);
-
-
 	}
 
 	public void onExitLabelClicked(MouseEvent mouseEvent)

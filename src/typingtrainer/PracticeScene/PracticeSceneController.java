@@ -1,27 +1,25 @@
 package typingtrainer.PracticeScene;
 
 import javafx.fxml.FXML;
-import javafx.scene.chart.XYChart;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
 
-import java.awt.*;
-import java.awt.List;
 import java.awt.im.InputContext;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Meow on 25.02.2017.
@@ -41,22 +39,32 @@ public class PracticeSceneController
 	@FXML
 	public Rectangle highlightRShiftRct;
 	@FXML
-	private Rectangle highlightSpaceRct;
+	public Rectangle highlightSpaceRct;
+	@FXML
+	public ImageView musicImg;
+	@FXML
+	public ImageView soundImg;
 
 	private static final int VOLUME_REDUCING_DELAY = 2000;
 	private static final int VOLUME_REDUCING_STEP = 50;
 	private static final int SECONDS_MINUTE_CONTAIN = 60;
 	private static final double SECONDS_NANOSECOND_CONTAIN = 1e-9;
+	private static Rectangle2D MUSIC_ON_RECT = new Rectangle2D(0, 0, 100, 100);
+	private static Rectangle2D MUSIC_OFF_RECT = new Rectangle2D(100, 0, 100, 100);
+	private static Rectangle2D SOUND_ON_RECT = new Rectangle2D(200, 0, 100, 100);
+	private static Rectangle2D SOUND_OFF_RECT = new Rectangle2D(300, 0, 100, 100);
 
 	private PracticeWatcher watcher;
-	private Object[] sceneParams;
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
+	private Image soundSprite;
 
-	static Word.Languages lang;
-	static int difficulty;
-	static boolean register;
+	static Word.Languages paramLang;
+	static int difficultyParam;
+	static boolean isRegisterParam;
+	static boolean isMusicParam;
+	static boolean isSoundParam;
 	private static int[][] keyCoordinates = {
 			{396, 180},	//а
 			{649, 180},	//о
@@ -99,22 +107,25 @@ public class PracticeSceneController
 		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
+		soundSprite = new Image(getClass().getResourceAsStream("soundsprite.png"));
+		musicImg.setImage(soundSprite);
+		musicImg.setViewport(isMusicParam ? MUSIC_ON_RECT : MUSIC_OFF_RECT);
+		soundImg.setImage(soundSprite);
+		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
 	}
 
 	private void restart()
 	{
 		disposeSounds();
 		/*Временный фикс*/
-		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15),
-				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));
+		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 		while (taskWord.length() < 200)
-			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), PracticeSceneController.difficulty,
-					PracticeSceneController.lang, PracticeSceneController.register));
+			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
 		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
-				PracticeSceneController.difficulty,	PracticeSceneController.lang, PracticeSceneController.register));*/
+				PracticeSceneController.difficultyParam,	PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));*/
 
-		watcher = new PracticeWatcher(taskWord, PracticeSceneController.lang, PracticeSceneController.difficulty, PracticeSceneController.register);
+		watcher = new PracticeWatcher(taskWord, paramLang, difficultyParam, isRegisterParam);
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
 		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
@@ -186,7 +197,8 @@ public class PracticeSceneController
 
 			if (isSymbolCorrect)
 			{
-				playGoodMusic();
+				if (isMusicParam)
+					playGoodMusic();
 				watcher.passCurrentChar();
 				if (watcher.getDisplayableString().length() != 0)
 				{
@@ -240,8 +252,6 @@ public class PracticeSceneController
 					*/
 					all_stat.close();
 
-
-
 					FileWriter new_stat = new FileWriter("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
 					String new_st;
 					if (lines.isEmpty()){
@@ -259,20 +269,16 @@ public class PracticeSceneController
 									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))*v+time)/Double.valueOf(v+1)) + "\r\n" +
 									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))*v+speed)/Double.valueOf(v+1)) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
 						}
-
 					}
 					new_stat.write(new_st);
 					new_stat.flush();
-
-
-
 				}
-				//System.out.println("+");
 			}
 			else
 			{
-				playBadMusic();
-				//System.out.println("-");
+				if (isSoundParam)
+					playBadMusic();
+				music.pause();
 				watcher.addMistake();
 			}
 		}
@@ -345,13 +351,15 @@ public class PracticeSceneController
 		}
 		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
 		falseNote.play();
-		music.pause();
 	}
 
-	public static void setOptions(Word.Languages lang, int difficulty, boolean register){
-		PracticeSceneController.lang = lang;
-		PracticeSceneController.difficulty = difficulty;
-		PracticeSceneController.register = register;
+	public static void setOptions(Word.Languages lang, int difficulty, boolean isRegister, boolean isMusic, boolean isSound)
+	{
+		paramLang = lang;
+		difficultyParam = difficulty;
+		isRegisterParam = isRegister;
+		isMusicParam = isMusic;
+		isSoundParam = isSound;
 	}
 
 	private void disposeSounds()
@@ -418,5 +426,18 @@ public class PracticeSceneController
 	public void onRestartLabelClicked(MouseEvent mouseEvent)
 	{
 		restart();
+	}
+
+	public void onMusicImgClicked(MouseEvent mouseEvent)
+	{
+		isMusicParam = !isMusicParam;
+		musicImg.setViewport(isMusicParam ? MUSIC_ON_RECT : MUSIC_OFF_RECT);
+		music.pause();
+	}
+
+	public void onSoundImgClicked(MouseEvent mouseEvent)
+	{
+		isSoundParam = !isSoundParam;
+		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
 	}
 }

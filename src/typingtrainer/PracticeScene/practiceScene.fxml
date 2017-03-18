@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.*?>
@@ -11,8 +12,21 @@
   <children>
     <GridPane alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
-        <Label fx:id="mainMenuLabel" alignment="CENTER_LEFT" onKeyPressed="#onKeyPressed" onMouseClicked="#onMainMenuLabelClicked" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="restartLabel" onMouseClicked="#onRestartLabelClicked" text="РЕСТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="mainMenuLabel" alignment="CENTER_LEFT" onKeyPressed="#onKeyPressed" onMouseClicked="#onMainMenuLabelClicked" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Label fx:id="restartLabel" onMouseClicked="#onRestartLabelClicked" text="РЕСТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
+          <children>
+            <ImageView fx:id="musicImg" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#onMusicImgClicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <ImageView fx:id="soundImg" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#onSoundImgClicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -20,14 +34,10 @@
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       </columnConstraints>
       <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-      <children>
-        <Label fx:id="displayableStringLabel" alignment="CENTER_LEFT" focusTraversable="true" layoutX="621.0" layoutY="79.0" onKeyPressed="#onKeyPressed" text="HELLO!" />
-      </children>
-    </AnchorPane>
     <AnchorPane fx:id="keyboardpane" maxHeight="446.0" maxWidth="1280.0" minHeight="446.0" minWidth="1280.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
         <Rectangle fx:id="highlightRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="85.0" layoutX="986.0" layoutY="180.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="85.0" />
@@ -36,13 +46,30 @@
         <Rectangle fx:id="highlightSpaceRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="86.0" layoutX="332.0" layoutY="355.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" visible="false" width="568.0" />
       </children>
     </AnchorPane>
+    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+      <children>
+        <Label fx:id="displayableStringLabel" alignment="CENTER_LEFT" focusTraversable="true" onKeyPressed="#onKeyPressed" text="HELLO!" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label fx:id="timerLabel" scaleX="1.0" text="00:00" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <GridPane.margin>
+            <Insets left="50.0" />
+          </GridPane.margin>
+        </Label>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="400.0" minWidth="10.0" prefWidth="400.0" />
+        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="CENTER" minWidth="400.0" prefWidth="1280.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" />
-    <RowConstraints maxHeight="309.0" prefHeight="213.0" />
+    <RowConstraints maxHeight="309.0" prefHeight="213.0" valignment="CENTER" />
     <RowConstraints maxHeight="450.0" prefHeight="450.0" />
   </rowConstraints>
 </GridPane>

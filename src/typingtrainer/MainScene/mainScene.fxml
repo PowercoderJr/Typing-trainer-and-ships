@@ -1,30 +1,33 @@
-<?import javafx.scene.layout.GridPane?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<GridPane fx:controller="typingtrainer.MainScene.MainSceneController" xmlns:fx="http://javafx.com/fxml" fx:id="pane" alignment="CENTER">
-        <columnConstraints>
-                <ColumnConstraints minWidth="100"/>
-                <ColumnConstraints minWidth="400" halignment="CENTER"/>
-                <ColumnConstraints minWidth="100"/>
-        </columnConstraints>
-        <rowConstraints>
-                <RowConstraints minHeight="150"/>
-        </rowConstraints>
-        <children>
-                <Label text="1" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label text="2" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="3" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="4" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <ImageView fx:id="logoImg" fitHeight="100" fitWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"  GridPane.halignment="CENTER">
-                        <Image url="@logo.png"/>
-                </ImageView>
-                <Label fx:id="practiceModeLabel" text="ПРАКТИКА" onMouseClicked="#onPracticeModeLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <Label fx:id="pvpModeLabel" text="БИТВА" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Label fx:id="authorsLabel" text="АВТОРЫ" onMouseClicked="#onLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <Label fx:id="statLabel" text="СТАТИСТИКА" onMouseClicked="#onStatLableClicked" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                <Label fx:id="exitLabel" text="ВЫХОД" onMouseClicked="#onExitLabelClicked" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-        </children>
+
+<GridPane fx:id="pane" alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.MainScene.MainSceneController">
+  <children>
+    <ImageView fx:id="logoImg" fitHeight="100.0" fitWidth="300.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0">
+      <Image url="@logo.png" />
+    </ImageView>
+    <Label fx:id="practiceModeLabel" onMouseClicked="#onPracticeModeLabelClicked" text="ПРАКТИКА" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Label fx:id="pvpModeLabel" onMouseClicked="#onLabelClicked" text="БИТВА" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <Label fx:id="authorsLabel" onMouseClicked="#onLabelClicked" text="АВТОРЫ" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    <Label fx:id="statLabel" onMouseClicked="#onStatLableClicked" text="СТАТИСТИКА" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    <Label fx:id="exitLabel" onMouseClicked="#onExitLabelClicked" text="ВЫХОД" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+  </children>
+  <columnConstraints>
+    <ColumnConstraints minWidth="100.0" />
+    <ColumnConstraints halignment="CENTER" minWidth="400.0" />
+    <ColumnConstraints minWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="150.0" />
+  </rowConstraints>
 </GridPane>

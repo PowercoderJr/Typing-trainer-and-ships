@@ -6,7 +6,7 @@ import typingtrainer.SceneManager;
 
 /**
  * Created by Meow on 25.02.2017.
- * Расширяет класс Scene из JavaFX. Имеет ссылку на свой менеджер и массив параметров.
+ * Расширяет класс Scene из JavaFX. Имеет ссылку на свой менеджер.
  * @see SceneManager
  */
 public class ManagedScene extends Scene

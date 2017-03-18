@@ -2,9 +2,10 @@ package typingtrainer.ModScene;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -16,16 +17,22 @@ import typingtrainer.Word;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 
 /**
  * Created by Никитка on 28.02.2017.
  */
 public class ModSceneController {
 
+	@FXML
     public ChoiceBox langCB;
+	@FXML
     public ChoiceBox difficultyCB;
-    public ChoiceBox registerCB;
+	@FXML
+	public CheckBox registerChb;
+	@FXML
+	public CheckBox musicChb;
+	@FXML
+	public CheckBox soundsChb;
 
     public void initialize()
     {
@@ -38,16 +45,17 @@ public class ModSceneController {
 			" / " + Word.ALPH_EN[0].charAt(30) + Word.ALPH_EN[0].charAt(31) + Word.ALPH_EN[0].charAt(32) + ")");
         langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
         difficultyCB.setItems(levels);
-        registerCB.setItems(FXCollections.observableArrayList("Выкл.", "Вкл."));
 
         langCB.getSelectionModel().select(0);
         difficultyCB.getSelectionModel().select(0);
-        registerCB.getSelectionModel().select(0);
+        registerChb.setSelected(false);
+        musicChb.setSelected(true);
+        soundsChb.setSelected(true);
     }
 
     public void onGoClicked(MouseEvent mouseEvent) throws IOException
 	{
-        /*if (langCB.getSelectionModel().isEmpty() || difficultyCB.getSelectionModel().isEmpty() || registerCB.getSelectionModel().isEmpty())
+        /*if (langCB.getSelectionModel().isEmpty() || difficultyCB.getSelectionModel().isEmpty() || registerChb.getSelectionModel().isEmpty())
         {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ага, конечно");
@@ -59,7 +67,6 @@ public class ModSceneController {
 		{
 			Word.Languages lang;
 			int difficulty;
-			boolean register;
 			switch (langCB.getSelectionModel().getSelectedIndex())
 			{
 				case 0:
@@ -72,8 +79,7 @@ public class ModSceneController {
 			}
 			String diffStr = difficultyCB.getSelectionModel().getSelectedItem().toString();
 			difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
-			register = registerCB.getSelectionModel().getSelectedIndex() == 1;
-            PracticeSceneController.setOptions(lang, difficulty, register);
+            PracticeSceneController.setOptions(lang, difficulty, registerChb.isSelected(), musicChb.isSelected(), soundsChb.isSelected());
 
             SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
             Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
