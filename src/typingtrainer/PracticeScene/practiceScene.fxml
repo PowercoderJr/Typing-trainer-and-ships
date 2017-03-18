@@ -30,10 +30,10 @@
     </AnchorPane>
     <AnchorPane fx:id="keyboardpane" maxHeight="446.0" maxWidth="1280.0" minHeight="446.0" minWidth="1280.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Rectangle fx:id="highlightRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="85.0" layoutX="986.0" layoutY="180.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="85.0" />
-        <Rectangle fx:id="highlightLShiftRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="88.0" layoutX="7.0" layoutY="266.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" visible="false" width="170.0" />
-        <Rectangle fx:id="highlightRShiftRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="88.0" layoutX="1020.0" layoutY="266.0" opacity="0.4" stroke="BLACK" strokeType="INSIDE" visible="false" width="254.0" />
-        <Rectangle fx:id="highlightSpaceRct" arcHeight="25.0" arcWidth="25.0" fill="GREEN" height="86.0" layoutX="332.0" layoutY="355.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" visible="false" width="568.0" />
+        <Rectangle fx:id="highlightRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="85.0" layoutX="986.0" layoutY="180.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="85.0" />
+        <Rectangle fx:id="highlightLShiftRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="88.0" layoutX="7.0" layoutY="266.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" visible="false" width="170.0" />
+        <Rectangle fx:id="highlightRShiftRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="88.0" layoutX="1020.0" layoutY="266.0" opacity="0.4" stroke="BLACK" strokeType="INSIDE" visible="false" width="254.0" />
+        <Rectangle fx:id="highlightSpaceRct" arcHeight="25.0" arcWidth="25.0" fill="LIME" height="86.0" layoutX="332.0" layoutY="355.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" visible="false" width="568.0" />
       </children>
     </AnchorPane>
   </children>
