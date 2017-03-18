@@ -15,11 +15,11 @@
     <GridPane alignment="TOP_LEFT" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
         <Label fx:id="labelOption2" text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <ChoiceBox fx:id="langCB" prefWidth="300.0" value="Русский" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <ChoiceBox fx:id="langCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
         <Label fx:id="labelOption3" text="Сложность:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <ChoiceBox fx:id="difficultyCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
         <Label fx:id="labelOption4" text="Регистр:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <ChoiceBox fx:id="difficultyCB" prefWidth="300.0" value="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-        <ChoiceBox fx:id="registerCB" prefWidth="300.0" value="Выкл." GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <ChoiceBox fx:id="registerCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       </children>
       <columnConstraints>
         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="567.0" minWidth="10.0" prefWidth="567.0" />

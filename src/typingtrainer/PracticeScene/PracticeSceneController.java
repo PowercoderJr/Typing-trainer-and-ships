@@ -49,6 +49,7 @@ public class PracticeSceneController
 	private static final double SECONDS_NANOSECOND_CONTAIN = 1e-9;
 
 	private PracticeWatcher watcher;
+	private Object[] sceneParams;
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
@@ -95,11 +96,9 @@ public class PracticeSceneController
 	public void initialize()
 	{
 		System.out.println("Сцена практики готова!");
-		//displayableStringLabel.setFocusTraversable(true);
 		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
-		System.out.println(InCon.getLocale().toString());
 	}
 
 	private void restart()

@@ -1,6 +1,7 @@
 package typingtrainer.ModScene;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -15,6 +16,7 @@ import typingtrainer.Word;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 
 /**
  * Created by Никитка on 28.02.2017.
@@ -27,10 +29,20 @@ public class ModSceneController {
 
     public void initialize()
     {
-        System.out.println("Опционная сцена готова!");
+		System.out.println("Опционная сцена готова!");
+		ObservableList<String> levels = FXCollections.observableArrayList();
+		for (int i = 0; i < 30; i += 2)
+			levels.add(new String() + (i + 2) + " (" + Word.ALPH_RU[0].charAt(i) + Word.ALPH_RU[0].charAt(i + 1) +
+				" / " + Word.ALPH_EN[0].charAt(i) + Word.ALPH_EN[0].charAt(i + 1) + ")");
+		levels.add("33" + " (" + Word.ALPH_RU[0].charAt(30) + Word.ALPH_RU[0].charAt(31) + Word.ALPH_RU[0].charAt(32) +
+			" / " + Word.ALPH_EN[0].charAt(30) + Word.ALPH_EN[0].charAt(31) + Word.ALPH_EN[0].charAt(32) + ")");
         langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
-        difficultyCB.setItems(FXCollections.observableArrayList("2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "33"));
+        difficultyCB.setItems(levels);
         registerCB.setItems(FXCollections.observableArrayList("Выкл.", "Вкл."));
+
+        langCB.getSelectionModel().select(0);
+        difficultyCB.getSelectionModel().select(0);
+        registerCB.getSelectionModel().select(0);
     }
 
     public void onGoClicked(MouseEvent mouseEvent) throws IOException
@@ -58,7 +70,8 @@ public class ModSceneController {
 					lang = Word.Languages.EN;
 					break;
 			}
-			difficulty = Integer.parseInt(difficultyCB.getSelectionModel().getSelectedItem().toString());
+			String diffStr = difficultyCB.getSelectionModel().getSelectedItem().toString();
+			difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
 			register = registerCB.getSelectionModel().getSelectedIndex() == 1;
             PracticeSceneController.setOptions(lang, difficulty, register);
 
