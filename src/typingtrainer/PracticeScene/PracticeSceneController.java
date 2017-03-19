@@ -1,5 +1,7 @@
 package typingtrainer.PracticeScene;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
@@ -33,6 +35,8 @@ public class PracticeSceneController
 	@FXML
 	public Label displayableStringLabel;
 	@FXML
+	public Label timerLabel;
+	@FXML
 	public Rectangle highlightRct;
 	@FXML
 	public Rectangle highlightLShiftRct;
@@ -49,16 +53,17 @@ public class PracticeSceneController
 	private static final int VOLUME_REDUCING_STEP = 50;
 	private static final int SECONDS_MINUTE_CONTAIN = 60;
 	private static final double SECONDS_NANOSECOND_CONTAIN = 1e-9;
-	private static Rectangle2D MUSIC_ON_RECT = new Rectangle2D(0, 0, 100, 100);
-	private static Rectangle2D MUSIC_OFF_RECT = new Rectangle2D(100, 0, 100, 100);
-	private static Rectangle2D SOUND_ON_RECT = new Rectangle2D(200, 0, 100, 100);
-	private static Rectangle2D SOUND_OFF_RECT = new Rectangle2D(300, 0, 100, 100);
+	private static final Rectangle2D MUSIC_ON_RECT = new Rectangle2D(0, 0, 100, 100);
+	private static final Rectangle2D MUSIC_OFF_RECT = new Rectangle2D(100, 0, 100, 100);
+	private static final Rectangle2D SOUND_ON_RECT = new Rectangle2D(200, 0, 100, 100);
+	private static final Rectangle2D SOUND_OFF_RECT = new Rectangle2D(300, 0, 100, 100);
 
 	private PracticeWatcher watcher;
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
 	private Image soundSprite;
+	private boolean isTimerRunning;
 
 	static Word.Languages paramLang;
 	static int difficultyParam;
@@ -133,6 +138,7 @@ public class PracticeSceneController
 		displayableStringLabel.setText(watcher.getDisplayableString());
 		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
 		msToReducing = 0;
+		isTimerRunning = false;
 	}
 
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
@@ -154,8 +160,112 @@ public class PracticeSceneController
 				!keyEvent.getCode().toString().equals("ALT") &&
 				!keyEvent.getCode().toString().equals("ALT_GRAPH"))
 		{
+			if (!isTimerRunning)
+			{
+				isTimerRunning = true;
+				watcher.rememberTimeStart();
+				//Памагити
+				/*Task timerTask = new Task<Void>() //Task, плодит ошибки
+				{
+					@Override
+					protected Void call() throws Exception
+					{
+						//BEGIN
+						int min = 0, sec = 0;
+						while (isTimerRunning)
+						{
+							for (int i = 0; !isTimerRunning && i < 20; ++i)
+							{
+								try
+								{
+									Thread.sleep(50);
+								}
+								catch (InterruptedException e)
+								{
+									e.printStackTrace();
+								}
+							}
+							if (++sec == 60)
+							{
+								sec = 0;
+								++min;
+							}
+							final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
+							timerLabel.setText(newTime);
+						}
+						timerLabel.setText("00:00");
+						//END
+						return null;
+					}
+				};
+				new Thread(timerTask).start();*/
+				/****/
+				/*new Thread(() -> //RunLater, не работает
+				{
+					//BEGIN
+					int min = 0, sec = 0;
+					while (isTimerRunning)
+					{
+						for (int i = 0; !isTimerRunning && i < 20; ++i)
+						{
+							try
+							{
+								Thread.sleep(50);
+							}
+							catch (InterruptedException e)
+							{
+								e.printStackTrace();
+							}
+						}
+						if (++sec == 60)
+						{
+							sec = 0;
+							++min;
+						}
+						final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
+						Platform.runLater(() -> timerLabel.setText(newTime));
+					}
+					Platform.runLater(() -> timerLabel.setText("00:00"));
+					//END
+				});*/
+				/****/
+				/*Task timerTask = new Task<Void>() //2 в 1, очень странно работает
+				{
+					@Override
+					protected Void call() throws Exception
+					{
+						//BEGIN
+						int min = 0, sec = 0;
+						while (isTimerRunning)
+						{
+							for (int i = 0; !isTimerRunning && i < 20; ++i)
+							{
+								try
+								{
+									Thread.sleep(50);
+								}
+								catch (InterruptedException e)
+								{
+									e.printStackTrace();
+								}
+							}
+							if (++sec == 60)
+							{
+								sec = 0;
+								++min;
+							}
+							final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
+							Platform.runLater(() -> timerLabel.setText(newTime));
+						}
+						Platform.runLater(() -> timerLabel.setText("00:00"));
+						//END
+						return null;
+					}
+				};
+				new Thread(timerTask).start();*/
+			}
+
 			boolean isSymbolCorrect;
-			//System.out.println(keyEvent.getText().charAt(0));
 			if (!keyEvent.getText().isEmpty())
 			{
 				if (watcher.getCurrentChar() == ' ')
@@ -211,7 +321,6 @@ public class PracticeSceneController
 				else
 				{
 					disposeSounds();
-					//Тут будет сцена со статистикой
 					try
 					{
 						((ManagedScene)(displayableStringLabel.getScene())).getManager().popAllExceptFirst();
@@ -406,5 +515,11 @@ public class PracticeSceneController
 	{
 		isSoundParam = !isSoundParam;
 		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
+	}
+
+	public void stop() //Здесь есть какой-нибудь деструктор?
+	{
+		isTimerRunning = false;
+		System.out.println("Сцена практики уничтожена!");
 	}
 }

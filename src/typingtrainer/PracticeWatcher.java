@@ -22,7 +22,6 @@ public class PracticeWatcher
 		this.register = register;
 		initStringLength = taskString.length();
 		mistakeCount = 0;
-		timeStart = System.nanoTime();
 	}
 
 	public char getCurrentChar()
@@ -81,5 +80,10 @@ public class PracticeWatcher
 	public int getInitStringLength()
 	{
 		return initStringLength;
+	}
+
+	public void rememberTimeStart()
+	{
+		timeStart = System.nanoTime();
 	}
 }
