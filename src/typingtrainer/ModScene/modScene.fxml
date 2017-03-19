@@ -11,7 +11,7 @@
 
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.ModScene.ModSceneController">
   <children>
-    <Label fx:id="labelOption1" text="Настройки" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+    <Label fx:id="labelOption1" text="НАСТРОЙКИ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
     <GridPane alignment="TOP_LEFT" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
         <Label fx:id="labelOption2" text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
