@@ -15,12 +15,12 @@
     -fx-effect: dropshadow( gaussian, black, 2, 1, 0, 0);
 }
 
-#labelGo:hover, #backLabel:hover
+#labelGo:hover, #backLabel:hover, #clear_lable:hover
 {
     -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);
 }
 
-#labelGo:pressed, #backLabel:pressed
+#labelGo:pressed, #backLabel:pressed, #clear_lable:pressed
 {
     -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
 }
