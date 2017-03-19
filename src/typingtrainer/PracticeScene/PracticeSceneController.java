@@ -119,11 +119,14 @@ public class PracticeSceneController
 		disposeSounds();
 		/*Временный фикс*/
 		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
+
 		while (taskWord.length() < 200)
 			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
-		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
-				PracticeSceneController.difficultyParam,	PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));*/
+/*
+		StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
+				PracticeSceneController.difficultyParam,	PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));
+				*/
 
 		watcher = new PracticeWatcher(taskWord, paramLang, difficultyParam, isRegisterParam);
 		updHighlights();
@@ -231,47 +234,11 @@ public class PracticeSceneController
 							" секунд\r\nСкорость: " + speed + " зн/мин");
 					alert.showAndWait();
 
-					FileWriter statistics = new FileWriter("src/typingtrainer/StatisticScene/Statistics/last_stat.txt");
-					Date curr_date = new Date();
-					statistics.write(mistakes + "\r\n" + String.format("%.2f", time) + "\r\n" +	speed + "\r\n"
-							+ curr_date.toString());
-					statistics.flush();
+					FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt",true);
+					st_write.write(mistakes + "\r\n" +  time + "\r\n" +	speed + "\r\n");
+					st_write.flush();
+					st_write.close();
 
-					FileReader all_stat = new FileReader("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
-					BufferedReader reader = new BufferedReader(all_stat);
-					String line;
-					ArrayList<String> lines = new ArrayList<String>();
-					while ((line = reader.readLine())!=null){
-						lines.add(line);
-					}
-
-					/* Отладочная часть. Ещё понадобится
-					for (int i = 0; i < lines.size();i++)
-						System.out.println(lines.get(i));
-					reader.close();
-					*/
-					all_stat.close();
-
-					FileWriter new_stat = new FileWriter("src/typingtrainer/StatisticScene/Statistics/all_stat.txt");
-					String new_st;
-					if (lines.isEmpty()){
-						new_st = String.valueOf(mistakes) + "\r\n" + String.valueOf(Double.valueOf(time)) + "\r\n"
-								+String.valueOf(((int)speed))+"\r\n1";
-					} else {
-						int v = Integer.valueOf(lines.get(3));
-						if (v==0) {
-							new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0)) + mistakes)/2) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))+time)/2) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))+speed)/2) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
-						}
-						else {
-							new_st = String.valueOf(Double.valueOf(Double.valueOf(lines.get(0))*v + mistakes)/Double.valueOf(v+1)) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(1))*v+time)/Double.valueOf(v+1)) + "\r\n" +
-									String.valueOf(Double.valueOf(Double.valueOf(lines.get(2))*v+speed)/Double.valueOf(v+1)) + "\r\n" + String.valueOf(Integer.valueOf(lines.get(3))+1);
-						}
-					}
-					new_stat.write(new_st);
-					new_stat.flush();
 				}
 			}
 			else
