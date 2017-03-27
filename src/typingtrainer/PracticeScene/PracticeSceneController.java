@@ -62,8 +62,8 @@ public class PracticeSceneController
 	private volatile MediaPlayer music;
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
+	private volatile boolean isTimerRunning;
 	private Image soundSprite;
-	private boolean isTimerRunning;
 
 	static Word.Languages paramLang;
 	static int difficultyParam;
@@ -144,6 +144,7 @@ public class PracticeSceneController
 	public void onMainMenuLabelClicked(MouseEvent mouseEvent)
 	{
 		disposeSounds();
+		isTimerRunning = false;
 		try
 		{
 			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
@@ -164,49 +165,13 @@ public class PracticeSceneController
 			{
 				isTimerRunning = true;
 				watcher.rememberTimeStart();
-				//Памагити
-				/*Task timerTask = new Task<Void>() //Task, плодит ошибки
-				{
-					@Override
-					protected Void call() throws Exception
-					{
-						//BEGIN
-						int min = 0, sec = 0;
-						while (isTimerRunning)
-						{
-							for (int i = 0; !isTimerRunning && i < 20; ++i)
-							{
-								try
-								{
-									Thread.sleep(50);
-								}
-								catch (InterruptedException e)
-								{
-									e.printStackTrace();
-								}
-							}
-							if (++sec == 60)
-							{
-								sec = 0;
-								++min;
-							}
-							final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
-							timerLabel.setText(newTime);
-						}
-						timerLabel.setText("00:00");
-						//END
-						return null;
-					}
-				};
-				new Thread(timerTask).start();*/
-				/****/
-				/*new Thread(() -> //RunLater, не работает
+				new Thread(() ->
 				{
 					//BEGIN
 					int min = 0, sec = 0;
 					while (isTimerRunning)
 					{
-						for (int i = 0; !isTimerRunning && i < 20; ++i)
+						for (int i = 0; isTimerRunning && i < 20; ++i)
 						{
 							try
 							{
@@ -223,46 +188,11 @@ public class PracticeSceneController
 							++min;
 						}
 						final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
-						Platform.runLater(() -> timerLabel.setText(newTime));
+						Platform.runLater(() ->	timerLabel.setText(newTime));
 					}
 					Platform.runLater(() -> timerLabel.setText("00:00"));
 					//END
-				});*/
-				/****/
-				/*Task timerTask = new Task<Void>() //2 в 1, очень странно работает
-				{
-					@Override
-					protected Void call() throws Exception
-					{
-						//BEGIN
-						int min = 0, sec = 0;
-						while (isTimerRunning)
-						{
-							for (int i = 0; !isTimerRunning && i < 20; ++i)
-							{
-								try
-								{
-									Thread.sleep(50);
-								}
-								catch (InterruptedException e)
-								{
-									e.printStackTrace();
-								}
-							}
-							if (++sec == 60)
-							{
-								sec = 0;
-								++min;
-							}
-							final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
-							Platform.runLater(() -> timerLabel.setText(newTime));
-						}
-						Platform.runLater(() -> timerLabel.setText("00:00"));
-						//END
-						return null;
-					}
-				};
-				new Thread(timerTask).start();*/
+				}).start();
 			}
 
 			boolean isSymbolCorrect;
@@ -517,7 +447,7 @@ public class PracticeSceneController
 		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
 	}
 
-	public void stop() //Здесь есть какой-нибудь деструктор?
+	public void finalize() //Здесь есть какой-нибудь деструктор?
 	{
 		isTimerRunning = false;
 		System.out.println("Сцена практики уничтожена!");
