@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -48,38 +49,53 @@ public class ModSceneController {
 
 
 
+		try {
+			FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
+			BufferedReader reader = new BufferedReader(settings_read);
+			String ln;
+			ArrayList<String> lns = new ArrayList<String>();
+			while ((ln = reader.readLine()) != null) {
+				lns.add(ln);
+			}
+			reader.close();
+			settings_read.close();
 
-		FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
-		BufferedReader reader = new BufferedReader(settings_read);
-		String ln;
-		ArrayList<String> lns = new ArrayList<String>();
-		while ((ln = reader.readLine())!=null){
-			lns.add(ln);
-		}
-		reader.close();
-		settings_read.close();
+			if (!lns.isEmpty()) {
 
-		if (!lns.isEmpty()) {
+				int language = 0;
+				int difficulty = 0;
+				boolean register = false;
+				boolean music = false;
+				boolean sound = false;
 
-			int language = 0;
-			int difficulty = 0;
-			boolean register = false;
-			boolean music = false;
-			boolean sound = false;
+				language = Integer.valueOf(lns.get(0)) == 0 ? 0 : 1;
+				difficulty = Integer.valueOf(lns.get(1));
+				register = Integer.valueOf(lns.get(2)) == 0 ? false : true;
+				music = Integer.valueOf(lns.get(3)) == 0 ? false : true;
+				sound = Integer.valueOf(lns.get(4)) == 0 ? false : true;
 
-			language = Integer.valueOf(lns.get(0)) == 0 ? 0 : 1;
-			difficulty = Integer.valueOf(lns.get(1));
-			register = Integer.valueOf(lns.get(2))==0 ? false : true;
-			music = Integer.valueOf(lns.get(3))==0 ? false : true;
-			sound = Integer.valueOf(lns.get(4))==0 ? false : true;
+				langCB.getSelectionModel().select(language);
+				difficultyCB.getSelectionModel().select(difficulty);
+				registerChb.setSelected(register);
+				musicChb.setSelected(music);
+				soundsChb.setSelected(sound);
 
-			langCB.getSelectionModel().select(language);
-			difficultyCB.getSelectionModel().select(difficulty);
-			registerChb.setSelected(register);
-			musicChb.setSelected(music);
-			soundsChb.setSelected(sound);
+			} else {
+				langCB.getSelectionModel().select(0);
+				difficultyCB.getSelectionModel().select(0);
+				registerChb.setSelected(false);
+				musicChb.setSelected(true);
+				soundsChb.setSelected(true);
+			}
+		}catch (Exception e){
+			System.out.println("Файл статистики отсутствует");
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("Ошибка");
+			alert.setHeaderText(null);
+			alert.setContentText("Файл статистики отсутствует");
+			alert.showAndWait();
 
-		}else {
+
 			langCB.getSelectionModel().select(0);
 			difficultyCB.getSelectionModel().select(0);
 			registerChb.setSelected(false);
