@@ -8,7 +8,7 @@
 
 <GridPane fx:id="pane" alignment="CENTER" prefHeight="720.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.StatisticScene.StatisticSceneController">
   <children>
-    <Label fx:id="labelOption1" onMouseClicked="#onGraphClicked" text="СТАТИСТИКА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+    <Label text="СТАТИСТИКА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
     <GridPane alignment="TOP_LEFT" prefWidth="1280.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
         <Label text="Ошибки:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
@@ -38,10 +38,12 @@
     </GridPane>
     <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="clearLabel" onMouseClicked="#onClearClicked" text="ОЧИСТИТЬ СТАТИСТИКУ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="clearLabel" onMouseClicked="#onClearClicked" text="ОЧИСТИТЬ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label id="clearLabel" fx:id="graphLabel" onMouseClicked="#onGraphClicked" text="ГРАФИК" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       </columnConstraints>

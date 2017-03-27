@@ -1,18 +1,8 @@
+@import "../main.css"
+
 .root
 {
-    -fx-background-image: url("../background.png");
-    -fx-background-position: center center;
-    -fx-background-size: 100% 100%;
     -fx-font-size: 50px;
-}
-
-.label
-{
-    -fx-alignment: top-center;
-    -fx-font-family: "Arial Bold";
-    -fx-font-weight: 900;
-    -fx-font-color: white;
-    -fx-effect: dropshadow( gaussian, black, 2, 1, 0, 0);
 }
 
 #displayableStringLabel
