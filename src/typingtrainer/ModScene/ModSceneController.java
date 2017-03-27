@@ -23,12 +23,13 @@ import java.util.ArrayList;
 /**
  * Created by Никитка on 28.02.2017.
  */
-public class ModSceneController {
+public class ModSceneController
+{
 
 	@FXML
-    public ChoiceBox langCB;
+	public ChoiceBox langCB;
 	@FXML
-    public ChoiceBox difficultyCB;
+	public ChoiceBox difficultyCB;
 	@FXML
 	public CheckBox registerChb;
 	@FXML
@@ -36,75 +37,49 @@ public class ModSceneController {
 	@FXML
 	public CheckBox soundsChb;
 
-    public void initialize() throws IOException {
+	public void initialize()
+	{
 		System.out.println("Опционная сцена готова!");
 		ObservableList<String> levels = FXCollections.observableArrayList();
 		for (int i = 0; i < 30; i += 2)
 			levels.add(new String() + (i + 2) + " (" + Word.ALPH_RU[0].charAt(i) + Word.ALPH_RU[0].charAt(i + 1) +
-				" / " + Word.ALPH_EN[0].charAt(i) + Word.ALPH_EN[0].charAt(i + 1) + ")");
+					" / " + Word.ALPH_EN[0].charAt(i) + Word.ALPH_EN[0].charAt(i + 1) + ")");
 		levels.add("33" + " (" + Word.ALPH_RU[0].charAt(30) + Word.ALPH_RU[0].charAt(31) + Word.ALPH_RU[0].charAt(32) +
-			" / " + Word.ALPH_EN[0].charAt(30) + Word.ALPH_EN[0].charAt(31) + Word.ALPH_EN[0].charAt(32) + ")");
-        langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
-        difficultyCB.setItems(levels);
+				" / " + Word.ALPH_EN[0].charAt(30) + Word.ALPH_EN[0].charAt(31) + Word.ALPH_EN[0].charAt(32) + ")");
+		langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
+		difficultyCB.setItems(levels);
 
 
-
-		try {
+		int language, difficulty;
+		boolean register, music, sound;
+		try
+		{
 			FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
 			BufferedReader reader = new BufferedReader(settings_read);
-			String ln;
-			ArrayList<String> lns = new ArrayList<String>();
-			while ((ln = reader.readLine()) != null) {
-				lns.add(ln);
-			}
+			language = Integer.valueOf(reader.readLine());
+			difficulty = Integer.valueOf(reader.readLine());
+			register = Integer.valueOf(reader.readLine()) == 1;
+			music = Integer.valueOf(reader.readLine()) == 1;
+			sound = Integer.valueOf(reader.readLine()) == 1;
 			reader.close();
 			settings_read.close();
-
-			if (!lns.isEmpty()) {
-
-				int language = 0;
-				int difficulty = 0;
-				boolean register = false;
-				boolean music = false;
-				boolean sound = false;
-
-				language = Integer.valueOf(lns.get(0)) == 0 ? 0 : 1;
-				difficulty = Integer.valueOf(lns.get(1));
-				register = Integer.valueOf(lns.get(2)) == 0 ? false : true;
-				music = Integer.valueOf(lns.get(3)) == 0 ? false : true;
-				sound = Integer.valueOf(lns.get(4)) == 0 ? false : true;
-
-				langCB.getSelectionModel().select(language);
-				difficultyCB.getSelectionModel().select(difficulty);
-				registerChb.setSelected(register);
-				musicChb.setSelected(music);
-				soundsChb.setSelected(sound);
-
-			} else {
-				langCB.getSelectionModel().select(0);
-				difficultyCB.getSelectionModel().select(0);
-				registerChb.setSelected(false);
-				musicChb.setSelected(true);
-				soundsChb.setSelected(true);
-			}
-		}catch (Exception e){
-			System.out.println("Файл статистики отсутствует");
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setTitle("Ошибка");
-			alert.setHeaderText(null);
-			alert.setContentText("Файл статистики отсутствует");
-			alert.showAndWait();
-
-
-			langCB.getSelectionModel().select(0);
-			difficultyCB.getSelectionModel().select(0);
-			registerChb.setSelected(false);
-			musicChb.setSelected(true);
-			soundsChb.setSelected(true);
 		}
-    }
+		catch (Exception e)
+		{
+			language = 0;
+			difficulty = 0;
+			register = false;
+			music = true;
+			sound = true;
+		}
+		langCB.getSelectionModel().select(language);
+		difficultyCB.getSelectionModel().select(difficulty);
+		registerChb.setSelected(register);
+		musicChb.setSelected(music);
+		soundsChb.setSelected(sound);
+	}
 
-    public void onGoClicked(MouseEvent mouseEvent) throws IOException
+	public void onGoClicked(MouseEvent mouseEvent) throws IOException
 	{
 
 		{
@@ -130,26 +105,26 @@ public class ModSceneController {
 
 			FileWriter settings_wr = new FileWriter("src/typingtrainer/ModScene/Settings/settings.txt");
 
-			settings_wr.write(lng + "\r\n" +  diff + "\r\n" +	reg + "\r\n" +	 mus + "\r\n" + snd);
+			settings_wr.write(lng + "\r\n" + diff + "\r\n" + reg + "\r\n" + mus + "\r\n" + snd);
 			settings_wr.flush();
 			settings_wr.close();
 
 
-            PracticeSceneController.setOptions(lang, difficulty, registerChb.isSelected(), musicChb.isSelected(), soundsChb.isSelected());
+			PracticeSceneController.setOptions(lang, difficulty, registerChb.isSelected(), musicChb.isSelected(), soundsChb.isSelected());
 
-            SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
-            Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
-            ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
-            practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
-            sceneManager.pushScene(practiceScene);
-        }
-    }
+			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+			Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
+			ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+			practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
+			sceneManager.pushScene(practiceScene);
+		}
+	}
 
 	public void onBackClicked(MouseEvent mouseEvent)
 	{
 		try
 		{
-			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popScene();
+			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
 		}
 		catch (InvocationTargetException e)
 		{

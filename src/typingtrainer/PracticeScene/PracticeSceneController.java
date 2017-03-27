@@ -71,39 +71,39 @@ public class PracticeSceneController
 	static boolean isMusicParam;
 	static boolean isSoundParam;
 	private static int[][] keyCoordinates = {
-			{396, 180},	//а
-			{649, 180},	//о
-			{311, 180},	//в
-			{733, 180},	//л
-			{227, 180},	//ы
-			{817, 180},	//д
-			{143, 180},	//ф
-			{901, 180},	//ж
-			{480, 180},	//п
-			{564, 180},	//р
-			{370, 93},	//к
-			{623, 93},	//г
-			{455, 93},	//е
-			{539, 93},	//н
-			{426, 268},	//м
-			{682, 268},	//ь
-			{514, 268},	//и
-			{598, 268},	//т
-			{286, 93},	//у
-			{708, 93},	//ш
-			{345, 268},	//с
-			{767, 268},	//б
-			{202, 93},	//ц
-			{792, 93},	//щ
-			{261, 268},	//ч
-			{851, 268},	//ю
-			{117, 93},	//й
-			{876, 93},	//з
-			{176, 268},	//я
-			{936, 268},	//.
-			{961, 93},	//х
-			{1045, 93},	//ъ
-			{986, 180},	//э
+			{396, 180},		//а
+			{649, 180},		//о
+			{311, 180},		//в
+			{733, 180},		//л
+			{227, 180},		//ы
+			{817, 180},		//д
+			{143, 180},		//ф
+			{901, 180},		//ж
+			{480, 180},		//п
+			{564, 180},		//р
+			{370, 93},		//к
+			{623, 93},		//г
+			{455, 93},		//е
+			{539, 93},		//н
+			{426, 268},		//м
+			{682, 268},		//ь
+			{514, 268},		//и
+			{598, 268},		//т
+			{286, 93},		//у
+			{708, 93},		//ш
+			{345, 268},		//с
+			{767, 268},		//б
+			{202, 93},		//ц
+			{792, 93},		//щ
+			{261, 268},		//ч
+			{851, 268},		//ю
+			{117, 93},		//й
+			{876, 93},		//з
+			{176, 268},		//я
+			{936, 268},		//.
+			{961, 93},		//х
+			{1045, 93},		//ъ
+			{986, 180},		//э
 	};
 
 	public void initialize()
@@ -122,21 +122,18 @@ public class PracticeSceneController
 	private void restart()
 	{
 		disposeSounds();
-		/*Временный фикс*/
-		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
+		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
 		while (taskWord.length() < 200)
-			taskWord.append(" " + Word.generateRndWord((int)(1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
+			taskWord.append(" " + Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
-/*
-		StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20,
-				PracticeSceneController.difficultyParam,	PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));
-				*/
+		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficultyParam,
+			PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));*/
 
 		watcher = new PracticeWatcher(taskWord, paramLang, difficultyParam, isRegisterParam);
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
-		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int)(1 + Math.random() * 6) + ".mp3").toURI().toString()));
+		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));
 		msToReducing = 0;
 		isTimerRunning = false;
 	}
@@ -147,7 +144,7 @@ public class PracticeSceneController
 		isTimerRunning = false;
 		try
 		{
-			((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
+			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -155,7 +152,8 @@ public class PracticeSceneController
 		}
 	}
 
-	public void onKeyPressed(KeyEvent keyEvent) throws IOException {
+	public void onKeyPressed(KeyEvent keyEvent)
+	{
 		if (!keyEvent.getCode().toString().equals("CONTROL") &&
 				!keyEvent.getCode().toString().equals("SHIFT") &&
 				!keyEvent.getCode().toString().equals("ALT") &&
@@ -188,7 +186,7 @@ public class PracticeSceneController
 							++min;
 						}
 						final String newTime = (min > 9 ? "" : "0") + min + ":" + (sec > 9 ? "" : "0") + sec;
-						Platform.runLater(() ->	timerLabel.setText(newTime));
+						Platform.runLater(() -> timerLabel.setText(newTime));
 					}
 					Platform.runLater(() -> timerLabel.setText("00:00"));
 					//END
@@ -253,7 +251,7 @@ public class PracticeSceneController
 					disposeSounds();
 					try
 					{
-						((ManagedScene)(displayableStringLabel.getScene())).getManager().popAllExceptFirst();
+						((ManagedScene) (displayableStringLabel.getScene())).getManager().popAllExceptFirst();
 					}
 					catch (InvocationTargetException e)
 					{
@@ -267,17 +265,23 @@ public class PracticeSceneController
 
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
-					int speed = (int)(watcher.getInitStringLength() * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
+					int speed = (int) (watcher.getInitStringLength() * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
 
 					alert.setContentText("Ошибки: " + mistakes + "\r\nВремя: " + String.format("%.2f", time) +
 							" секунд\r\nСкорость: " + speed + " зн/мин");
 					alert.showAndWait();
 
-					FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt",true);
-					st_write.write(mistakes + "\r\n" +  time + "\r\n" +	speed + "\r\n");
-					st_write.flush();
-					st_write.close();
-
+					try
+					{
+						FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt", true);
+						st_write.write(mistakes + "\r\n" + time + "\r\n" + speed + "\r\n");
+						st_write.flush();
+						st_write.close();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 			else
@@ -355,7 +359,7 @@ public class PracticeSceneController
 				buf.dispose();
 			}).start();
 		}
-		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int)(1 + Math.random() * 1) + ".mp3").toURI().toString()));
+		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int) (1 + Math.random() * 1) + ".mp3").toURI().toString()));
 		falseNote.play();
 	}
 
