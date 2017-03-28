@@ -11,9 +11,9 @@
     <Label text="СТАТИСТИКА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
     <GridPane alignment="TOP_LEFT" prefWidth="1280.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
-        <Label text="Ошибки:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label text="Время:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <Label text="Скорость:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label text="Ошибки:" onMouseClicked="#onMistakesCliked" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Время:" onMouseClicked="#onTimeCliked" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="Скорость:" onMouseClicked="#onSpeedCliked" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <Label text="Последний сеанс" GridPane.columnIndex="3" GridPane.rowIndex="0" />
         <Label fx:id="labelMisAll" text="1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
         <Label fx:id="labelTimeAll" text="2" GridPane.columnIndex="2" GridPane.rowIndex="2" />

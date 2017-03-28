@@ -204,4 +204,122 @@ public class StatisticSceneController
 		sceneManager.pushScene(graphScene);
 
 	}
+
+	public void onMistakesCliked(MouseEvent mouseEvent) {
+		NumberAxis x = new NumberAxis();
+		NumberAxis y = new NumberAxis();
+
+		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
+		numberLineChart.setTitle("Статистика ошибок");
+		XYChart.Series series2 = new XYChart.Series();
+
+		series2.setName("Ошибки (шт)");
+
+		ObservableList<XYChart.Data> datas2 = FXCollections.observableArrayList();
+
+		for (int i = 0; i < this.mistakes_list.size(); i++)
+		{
+			datas2.add(new XYChart.Data(i, this.mistakes_list.get(i)));
+		}
+
+		series2.setData(datas2);
+
+
+		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		numberLineChart.setOnMouseClicked(event ->
+		{
+			try
+			{
+				sceneManager.popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		});
+		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
+
+		numberLineChart.getData().add(series2);
+		
+
+		sceneManager.pushScene(graphScene);
+	}
+
+
+	public void onTimeCliked(MouseEvent mouseEvent) {
+		NumberAxis x = new NumberAxis();
+		NumberAxis y = new NumberAxis();
+
+		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
+		numberLineChart.setTitle("Статистика времени");
+		XYChart.Series series3 = new XYChart.Series();
+
+		series3.setName("Время (сек)");
+
+		ObservableList<XYChart.Data> datas3 = FXCollections.observableArrayList();
+
+		for (int i = 0; i < this.time_list.size(); i++)
+		{
+
+			datas3.add(new XYChart.Data(i, this.time_list.get(i)));
+		}
+
+		series3.setData(datas3);
+
+
+		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		numberLineChart.setOnMouseClicked(event ->
+		{
+			try
+			{
+				sceneManager.popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		});
+		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
+
+		numberLineChart.getData().add(series3);
+		sceneManager.pushScene(graphScene);
+	}
+
+	public void onSpeedCliked(MouseEvent mouseEvent) {
+		NumberAxis x = new NumberAxis();
+		NumberAxis y = new NumberAxis();
+
+		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
+		numberLineChart.setTitle("Статистика скорости");
+		XYChart.Series series1 = new XYChart.Series();
+
+		series1.setName("Скорость (зн/мин)");
+
+		ObservableList<XYChart.Data> datas = FXCollections.observableArrayList();
+
+		for (int i = 0; i < this.speed_list.size(); i++)
+		{
+			datas.add(new XYChart.Data(i, this.speed_list.get(i)));
+
+		}
+
+		series1.setData(datas);
+
+		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		numberLineChart.setOnMouseClicked(event ->
+		{
+			try
+			{
+				sceneManager.popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		});
+		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
+
+		numberLineChart.getData().add(series1);
+		sceneManager.pushScene(graphScene);
+	}
 }
