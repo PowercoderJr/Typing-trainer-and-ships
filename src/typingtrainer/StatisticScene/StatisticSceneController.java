@@ -3,25 +3,20 @@ package typingtrainer.StatisticScene;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import typingtrainer.Main;
+import javafx.scene.layout.GridPane;
 import typingtrainer.ManagedScene;
 import typingtrainer.SceneManager;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -30,6 +25,8 @@ import java.util.List;
 public class StatisticSceneController
 {
 
+	@FXML
+	public GridPane pane;
 	@FXML
 	public Label labelMisAll;
 	@FXML
@@ -155,157 +152,83 @@ public class StatisticSceneController
 
 	public void onGraphClicked(MouseEvent mouseEvent)
 	{
-		NumberAxis x = new NumberAxis();
-		NumberAxis y = new NumberAxis();
-
-		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
-		numberLineChart.setTitle("Статистика");
-		XYChart.Series series1 = new XYChart.Series();
-		XYChart.Series series2 = new XYChart.Series();
-		XYChart.Series series3 = new XYChart.Series();
-
-		series1.setName("Скорость (зн/мин)");
-		series2.setName("Ошибки (шт)");
-		series3.setName("Время (сек)");
-
-		ObservableList<XYChart.Data> datas = FXCollections.observableArrayList();
-		ObservableList<XYChart.Data> datas2 = FXCollections.observableArrayList();
-		ObservableList<XYChart.Data> datas3 = FXCollections.observableArrayList();
-
+		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
+		ObservableList<XYChart.Data> data1 = FXCollections.observableArrayList();
+		ObservableList<XYChart.Data> data2 = FXCollections.observableArrayList();
+		ObservableList<XYChart.Data> data3 = FXCollections.observableArrayList();
 		for (int i = 0; i < this.speed_list.size(); i++)
 		{
-			datas.add(new XYChart.Data(i, this.speed_list.get(i)));
-			datas2.add(new XYChart.Data(i, this.mistakes_list.get(i)));
-			datas3.add(new XYChart.Data(i, this.time_list.get(i)));
+			data1.add(new XYChart.Data(i, this.speed_list.get(i)));
+			data2.add(new XYChart.Data(i, this.mistakes_list.get(i)));
+			data3.add(new XYChart.Data(i, this.time_list.get(i)));
 		}
+		datas.add(data1);
+		datas.add(data2);
+		datas.add(data3);
 
-		series1.setData(datas);
-		series2.setData(datas2);
-		series3.setData(datas3);
+		ArrayList<String> seriesNames = new ArrayList<>();
+		seriesNames.add("Скорость (зн/мин)");
+		seriesNames.add("Ошибки (шт)");
+		seriesNames.add("Время (сек)");
 
-
-		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		numberLineChart.setOnMouseClicked(event ->
-		{
-			try
-			{
-				sceneManager.popScene();
-			}
-			catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-		});
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
-
-		numberLineChart.getData().add(series1);
-		numberLineChart.getData().add(series2);
-		numberLineChart.getData().add(series3);
-		sceneManager.pushScene(graphScene);
-
+		buildGraphScene("Статистика", seriesNames, datas);
 	}
 
-	public void onMistakesCliked(MouseEvent mouseEvent) {
-		NumberAxis x = new NumberAxis();
-		NumberAxis y = new NumberAxis();
+	public void onMistakesCliked(MouseEvent mouseEvent)
+	{
+		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
+		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
+		for (int i = 0; i < this.mistakes_list.size(); i++) { data.add(new XYChart.Data(i, this.mistakes_list.get(i))); }
+		datas.add(data);
 
-		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
-		numberLineChart.setTitle("Статистика ошибок");
-		XYChart.Series series2 = new XYChart.Series();
+		ArrayList<String> seriesNames = new ArrayList<>();
+		seriesNames.add("Ошибки (шт)");
 
-		series2.setName("Ошибки (шт)");
-
-		ObservableList<XYChart.Data> datas2 = FXCollections.observableArrayList();
-
-		for (int i = 0; i < this.mistakes_list.size(); i++)
-		{
-			datas2.add(new XYChart.Data(i, this.mistakes_list.get(i)));
-		}
-
-		series2.setData(datas2);
-
-
-		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		numberLineChart.setOnMouseClicked(event ->
-		{
-			try
-			{
-				sceneManager.popScene();
-			}
-			catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-		});
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
-
-		numberLineChart.getData().add(series2);
-		
-
-		sceneManager.pushScene(graphScene);
+		buildGraphScene("Статистика ошибок", seriesNames, datas);
 	}
 
 
-	public void onTimeCliked(MouseEvent mouseEvent) {
-		NumberAxis x = new NumberAxis();
-		NumberAxis y = new NumberAxis();
+	public void onTimeCliked(MouseEvent mouseEvent)
+	{
+		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
+		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
+		for (int i = 0; i < this.time_list.size(); i++) { data.add(new XYChart.Data(i, this.time_list.get(i))); }
+		datas.add(data);
 
-		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
-		numberLineChart.setTitle("Статистика времени");
-		XYChart.Series series3 = new XYChart.Series();
+		ArrayList<String> seriesNames = new ArrayList<>();
+		seriesNames.add("Время (сек)");
 
-		series3.setName("Время (сек)");
-
-		ObservableList<XYChart.Data> datas3 = FXCollections.observableArrayList();
-
-		for (int i = 0; i < this.time_list.size(); i++)
-		{
-
-			datas3.add(new XYChart.Data(i, this.time_list.get(i)));
-		}
-
-		series3.setData(datas3);
-
-
-		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		numberLineChart.setOnMouseClicked(event ->
-		{
-			try
-			{
-				sceneManager.popScene();
-			}
-			catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-		});
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
-
-		numberLineChart.getData().add(series3);
-		sceneManager.pushScene(graphScene);
+		buildGraphScene("Статистика времени", seriesNames, datas);
 	}
 
-	public void onSpeedCliked(MouseEvent mouseEvent) {
-		NumberAxis x = new NumberAxis();
-		NumberAxis y = new NumberAxis();
+	public void onSpeedCliked(MouseEvent mouseEvent)
+	{
+		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
+		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
+		for (int i = 0; i < this.speed_list.size(); i++) { data.add(new XYChart.Data(i, this.speed_list.get(i))); }
+		datas.add(data);
 
-		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(x, y);
-		numberLineChart.setTitle("Статистика скорости");
-		XYChart.Series series1 = new XYChart.Series();
+		ArrayList<String> seriesNames = new ArrayList<>();
+		seriesNames.add("Скорость (зн/мин)");
 
-		series1.setName("Скорость (зн/мин)");
+		buildGraphScene("Статистика скорости", seriesNames, datas);
+	}
 
-		ObservableList<XYChart.Data> datas = FXCollections.observableArrayList();
-
-		for (int i = 0; i < this.speed_list.size(); i++)
+	private void buildGraphScene(String chartTitle, ArrayList<String> seriesNames, ArrayList<ObservableList<XYChart.Data>> datas)
+	{
+		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(new NumberAxis(), new NumberAxis());
+		numberLineChart.setTitle(chartTitle);
+		XYChart.Series series;
+		for (int i = 0; i < datas.size(); ++i)
 		{
-			datas.add(new XYChart.Data(i, this.speed_list.get(i)));
-
+			series = new XYChart.Series();
+			if (i < seriesNames.size())
+				series.setName(seriesNames.get(i));
+			series.setData(datas.get(i));
+			numberLineChart.getData().add(series);
 		}
 
-		series1.setData(datas);
-
-		final SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
 		numberLineChart.setOnMouseClicked(event ->
 		{
 			try
@@ -317,9 +240,8 @@ public class StatisticSceneController
 				e.printStackTrace();
 			}
 		});
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
 
-		numberLineChart.getData().add(series1);
+		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
 		sceneManager.pushScene(graphScene);
 	}
 }
