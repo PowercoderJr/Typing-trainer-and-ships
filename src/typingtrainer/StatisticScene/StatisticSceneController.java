@@ -8,9 +8,11 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import sun.plugin2.message.Message;
 import typingtrainer.ManagedScene;
 import typingtrainer.SceneManager;
 
@@ -49,7 +51,6 @@ public class StatisticSceneController
 	public void initialize()
 	{
 		System.out.println("Сцена статистики готова!");
-
 
 		try
 		{
@@ -99,12 +100,26 @@ public class StatisticSceneController
 		}
 		catch (Exception e)
 		{
-			System.out.println("Файл статистики отсутствует");
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Файл статистики отсутствует или повреждён. Создать вместо него новый?", ButtonType.YES, ButtonType.NO);
 			alert.setTitle("Ошибка");
 			alert.setHeaderText(null);
-			alert.setContentText("Файл статистики отсутствует");
 			alert.showAndWait();
+			if (alert.getResult() == ButtonType.YES)
+			{
+				try
+				{
+					FileWriter writer = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
+					writer.close();
+				}
+				catch (IOException e1)
+				{
+					new Alert(Alert.AlertType.ERROR, "Ошибка при создании файла.", ButtonType.OK).showAndWait();
+				}
+			}
+
+			speed_list.clear();
+			mistakes_list.clear();
+			time_list.clear();
 
 			//Общая
 			labelAvgHeader.setText("Среднее за 0 раз");
@@ -131,12 +146,20 @@ public class StatisticSceneController
 		}
 	}
 
-	public void onClearClicked(MouseEvent mouseEvent) throws IOException
+	public void onClearClicked(MouseEvent mouseEvent)
 	{
-		FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
-		st_write.write("");
-		st_write.flush();
-		st_write.close();
+		FileWriter st_write = null;
+		try
+		{
+			st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
+			st_write.write("");
+			st_write.flush();
+			st_write.close();
+		}
+		catch (IOException e)
+		{
+			new Alert(Alert.AlertType.ERROR, "Ошибка при создании файла.", ButtonType.OK).showAndWait();
+		}
 
 		//Общая
 		labelAvgHeader.setText("Среднее за 0 раз");
@@ -178,7 +201,8 @@ public class StatisticSceneController
 	{
 		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
 		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
-		for (int i = 0; i < this.mistakes_list.size(); i++) { data.add(new XYChart.Data(i, this.mistakes_list.get(i))); }
+		for (int i = 0; i < this.mistakes_list.size(); i++)
+			data.add(new XYChart.Data(i, this.mistakes_list.get(i)));
 		datas.add(data);
 
 		ArrayList<String> seriesNames = new ArrayList<>();
@@ -192,7 +216,8 @@ public class StatisticSceneController
 	{
 		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
 		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
-		for (int i = 0; i < this.time_list.size(); i++) { data.add(new XYChart.Data(i, this.time_list.get(i))); }
+		for (int i = 0; i < this.time_list.size(); i++)
+			data.add(new XYChart.Data(i, this.time_list.get(i)));
 		datas.add(data);
 
 		ArrayList<String> seriesNames = new ArrayList<>();
@@ -205,7 +230,8 @@ public class StatisticSceneController
 	{
 		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
 		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
-		for (int i = 0; i < this.speed_list.size(); i++) { data.add(new XYChart.Data(i, this.speed_list.get(i))); }
+		for (int i = 0; i < this.speed_list.size(); i++)
+			data.add(new XYChart.Data(i, this.speed_list.get(i)));
 		datas.add(data);
 
 		ArrayList<String> seriesNames = new ArrayList<>();
