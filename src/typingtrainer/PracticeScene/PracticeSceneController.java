@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -280,7 +281,7 @@ public class PracticeSceneController
 					}
 					catch (IOException e)
 					{
-						e.printStackTrace();
+						new Alert(Alert.AlertType.ERROR, "Ошибка при записи статистики.", ButtonType.OK).showAndWait();
 					}
 				}
 			}
