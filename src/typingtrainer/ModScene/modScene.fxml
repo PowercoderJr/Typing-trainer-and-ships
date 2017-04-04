@@ -40,8 +40,8 @@
     </GridPane>
     <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="labelGo" onMouseClicked="#onGoClicked" text="GO" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="labelGo" onMouseClicked="#onGoClicked" styleClass="label-button" text="GO" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

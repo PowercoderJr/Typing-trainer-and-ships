@@ -4,22 +4,3 @@
 {
     -fx-font-size: 40px;
 }
-
-#labelGo:hover, #backLabel:hover, #clearLabel:hover, #mistakesLabel:hover, #timeLabel:hover, #speedLabel:hover
-{
-    -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);
-}
-
-#labelGo:pressed, #backLabel:pressed, #clearLabel:pressed, #mistakesLabel:pressed, #timeLabel:pressed, #speedLabel:pressed
-{
-    -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
-}
-
-#langCB, #difficultyCB, #registerCB
-{
-    -fx-font-size: 40px;
-    -fx-font-family: "Arial Bold";
-    -fx-font-weight: 400;
-    -fx-font-color: white;
-    -fx-effect: dropshadow( gaussian, black, 0, 0, 0, 0);
-}

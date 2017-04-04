@@ -23,13 +23,3 @@
 {
     -fx-background-color: red;
 }
-
-#mainMenuLabel:hover, #restartLabel:hover
-{
-    -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);
-}
-
-#mainMenuLabel:pressed, #restartLabel:pressed
-{
-    -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
-}

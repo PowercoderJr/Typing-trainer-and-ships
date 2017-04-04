@@ -13,3 +13,13 @@
     -fx-font-color: white;
     -fx-effect: dropshadow( gaussian, black, 2, 1, 0, 0);
 }
+
+.label-button:hover
+{
+    -fx-effect: dropshadow( gaussian, white, 5, 0.7, 0, 0);
+}
+
+.label-button:pressed
+{
+    -fx-effect: dropshadow( gaussian, white, 15, 0.7, 0, 0);
+}

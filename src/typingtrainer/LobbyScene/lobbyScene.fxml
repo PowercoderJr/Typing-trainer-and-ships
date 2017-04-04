@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.LobbyScene.LobbySceneController">
+  <children>
+    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+      <children>
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="joinLabel" onMouseClicked="#onJoinClicked" styleClass="label-button" text="ПРИСОЕДИНИТЬСЯ" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="createLabel" onMouseClicked="#onCreateClicked" styleClass="label-button" text="СОЗДАТЬ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <TableView fx:id="serversTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+      <columns>
+      </columns>
+    </TableView>
+    <Label text="СПИСОК СЕРВЕРОВ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="RIGHT" maxWidth="1206.0" prefWidth="1199.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="400.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="26.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+</GridPane>
