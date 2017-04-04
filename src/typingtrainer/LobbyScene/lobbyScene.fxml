@@ -8,23 +8,21 @@
   <children>
     <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="joinLabel" onMouseClicked="#onJoinClicked" styleClass="label-button" text="ПРИСОЕДИНИТЬСЯ" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Label fx:id="joinLabel" onMouseClicked="#onJoinClicked" styleClass="label-button" text="ПРИСОЕДИНИТЬСЯ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
         <Label fx:id="createLabel" onMouseClicked="#onCreateClicked" styleClass="label-button" text="СОЗДАТЬ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="refreshLabel" onMouseClicked="#onRefreshClicked" styleClass="label-button" text="ОБНОВИТЬ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       </columnConstraints>
       <rowConstraints>
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <TableView fx:id="serversTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-      <columns>
-      </columns>
-    </TableView>
+    <TableView fx:id="serversTable" prefHeight="336.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
     <Label text="СПИСОК СЕРВЕРОВ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
   </children>
   <columnConstraints>
@@ -32,7 +30,7 @@
   </columnConstraints>
   <rowConstraints>
     <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
-    <RowConstraints prefHeight="400.0" vgrow="SOMETIMES" />
-    <RowConstraints prefHeight="26.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="350.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="70.0" vgrow="SOMETIMES" />
   </rowConstraints>
 </GridPane>
