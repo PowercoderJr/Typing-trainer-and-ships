@@ -1,5 +1,6 @@
 package typingtrainer.LobbyScene;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,11 +16,16 @@ import typingtrainer.PracticeScene.PracticeSceneController;
 import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 
 /**
  * Created by Никитка on 28.02.2017.
@@ -27,7 +33,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class LobbySceneController
 {
-	private class ServerInfo
+
+	public class ServerInfo
 	{
 		private SimpleStringProperty name;
 		private SimpleStringProperty ip;
@@ -35,9 +42,9 @@ public class LobbySceneController
 
 		public ServerInfo(String name, String ip, String passwordFlag)
 		{
-			this.name.set(name);
-			this.ip.set(ip);
-			this.passwordFlag.set(passwordFlag);
+			this.name = new SimpleStringProperty(name);
+			this.ip = new SimpleStringProperty(ip);
+			this.passwordFlag = new SimpleStringProperty(passwordFlag);
 		}
 
 		public String getName()
@@ -98,13 +105,13 @@ public class LobbySceneController
 	{
 		System.out.println("Сцена лобби готова!");
 		nameColumn = buildTableColumn("Имя сервера", "name", 200);
-		ipColumn = buildTableColumn("IP сервера", "ip", 150);
-		passwordFlagColumn = buildTableColumn("Пароль", "password", 100);
+		ipColumn = buildTableColumn("IP сервера", "ip", 200);
+		passwordFlagColumn = buildTableColumn("Пароль", "passwordFlag", 100);
 		Label ph = new Label("СЕРВЕРЫ НЕ НАЙДЕНЫ");
 		ph.setStyle("-fx-font-size: 60px; \n-fx-effect: dropshadow( one-pass-box, white, 0, 0, 0, 0);");
 		serversTable.setPlaceholder(ph);
-		
-		servers.add(new ServerInfo("Pisosina", "192.0.0.1", "*****"));
+
+		//servers.add(new ServerInfo("Pisosina", "192.193.194.195", "CHLEN"));
 		serversTable.setItems(servers);
 		serversTable.getColumns().addAll(nameColumn, ipColumn, passwordFlagColumn);
 	}
@@ -129,13 +136,48 @@ public class LobbySceneController
 		}
 	}
 
-	public void onCreateClicked(MouseEvent mouseEvent)
+	private void refreshServerList()
 	{
-		;
+		new Thread(() ->
+		{
+			try
+			{
+				DatagramSocket dgSocket = new DatagramSocket();
+				InetAddress ipaddr = InetAddress.getLocalHost();
+				String msg = "Is anybody waiting for me?";
+				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, ipaddr, 27015);
+				dgSocket.send(dgPacket);
+				dgSocket.close();
+			}
+			catch (SocketException e)
+			{
+				System.out.println("Socket Exception");
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				System.out.println("IO Exception");
+				e.printStackTrace();
+			}
+		}).start();
+	}
+
+	public void onCreateClicked(MouseEvent mouseEvent) throws IOException
+	{
+		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		Parent pregameSceneFXML = FXMLLoader.load(Main.class.getResource("PregameScene/pregameScene.fxml"));
+		ManagedScene pregameScene = new ManagedScene(pregameSceneFXML, 1280, 720, sceneManager);
+		pregameScene.getStylesheets().add("typingtrainer/pregameScene/style.css");
+		sceneManager.pushScene(pregameScene);
 	}
 
 	public void onJoinClicked(MouseEvent mouseEvent)
 	{
 		;
+	}
+
+	public void onRefreshClicked(MouseEvent mouseEvent)
+	{
+		refreshServerList();
 	}
 }
