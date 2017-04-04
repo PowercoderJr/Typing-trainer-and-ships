@@ -11,9 +11,9 @@
     <Label text="СТАТИСТИКА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
     <GridPane alignment="TOP_LEFT" prefWidth="1280.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
-        <Label fx:id="mistakesLabel" text="Ошибки:" onMouseClicked="#onMistakesCliked" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label fx:id="timeLabel" text="Время:" onMouseClicked="#onTimeCliked" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <Label fx:id="speedLabel" text="Скорость:" onMouseClicked="#onSpeedCliked" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label fx:id="mistakesLabel" styleClass="label-button" text="Ошибки:" onMouseClicked="#onMistakesCliked" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="timeLabel" styleClass="label-button" text="Время:" onMouseClicked="#onTimeCliked" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label fx:id="speedLabel" styleClass="label-button" text="Скорость:" onMouseClicked="#onSpeedCliked" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <Label fx:id="labelLastHeader" text="Последний сеанс" GridPane.columnIndex="3" GridPane.rowIndex="0" />
         <Label fx:id="labelMisAll" text="1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
         <Label fx:id="labelTimeAll" text="2" GridPane.columnIndex="2" GridPane.rowIndex="2" />
@@ -38,9 +38,9 @@
     </GridPane>
     <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="clearLabel" onMouseClicked="#onClearClicked" text="ОЧИСТИТЬ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label id="clearLabel" fx:id="graphLabel" onMouseClicked="#onGraphClicked" text="ГРАФИК" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="clearLabel" onMouseClicked="#onClearClicked" styleClass="label-button" text="ОЧИСТИТЬ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="graphLabel" onMouseClicked="#onGraphClicked" styleClass="label-button" text="ГРАФИК" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
