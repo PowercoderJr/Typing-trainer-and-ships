@@ -28,7 +28,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Created by Никитка on 28.02.2017.
+ * Created by Meow on 04.04.2017.
  */
 
 public class LobbySceneController
@@ -142,7 +142,7 @@ public class LobbySceneController
 		{
 			try
 			{
-				DatagramSocket dgSocket = new DatagramSocket();
+				DatagramSocket dgSocket = new DatagramSocket(27015);
 				InetAddress ipaddr = InetAddress.getLocalHost();
 				String msg = "Is anybody waiting for me?";
 				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, ipaddr, 27015);

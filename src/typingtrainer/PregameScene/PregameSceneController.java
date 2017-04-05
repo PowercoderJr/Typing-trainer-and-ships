@@ -1,4 +1,4 @@
-package typingtrainer.LobbyScene;
+package typingtrainer.PregameScene;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,7 +28,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Created by Никитка on 28.02.2017.
+ * Created by Meow on 04.04.2017.
  */
 
 public class PregameSceneController
@@ -44,7 +44,7 @@ public class PregameSceneController
 		{
 			try
 			{
-				dgSocket = new DatagramSocket();
+				dgSocket = new DatagramSocket(27015);
 				while (isWaiting)
 				{
 					DatagramPacket dgPacket = new DatagramPacket(new byte[1024], 1024);
