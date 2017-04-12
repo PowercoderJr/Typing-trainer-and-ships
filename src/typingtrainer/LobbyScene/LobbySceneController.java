@@ -17,15 +17,9 @@ import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
 import javax.xml.crypto.Data;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 /**
  * Created by Meow on 04.04.2017.
@@ -111,7 +105,7 @@ public class LobbySceneController
 		ph.setStyle("-fx-font-size: 60px; \n-fx-effect: dropshadow( one-pass-box, white, 0, 0, 0, 0);");
 		serversTable.setPlaceholder(ph);
 
-		//servers.add(new ServerInfo("Pisosina", "192.193.194.195", "CHLEN"));
+		//servers.add(new ServerInfo("Some server", "192.193.194.195", "+"));
 		serversTable.setItems(servers);
 		serversTable.getColumns().addAll(nameColumn, ipColumn, passwordFlagColumn);
 	}
@@ -140,14 +134,15 @@ public class LobbySceneController
 	{
 		new Thread(() ->
 		{
+			System.out.println("Обновление списка серверов");
 			try
 			{
-				DatagramSocket dgSocket = new DatagramSocket(27015);
-				InetAddress ipaddr = InetAddress.getLocalHost();
+				InetAddress address = InetAddress.getByName("230.1.2.3");
+				MulticastSocket mcSocket = new MulticastSocket();
 				String msg = "Is anybody waiting for me?";
-				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, ipaddr, 27015);
-				dgSocket.send(dgPacket);
-				dgSocket.close();
+				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address, 7913);
+				mcSocket.send(dgPacket);
+				mcSocket.close();
 			}
 			catch (SocketException e)
 			{
@@ -159,6 +154,7 @@ public class LobbySceneController
 				System.out.println("IO Exception");
 				e.printStackTrace();
 			}
+			System.out.println("Обновление завершено");
 		}).start();
 	}
 
@@ -173,7 +169,45 @@ public class LobbySceneController
 
 	public void onJoinClicked(MouseEvent mouseEvent)
 	{
-		;
+		//СЕРВЕР
+		new Thread(() ->
+		{
+			System.out.println("Ожидание подключения");
+			try
+			{
+				DatagramSocket s = new DatagramSocket(7913);
+				while (true)
+				{
+					DatagramPacket p = new DatagramPacket(new byte[256], 256);
+					s.receive(p);
+					byte[] buf = p.getData();
+					System.out.println(new String(buf, 0, buf.length));
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			System.out.println("Конец ожидания");
+		}).start();
+
+		//КЛИЕНТ
+        /*
+        new Thread(() -> {
+            System.out.println("Попытка подключения");
+            try {
+                InetAddress address = InetAddress.getLocalHost();
+                DatagramSocket s = new DatagramSocket(7913, address);
+                byte[] buf = ("WAZZUP").getBytes();
+                DatagramPacket p = new DatagramPacket(buf, 0, buf.length, InetAddress.getByName("192.168.0.***"), 7913);
+                s.send(p);
+                s.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Конец подключения");
+        }).start();
+        */
 	}
 
 	public void onRefreshClicked(MouseEvent mouseEvent)
