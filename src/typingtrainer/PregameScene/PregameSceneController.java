@@ -2,9 +2,12 @@ package typingtrainer.PregameScene;
 
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import typingtrainer.LobbyScene.LobbySceneController;
 import typingtrainer.ManagedScene;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 
@@ -33,13 +36,18 @@ public class PregameSceneController
 				while (isWaiting)
 				{
 					DatagramPacket dgPacket = new DatagramPacket(new byte[256], 256);
-					System.out.println("Сейчас получим!");
+					//System.out.println("Сейчас получим!");
 					mcSocket.receive(dgPacket);
-					System.out.println("Получили!");
+					//System.out.println("Получили!");
 					String receivedData = new String(dgPacket.getData()).trim();
 					System.out.println("Received: \"" + receivedData + "\"");
-					if (receivedData.equals("Is anybody waiting for me?"))
-						System.out.println("Me!!!");
+
+					Socket s = new Socket(InetAddress.getByName(receivedData), 7913);
+					OutputStream outs = s.getOutputStream();
+					byte[] buf = InetAddress.getLocalHost().getHostAddress().getBytes();
+					outs.flush();
+					outs.write(buf, 0, buf.length);
+					s.close();
 				}
 				mcSocket.close();
 			}
