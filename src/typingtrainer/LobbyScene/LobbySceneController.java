@@ -89,6 +89,8 @@ public class LobbySceneController
 
 	@FXML
 	public TableView serversTable;
+	@FXML
+	public Label refreshLabel;
 	TableColumn nameColumn;
 	TableColumn ipColumn;
 	TableColumn passwordFlagColumn;
@@ -108,6 +110,7 @@ public class LobbySceneController
 		//servers.add(new ServerInfo("Some server", "192.193.194.195", "+"));
 		serversTable.setItems(servers);
 		serversTable.getColumns().addAll(nameColumn, ipColumn, passwordFlagColumn);
+		refreshServerList();
 	}
 
 	private TableColumn buildTableColumn(String text, String property, int prefWidth)
@@ -132,6 +135,7 @@ public class LobbySceneController
 
 	private void refreshServerList()
 	{
+		Platform.runLater(() -> refreshLabel.setDisable(true));
 		servers.clear();
 		new Thread(() ->
 		{
@@ -145,7 +149,7 @@ public class LobbySceneController
 				mcSocket.send(dgPacket);
 				mcSocket.close();
 
-				ss.setSoTimeout(10000);
+				ss.setSoTimeout(5000);
 				while (true)
 				{
 					Socket s = ss.accept();
@@ -167,6 +171,7 @@ public class LobbySceneController
 				e.printStackTrace();
 			}
 			System.out.println("Обновление завершено");
+			Platform.runLater(() -> refreshLabel.setDisable(false));
 		}).start();
 	}
 
