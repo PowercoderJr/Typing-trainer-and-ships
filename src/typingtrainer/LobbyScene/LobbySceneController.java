@@ -28,7 +28,7 @@ import java.net.*;
 public class LobbySceneController
 {
 
-	public class ServerInfo
+	public static class ServerInfo extends Object
 	{
 		private SimpleStringProperty name;
 		private SimpleStringProperty ip;
@@ -132,17 +132,29 @@ public class LobbySceneController
 
 	private void refreshServerList()
 	{
+		servers.clear();
 		new Thread(() ->
 		{
 			System.out.println("Обновление списка серверов");
-			try
+			try (ServerSocket ss = new ServerSocket(7913);)
 			{
 				InetAddress address = InetAddress.getByName("230.1.2.3");
 				MulticastSocket mcSocket = new MulticastSocket();
-				String msg = "Is anybody waiting for me?";
+				String msg = InetAddress.getLocalHost().getHostAddress();
 				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address, 7913);
 				mcSocket.send(dgPacket);
 				mcSocket.close();
+
+				ss.setSoTimeout(10000);
+				while (true)
+				{
+					Socket s = ss.accept();
+					InputStream ins = s.getInputStream();
+					byte[] buf = new byte[256];
+					ins.read(buf);
+					Platform.runLater(() -> servers.add(new ServerInfo("Anonymus", new String(buf).trim(), "")));
+					s.close();
+				}
 			}
 			catch (SocketException e)
 			{
