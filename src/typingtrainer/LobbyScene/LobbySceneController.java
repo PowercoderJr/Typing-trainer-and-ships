@@ -12,11 +12,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
-import typingtrainer.PracticeScene.PracticeSceneController;
 import typingtrainer.SceneManager;
-import typingtrainer.Word;
+import typingtrainer.ServerInfo;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
@@ -27,65 +25,10 @@ import java.net.*;
 
 public class LobbySceneController
 {
-
-	public static class ServerInfo extends Object
-	{
-		private SimpleStringProperty name;
-		private SimpleStringProperty ip;
-		private SimpleStringProperty passwordFlag;
-
-		public ServerInfo(String name, String ip, String passwordFlag)
-		{
-			this.name = new SimpleStringProperty(name);
-			this.ip = new SimpleStringProperty(ip);
-			this.passwordFlag = new SimpleStringProperty(passwordFlag);
-		}
-
-		public String getName()
-		{
-			return name.get();
-		}
-
-		public SimpleStringProperty nameProperty()
-		{
-			return name;
-		}
-
-		public void setName(String name)
-		{
-			this.name.set(name);
-		}
-
-		public String getIp()
-		{
-			return ip.get();
-		}
-
-		public SimpleStringProperty ipProperty()
-		{
-			return ip;
-		}
-
-		public void setIp(String ip)
-		{
-			this.ip.set(ip);
-		}
-
-		public String getPasswordFlag()
-		{
-			return passwordFlag.get();
-		}
-
-		public SimpleStringProperty passwordFlagProperty()
-		{
-			return passwordFlag;
-		}
-
-		public void setPasswordFlag(String passwordFlag)
-		{
-			this.passwordFlag.set(passwordFlag);
-		}
-	}
+	private static final double NANOSECONDS_IN_MILLISECOND = 1e+6;
+	private static final int SEARCHING_TIMEOUT = 5000;
+	private long startSearchingTime;
+	private boolean isSearching;
 
 	@FXML
 	public TableView serversTable;
@@ -123,6 +66,7 @@ public class LobbySceneController
 
 	public void onBackClicked(MouseEvent mouseEvent)
 	{
+		isSearching = false;
 		try
 		{
 			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
@@ -149,25 +93,46 @@ public class LobbySceneController
 				mcSocket.send(dgPacket);
 				mcSocket.close();
 
-				ss.setSoTimeout(5000);
-				while (true)
+				ss.setSoTimeout(SEARCHING_TIMEOUT);
+				startSearchingTime = System.nanoTime();
+				Socket s = null;
+				boolean success = true;
+				isSearching = true;
+				while (System.nanoTime() - startSearchingTime < SEARCHING_TIMEOUT * NANOSECONDS_IN_MILLISECOND && isSearching)
 				{
-					Socket s = ss.accept();
-					InputStream ins = s.getInputStream();
-					byte[] buf = new byte[256];
-					ins.read(buf);
-					Platform.runLater(() -> servers.add(new ServerInfo("Anonymus", new String(buf).trim(), "")));
-					s.close();
+					try
+					{
+						s = ss.accept();
+					}
+					catch (SocketTimeoutException e)
+					{
+						System.out.println("SocketTimeout Exception");
+						//e.printStackTrace();
+						success = false;
+						isSearching = false;
+					}
+					if (success)
+					{
+						ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+						final ServerInfo info = (ServerInfo) in.readObject();
+						Platform.runLater(() -> servers.add(info));
+						startSearchingTime = System.nanoTime();
+						s.close();
+					}
 				}
 			}
 			catch (SocketException e)
 			{
 				System.out.println("Socket Exception");
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			catch (IOException e)
 			{
 				System.out.println("IO Exception");
+				e.printStackTrace();
+			}
+			catch (ClassNotFoundException e)
+			{
 				e.printStackTrace();
 			}
 			System.out.println("Обновление завершено");
@@ -177,6 +142,7 @@ public class LobbySceneController
 
 	public void onCreateClicked(MouseEvent mouseEvent) throws IOException
 	{
+		isSearching = false;
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent pregameSceneFXML = FXMLLoader.load(Main.class.getResource("PregameScene/pregameScene.fxml"));
 		ManagedScene pregameScene = new ManagedScene(pregameSceneFXML, 1280, 720, sceneManager);
@@ -209,7 +175,7 @@ public class LobbySceneController
 		}).start();
 
 		//КЛИЕНТ
-        /*
+		/*
         new Thread(() -> {
             System.out.println("Попытка подключения");
             try {

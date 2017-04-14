@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.LobbyScene.LobbySceneController;
 import typingtrainer.ManagedScene;
+import typingtrainer.ServerInfo;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -37,24 +38,32 @@ public class PregameSceneController
 				{
 					DatagramPacket dgPacket = new DatagramPacket(new byte[256], 256);
 					//System.out.println("Сейчас получим!");
-					mcSocket.receive(dgPacket);
+					try
+					{
+						mcSocket.receive(dgPacket);
+					}
+					catch (SocketException e)
+					{
+						System.out.println("Socket Exception");
+						//e.printStackTrace();
+						isWaiting = false;
+					}
 					//System.out.println("Получили!");
 					String receivedData = new String(dgPacket.getData()).trim();
 					System.out.println("Received: \"" + receivedData + "\"");
 
 					Socket s = new Socket(InetAddress.getByName(receivedData), 7913);
-					OutputStream outs = s.getOutputStream();
-					byte[] buf = InetAddress.getLocalHost().getHostAddress().getBytes();
-					outs.flush();
-					outs.write(buf, 0, buf.length);
+					ServerInfo info = new ServerInfo("Anonymus", InetAddress.getLocalHost().getHostAddress(), "");
+					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+					out.writeObject(info);
 					s.close();
 				}
 				mcSocket.close();
 			}
 			catch (SocketException e)
 			{
-				System.out.println("Socket Exception:");
-				e.printStackTrace();
+				System.out.println("Socket Exception");
+				//e.printStackTrace();
 			}
 			catch (IOException e)
 			{
