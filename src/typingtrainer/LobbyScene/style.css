@@ -16,3 +16,8 @@
     -fx-font-family: "Arial";
     -fx-font-weight: 100;
 }
+
+#nameLabel, #passLabel, #nameTextfield, #passPassfield
+{
+    -fx-font-size: 30px;
+}

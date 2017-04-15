@@ -6,7 +6,7 @@
 
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.LobbyScene.LobbySceneController">
   <children>
-    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
       <children>
         <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
         <Label fx:id="joinLabel" onMouseClicked="#onJoinClicked" styleClass="label-button" text="ПРИСОЕДИНИТЬСЯ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
@@ -24,6 +24,25 @@
     </GridPane>
     <TableView fx:id="serversTable" prefHeight="336.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
     <Label text="СПИСОК СЕРВЕРОВ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="2">
+      <children>
+        <Label fx:id="nameLabel" text="НИКНЕЙМ:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label fx:id="passLabel" text="ПАРОЛЬ:" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+        <PasswordField fx:id="passPassfield" prefWidth="200.0" promptText="ПАРОЛЬ СЕРВЕРА" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+        <TextField fx:id="nameTextfield" prefWidth="200.0" promptText="ВАШЕ ИМЯ" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="10.0" prefWidth="20.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="10.0" prefWidth="20.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
   </children>
   <columnConstraints>
     <ColumnConstraints halignment="RIGHT" maxWidth="1206.0" prefWidth="1199.0" />
@@ -31,6 +50,7 @@
   <rowConstraints>
     <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
     <RowConstraints prefHeight="350.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="70.0" vgrow="SOMETIMES" />
     <RowConstraints prefHeight="70.0" vgrow="SOMETIMES" />
   </rowConstraints>
 </GridPane>
