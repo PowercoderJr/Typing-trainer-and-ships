@@ -31,7 +31,7 @@ public class Main extends Application
             public void handle(WindowEvent event)
             {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Программу следует закрыть, нажав кнопку \"ВЫХОД\" в главном меню", ButtonType.OK);
-                alert.setTitle("Некорректное действие");
+                alert.setTitle("Привет, я - костыль!");
                 alert.setHeaderText(null);
                 alert.showAndWait();
                 event.consume();

@@ -66,11 +66,11 @@ public class PracticeSceneController
 	private volatile boolean isTimerRunning;
 	private Image soundSprite;
 
-	static Word.Languages paramLang;
-	static int difficultyParam;
-	static boolean isRegisterParam;
-	static boolean isMusicParam;
-	static boolean isSoundParam;
+	private static Word.Languages paramLang;
+	private static int difficultyParam;
+	private static boolean isRegisterParam;
+	private static boolean isMusicParam;
+	private static boolean isSoundParam;
 	private static int[][] keyCoordinates = {
 			{396, 180},		//а
 			{649, 180},		//о

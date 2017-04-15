@@ -1,7 +1,6 @@
 package typingtrainer.LobbyScene;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
+import typingtrainer.PregameServerScene.PregameServerSceneController;
 import typingtrainer.SceneManager;
 import typingtrainer.ServerInfo;
 
@@ -27,6 +27,7 @@ public class LobbySceneController
 {
 	private static final double NANOSECONDS_IN_MILLISECOND = 1e+6;
 	private static final int SEARCHING_TIMEOUT = 5000;
+	private static final int CONNECTING_TIMEOUT = 10000;
 	private long startSearchingTime;
 	private boolean isSearching;
 
@@ -34,9 +35,14 @@ public class LobbySceneController
 	public TableView serversTable;
 	@FXML
 	public Label refreshLabel;
-	TableColumn nameColumn;
-	TableColumn ipColumn;
-	TableColumn passwordFlagColumn;
+	@FXML
+	public TextField nameTextfield;
+	@FXML
+	public PasswordField passPassfield;
+	private TableColumn nameColumn;
+	private TableColumn ipColumn;
+	private TableColumn passwordFlagColumn;
+	private ServerSocket serverSocket; //Используется для получения информации о сервере
 
 	private ObservableList<ServerInfo> servers = FXCollections.observableArrayList();
 
@@ -53,7 +59,31 @@ public class LobbySceneController
 		//servers.add(new ServerInfo("Some server", "192.193.194.195", "+"));
 		serversTable.setItems(servers);
 		serversTable.getColumns().addAll(nameColumn, ipColumn, passwordFlagColumn);
+
+		serversTable.setRowFactory(tv ->
+		{
+			TableRow<ServerInfo> row = new TableRow<>();
+			row.setOnMouseClicked(event ->
+			{
+				if (event.getClickCount() == 2 && (!row.isEmpty()))
+				{
+					ServerInfo rowData = row.getItem();
+					connect(rowData.getIp(), passPassfield.getText());
+				}
+			});
+			return row;
+		});
+
 		refreshServerList();
+
+		try
+		{
+			nameTextfield.setText(InetAddress.getLocalHost().getHostName());
+		}
+		catch (UnknownHostException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private TableColumn buildTableColumn(String text, String property, int prefWidth)
@@ -66,7 +96,7 @@ public class LobbySceneController
 
 	public void onBackClicked(MouseEvent mouseEvent)
 	{
-		isSearching = false;
+		stopSearching();
 		try
 		{
 			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
@@ -84,40 +114,35 @@ public class LobbySceneController
 		new Thread(() ->
 		{
 			System.out.println("Обновление списка серверов");
-			try (ServerSocket ss = new ServerSocket(7913);)
+			try
 			{
 				InetAddress address = InetAddress.getByName("230.1.2.3");
 				MulticastSocket mcSocket = new MulticastSocket();
-				String msg = InetAddress.getLocalHost().getHostAddress();
+				String msg = PregameServerSceneController.SEARCHING_CODEGRAM + ":" + InetAddress.getLocalHost().getHostAddress();
 				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address, 7913);
 				mcSocket.send(dgPacket);
 				mcSocket.close();
 
-				ss.setSoTimeout(SEARCHING_TIMEOUT);
+				serverSocket = new ServerSocket(7913);
+				serverSocket.setSoTimeout(SEARCHING_TIMEOUT);
 				startSearchingTime = System.nanoTime();
-				Socket s = null;
-				boolean success = true;
 				isSearching = true;
 				while (System.nanoTime() - startSearchingTime < SEARCHING_TIMEOUT * NANOSECONDS_IN_MILLISECOND && isSearching)
 				{
-					try
+					try (Socket s = serverSocket.accept())
 					{
-						s = ss.accept();
-					}
-					catch (SocketTimeoutException e)
-					{
-						System.out.println("SocketTimeout Exception");
-						//e.printStackTrace();
-						success = false;
-						isSearching = false;
-					}
-					if (success)
-					{
+
 						ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 						final ServerInfo info = (ServerInfo) in.readObject();
 						Platform.runLater(() -> servers.add(info));
 						startSearchingTime = System.nanoTime();
 						s.close();
+					}
+					catch (SocketTimeoutException e)
+					{
+						System.out.println("SocketTimeout Exception");
+						//e.printStackTrace();
+						isSearching = false;
 					}
 				}
 			}
@@ -129,11 +154,15 @@ public class LobbySceneController
 			catch (IOException e)
 			{
 				System.out.println("IO Exception");
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			catch (ClassNotFoundException e)
 			{
 				e.printStackTrace();
+			}
+			finally
+			{
+				stopSearching();
 			}
 			System.out.println("Обновление завершено");
 			Platform.runLater(() -> refreshLabel.setDisable(false));
@@ -142,12 +171,14 @@ public class LobbySceneController
 
 	public void onCreateClicked(MouseEvent mouseEvent) throws IOException
 	{
-		isSearching = false;
+		stopSearching();
+		PregameServerSceneController.setServerName(nameTextfield.getText());
+		PregameServerSceneController.setServerPassword(passPassfield.getText());
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		Parent pregameSceneFXML = FXMLLoader.load(Main.class.getResource("PregameScene/pregameScene.fxml"));
-		ManagedScene pregameScene = new ManagedScene(pregameSceneFXML, 1280, 720, sceneManager);
-		pregameScene.getStylesheets().add("typingtrainer/pregameScene/style.css");
-		sceneManager.pushScene(pregameScene);
+		Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
+		ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, 1280, 720, sceneManager);
+		pregameServerScene.getStylesheets().add("typingtrainer/pregameServerScene/style.css");
+		sceneManager.pushScene(pregameServerScene);
 	}
 
 	public void onJoinClicked(MouseEvent mouseEvent)
@@ -196,5 +227,43 @@ public class LobbySceneController
 	public void onRefreshClicked(MouseEvent mouseEvent)
 	{
 		refreshServerList();
+	}
+
+	private void stopSearching()
+	{
+		isSearching = false;
+		try
+		{
+			serverSocket.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void connect(String IP, String password)
+	{
+		stopSearching();
+		InputStream in;
+		OutputStream out;
+		try (Socket socket = new Socket(IP, 7914))
+		{
+			in = socket.getInputStream();
+			out = socket.getOutputStream();
+
+			String msg = PregameServerSceneController.CONNECTING_CODEGRAM + ":" + InetAddress.getLocalHost().getHostAddress() + "|" + password;
+			out.write(msg.getBytes());
+
+			byte[] bytes = new byte[256];
+			in.read(bytes);
+			msg = new String(bytes).trim();
+			System.out.println("\"" + msg + "\"");
+		}
+		catch (IOException e)
+		{
+			System.out.println("IOException");
+			//e.printStackTrace();
+		}
 	}
 }
