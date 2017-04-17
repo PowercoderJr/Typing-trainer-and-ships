@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
+import typingtrainer.PregameClientScene.PregameClientSceneController;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 import typingtrainer.SceneManager;
 import typingtrainer.ServerInfo;
@@ -172,8 +173,8 @@ public class LobbySceneController
 	public void onCreateClicked(MouseEvent mouseEvent) throws IOException
 	{
 		stopSearching();
-		PregameServerSceneController.setServerName(nameTextfield.getText());
-		PregameServerSceneController.setServerPassword(passPassfield.getText());
+		PregameServerSceneController.setArg_serverName(nameTextfield.getText());
+		PregameServerSceneController.setArg_serverPassword(passPassfield.getText());
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
 		ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, 1280, 720, sceneManager);
@@ -256,14 +257,30 @@ public class LobbySceneController
 			out.write(msg.getBytes());
 
 			byte[] bytes = new byte[256];
-			in.read(bytes);
+			int length = in.read(bytes);
 			msg = new String(bytes).trim();
 			System.out.println("\"" + msg + "\"");
+
+			if (msg.equals(PregameServerSceneController.CONNECTION_ACCEPTED_MSG))
+			{
+				stopSearching();
+				PregameClientSceneController.setArg_serverIP(IP);
+				PregameClientSceneController.setArg_username(nameTextfield.getText());
+				SceneManager sceneManager = ((ManagedScene) serversTable.getScene()).getManager();
+				Parent pregameClientSceneFXML = FXMLLoader.load(Main.class.getResource("PregameClientScene/pregameClientScene.fxml"));
+				ManagedScene pregameClientScene = new ManagedScene(pregameClientSceneFXML, 1280, 720, sceneManager);
+				pregameClientScene.getStylesheets().add("typingtrainer/pregameClientScene/style.css");
+				sceneManager.pushScene(pregameClientScene);
+			}
+			else if (msg.equals(PregameServerSceneController.CONNECTION_DECLINED_MSG))
+			{
+				;
+			}
 		}
 		catch (IOException e)
 		{
 			System.out.println("IOException");
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 }

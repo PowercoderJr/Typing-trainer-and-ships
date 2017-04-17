@@ -8,18 +8,12 @@
 #langCB, #difficultyCB, #registerChb, #musicChb, #soundsChb
 {
     -fx-font-size: 40px;
-    -fx-font-family: "Arial Bold";
     -fx-font-weight: 400;
-    -fx-font-color: white;
     -fx-effect: dropshadow( gaussian, black, 0, 0, 0, 0);
 }
 
-#difficultyCB
+#difficultyCB .label
 {
+    -fx-font-weight: 300;
     -fx-font-family: "Courier New";
-}
-
-#lableOption1
-{
-    -fx-margin-bottom: 40px;
 }
