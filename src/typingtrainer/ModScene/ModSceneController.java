@@ -49,20 +49,17 @@ public class ModSceneController
 		langCB.setItems(FXCollections.observableArrayList("Русский", "English"));
 		difficultyCB.setItems(levels);
 
-
 		int language, difficulty;
 		boolean register, music, sound;
-		try
+		try (
+				FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
+				BufferedReader reader = new BufferedReader(settings_read);)
 		{
-			FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
-			BufferedReader reader = new BufferedReader(settings_read);
 			language = Integer.valueOf(reader.readLine());
 			difficulty = Integer.valueOf(reader.readLine());
 			register = Integer.valueOf(reader.readLine()) == 1;
 			music = Integer.valueOf(reader.readLine()) == 1;
 			sound = Integer.valueOf(reader.readLine()) == 1;
-			reader.close();
-			settings_read.close();
 		}
 		catch (Exception e)
 		{
@@ -81,7 +78,6 @@ public class ModSceneController
 
 	public void onGoClicked(MouseEvent mouseEvent) throws IOException
 	{
-
 		{
 			Word.Languages lang;
 			int difficulty;
@@ -103,12 +99,15 @@ public class ModSceneController
 			int mus = musicChb.isSelected() ? 1 : 0;
 			int snd = soundsChb.isSelected() ? 1 : 0;
 
-			FileWriter settings_wr = new FileWriter("src/typingtrainer/ModScene/Settings/settings.txt");
-
-			settings_wr.write(lng + "\r\n" + diff + "\r\n" + reg + "\r\n" + mus + "\r\n" + snd);
-			settings_wr.flush();
-			settings_wr.close();
-
+			try (FileWriter settings_wr = new FileWriter("src/typingtrainer/ModScene/Settings/settings.txt"))
+			{
+				settings_wr.write(lng + "\r\n" + diff + "\r\n" + reg + "\r\n" + mus + "\r\n" + snd);
+				settings_wr.flush();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 
 			PracticeSceneController.setOptions(lang, difficulty, registerChb.isSelected(), musicChb.isSelected(), soundsChb.isSelected());
 
