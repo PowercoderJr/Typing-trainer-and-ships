@@ -42,8 +42,8 @@ public class PregameServerSceneController
 	private static String arg_serverPassword;
 	public static final String CONNECTION_ACCEPTED_MSG = "ConnectionAccepted";
 	public static final String CONNECTION_DECLINED_MSG = "ConnectionDeclined";
-	public static final String SEARCHING_CODEGRAM = "SEA";
-	public static final String CONNECTING_CODEGRAM = "CON";
+	public static final String CHAT_MSG_CODEGRAM = "CHAT_MSG";
+	public static final String DISCONNECT_CODEGRAM = "BYE";
 
 	private boolean isWaiting;
 	private MulticastSocket mcSocket;
@@ -53,6 +53,7 @@ public class PregameServerSceneController
 	private String username;
 	private String password;
 	private String opponentIP;
+	private OutputStream ostream;
 
 	public void initialize()
 	{
@@ -108,6 +109,17 @@ public class PregameServerSceneController
 		new Thread(this::answerTheConnectionRequests).start();
 	}
 
+	private void handleIncomingMessage(String msg)
+	{
+		System.out.println(msg);
+		String codegram = msg.substring(0, msg.indexOf(':'));
+		String content = msg.substring(msg.indexOf(':') + 1) + "\n";
+		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+			chatTA.appendText(content);
+		else if (codegram.equals(DISCONNECT_CODEGRAM))
+			opponentIP = "";
+	}
+
 	private void answerTheSearchRequests()
 	{
 		System.out.println("Ожидание поискового запроса");
@@ -137,14 +149,10 @@ public class PregameServerSceneController
 
 				if (!receivedData.isEmpty())
 				{
-					if (receivedData.substring(0, receivedData.indexOf(':')).equals(SEARCHING_CODEGRAM))
-					{
-						String opponentIP = receivedData.substring(SEARCHING_CODEGRAM.length() + 1);
-						Socket s = new Socket(InetAddress.getByName(opponentIP), 7913);
-						ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-						out.writeObject(info);
-						s.close();
-					}
+					Socket s = new Socket(InetAddress.getByName(receivedData), 7913);
+					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+					out.writeObject(info);
+					s.close();
 				}
 			}
 		}
@@ -173,35 +181,38 @@ public class PregameServerSceneController
 			while (isWaiting)
 			{
 				//System.out.println("Сейчас получим!");
-				try (Socket localSocket = localServerSocket.accept())
+				try
 				{
+					Socket localSocket = localServerSocket.accept();
 					socket = localSocket;
+
 					InputStream in = localSocket.getInputStream();
 					OutputStream out = localSocket.getOutputStream();
 
 					byte[] bytes = new byte[256];
 					int length = in.read(bytes);
-					String receivedData = new String(bytes, 0, length);
+					String receivedData = new String(bytes).trim();
 					//localSocket.close();
 					//System.out.println("Получили!");
 					System.out.println("TCP Received: \"" + receivedData + "\"");
 
-					if (!receivedData.isEmpty() && receivedData.substring(0, receivedData.indexOf(':')).equals(CONNECTING_CODEGRAM))
+					if (!receivedData.isEmpty())
 					{
-						String opponentIP = receivedData.substring(CONNECTING_CODEGRAM.length() + 1, receivedData.indexOf('|'));
+						String opponentIP = receivedData.substring(0, receivedData.indexOf('|'));
 						String opponentPassword = receivedData.substring(receivedData.indexOf('|') + 1);
 						System.out.println(opponentIP + " - " + opponentPassword);
 
-						if (this.opponentIP.isEmpty())
+						out.flush();
+						if (this.opponentIP.isEmpty() && (password.isEmpty() || opponentPassword.equals(password)))
 						{
-							if (password.isEmpty() || opponentPassword.equals(password))
-							{
-								this.opponentIP = opponentIP;
-								out.flush();
-								out.write(CONNECTION_ACCEPTED_MSG.getBytes());
-							}
-							else
-								out.write(CONNECTION_DECLINED_MSG.getBytes());
+							this.opponentIP = opponentIP;
+							new Thread(() -> establishConnectionWithOpponent(localSocket)).start();
+							out.write(CONNECTION_ACCEPTED_MSG.getBytes());
+						}
+						else
+						{
+							out.write(CONNECTION_DECLINED_MSG.getBytes());
+							localSocket.close();
 						}
 					}
 				}
@@ -218,51 +229,17 @@ public class PregameServerSceneController
 		}
 	}
 
-	private void establishConnectionWithOpponent()
+	private void establishConnectionWithOpponent(Socket socket)
 	{
-
-
-		try (ServerSocket personalServerSocket = new ServerSocket(7915))
+		try (Socket autoClosableSocket = socket)
 		{
+			InputStream in = socket.getInputStream();
+			ostream = socket.getOutputStream();
+			byte[] bytes = new byte[256];
 			while (!opponentIP.isEmpty())
 			{
-				//System.out.println("Сейчас получим!");
-				try (Socket socket = personalServerSocket.accept())
-				{
-					InputStream in = socket.getInputStream();
-					OutputStream out = socket.getOutputStream();
-
-					byte[] bytes = new byte[256];
-					int length = in.read(bytes);
-					String receivedData = new String(bytes, 0, length);
-					//localSocket.close();
-					//System.out.println("Получили!");
-					System.out.println("TCP Received: \"" + receivedData + "\"");
-
-					if (!receivedData.isEmpty() && receivedData.substring(0, receivedData.indexOf(':')).equals(CONNECTING_CODEGRAM))
-					{
-						String opponentIP = receivedData.substring(CONNECTING_CODEGRAM.length() + 1, receivedData.indexOf('|'));
-						String opponentPassword = receivedData.substring(receivedData.indexOf('|') + 1);
-						System.out.println(opponentIP + " - " + opponentPassword);
-
-						if (this.opponentIP.isEmpty())
-						{
-							if (password.isEmpty() || opponentPassword.equals(password))
-							{
-								this.opponentIP = opponentIP;
-								out.flush();
-								out.write("Connection accepted".getBytes());
-							}
-							else
-								out.write("Connection declined".getBytes());
-						}
-					}
-				}
-				catch (SocketTimeoutException e)
-				{
-					System.out.println("SocketTimeout Exception");
-					//e.printStackTrace();
-				}
+				in.read(bytes);
+				handleIncomingMessage(new String(bytes).trim());
 			}
 		}
 		catch (IOException e)
@@ -273,6 +250,19 @@ public class PregameServerSceneController
 
 	public void onBackClicked(MouseEvent mouseEvent)
 	{
+		if (!opponentIP.isEmpty())
+		{
+			try
+			{
+				ostream.flush();
+				ostream.write((DISCONNECT_CODEGRAM + ":").getBytes());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 		try
 		{
 			stopAnswerers();
@@ -325,14 +315,32 @@ public class PregameServerSceneController
 
 	public void onSendClicked(MouseEvent mouseEvent)
 	{
-		String message = username + ": " + messageTF.getText() + "\n";
-		messageTF.clear();
-		chatTA.appendText(message);
+		sendChatMessage();
 	}
 
 	public void onMessageTFKeyPressed(KeyEvent keyEvent)
 	{
 		if (keyEvent.getCode() == KeyCode.ENTER)
-			onSendClicked(null);
+			sendChatMessage();
+	}
+
+	private void sendChatMessage()
+	{
+		String msg = username + ": " + messageTF.getText() + "\n";
+		messageTF.clear();
+		chatTA.appendText(msg);
+
+		if (!opponentIP.isEmpty())
+		{
+			try
+			{
+				ostream.flush();
+				ostream.write((CHAT_MSG_CODEGRAM + ":" + msg).getBytes());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }
