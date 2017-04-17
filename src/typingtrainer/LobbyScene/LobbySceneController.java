@@ -119,7 +119,7 @@ public class LobbySceneController
 			{
 				InetAddress address = InetAddress.getByName("230.1.2.3");
 				MulticastSocket mcSocket = new MulticastSocket();
-				String msg = PregameServerSceneController.SEARCHING_CODEGRAM + ":" + InetAddress.getLocalHost().getHostAddress();
+				String msg = InetAddress.getLocalHost().getHostAddress();
 				DatagramPacket dgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, address, 7913);
 				mcSocket.send(dgPacket);
 				mcSocket.close();
@@ -248,12 +248,13 @@ public class LobbySceneController
 		stopSearching();
 		InputStream in;
 		OutputStream out;
-		try (Socket socket = new Socket(IP, 7914))
+		try
 		{
+			Socket socket = new Socket(IP, 7914);
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
 
-			String msg = PregameServerSceneController.CONNECTING_CODEGRAM + ":" + InetAddress.getLocalHost().getHostAddress() + "|" + password;
+			String msg = InetAddress.getLocalHost().getHostAddress() + "|" + password;
 			out.write(msg.getBytes());
 
 			byte[] bytes = new byte[256];
@@ -264,7 +265,7 @@ public class LobbySceneController
 			if (msg.equals(PregameServerSceneController.CONNECTION_ACCEPTED_MSG))
 			{
 				stopSearching();
-				PregameClientSceneController.setArg_serverIP(IP);
+				PregameClientSceneController.setArg_socket(socket);
 				PregameClientSceneController.setArg_username(nameTextfield.getText());
 				SceneManager sceneManager = ((ManagedScene) serversTable.getScene()).getManager();
 				Parent pregameClientSceneFXML = FXMLLoader.load(Main.class.getResource("PregameClientScene/pregameClientScene.fxml"));
@@ -274,13 +275,18 @@ public class LobbySceneController
 			}
 			else if (msg.equals(PregameServerSceneController.CONNECTION_DECLINED_MSG))
 			{
-				;
+				socket.close();
 			}
+		}
+		catch (ConnectException e)
+		{
+			System.out.println("Connect Exception");
+			//e.printStackTrace();
 		}
 		catch (IOException e)
 		{
 			System.out.println("IOException");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }
