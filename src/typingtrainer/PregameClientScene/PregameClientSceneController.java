@@ -1,5 +1,6 @@
 package typingtrainer.PregameClientScene;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -24,6 +25,14 @@ public class PregameClientSceneController
 	public TextField messageTF;
 	@FXML
 	public TextArea chatTA;
+	@FXML
+	public Label backLabel;
+	@FXML
+	public Label langLabel;
+	@FXML
+	public Label difficultyLabel;
+	@FXML
+	public Label registerLabel;
 
 	private static String arg_username;
 	private static Socket arg_socket;
@@ -44,22 +53,51 @@ public class PregameClientSceneController
 
 	private void handleIncomingMessage(String msg)
 	{
-		msg = msg.substring(0, msg.length() - 1);
 		System.out.println(msg);
 		String codegram = msg.substring(0, msg.indexOf(':'));
 		String content = msg.substring(msg.indexOf(':') + 1);
 		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+		{
 			chatTA.appendText(content + '\n');
+		}
 		else if (codegram.equals(PregameServerSceneController.DISCONNECT_CODEGRAM))
+		{
 			isConnected = false;
+			try
+			{
+				socket.close();
+			}
+			catch (IOException e)
+			{
+				System.out.println("IO Exception - PregameClientSceneController::handleIncomingMessage");
+				//e.printStackTrace();
+			}
+			Platform.runLater(() -> onBackClicked(null));
+			System.out.println("Соединение разорвано");
+		}
+		else if (codegram.equals(PregameServerSceneController.SETTINGS_LANG))
+		{
+			Platform.runLater(() -> langLabel.setText(content));
+		}
+		else if (codegram.equals(PregameServerSceneController.SETTINGS_DIFFICULTY))
+		{
+			Platform.runLater(() -> difficultyLabel.setText(content));
+		}
+		else if (codegram.equals(PregameServerSceneController.SETTINGS_REGISTER))
+		{
+			Platform.runLater(() -> registerLabel.setText(content));
+		}
 	}
 
 	private void establishConnectionWithServer(Socket socket)
 	{
-		try (Socket autoClosableSocket = socket)
+		try
 		{
+			System.out.println("Соединение установлено");
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			ostream = new DataOutputStream(socket.getOutputStream());
+			ostream.writeUTF(PregameServerSceneController.SET_NAME_CODEGRAM + ":" + username);
+			ostream.writeUTF(PregameServerSceneController.GET_SETTINGS_CODEGRAM + ":");
 			while (isConnected)
 			{
 				String receivedData = in.readUTF();
@@ -90,7 +128,7 @@ public class PregameClientSceneController
 
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			((ManagedScene) (pane.getScene())).getManager().popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -111,20 +149,24 @@ public class PregameClientSceneController
 
 	private void sendChatMessage()
 	{
-		String msg = username + ": " + messageTF.getText() + "\n";
-		messageTF.clear();
-		chatTA.appendText(msg);
-
-		if (isConnected)
+		String msg = messageTF.getText();
+		if (!msg.trim().isEmpty())
 		{
-			try
+			msg = username + ": " + msg;
+			messageTF.clear();
+			chatTA.appendText(msg + "\n");
+
+			if (isConnected)
 			{
-				ostream.writeUTF(PregameServerSceneController.CHAT_MSG_CODEGRAM + ":" + msg);
-				ostream.flush();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
+				try
+				{
+					ostream.writeUTF(PregameServerSceneController.CHAT_MSG_CODEGRAM + ":" + msg);
+					ostream.flush();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
