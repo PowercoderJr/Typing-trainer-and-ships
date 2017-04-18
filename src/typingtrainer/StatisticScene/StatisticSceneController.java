@@ -4,6 +4,8 @@ package typingtrainer.StatisticScene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -47,6 +49,7 @@ public class StatisticSceneController
 	private ArrayList<Integer> speed_list = new ArrayList<Integer>();
 	private ArrayList<Integer> mistakes_list = new ArrayList<Integer>();
 	private ArrayList<Double> time_list = new ArrayList<Double>();
+	private ArrayList<String> date_list = new ArrayList<String>();
 
 	public void initialize()
 	{
@@ -58,7 +61,7 @@ public class StatisticSceneController
 			BufferedReader reader = new BufferedReader(st_read);
 			int lastMistakes = 0, lastSpeed = 0, count = 0;
 			double lastTime = 0.0, avgTime = 0.0, avgMistakes = 0.0, avgSpeed = 0.0;
-			String buf;
+			String buf, lastDate;
 			//List<int> speed_list = new List<int>();
 
 			while ((buf = reader.readLine()) != null)
@@ -71,6 +74,9 @@ public class StatisticSceneController
 				buf = reader.readLine();
 				lastSpeed = Integer.parseInt(buf);
 				speed_list.add(lastSpeed);
+				buf = reader.readLine();
+				lastDate = buf;
+				date_list.add(lastDate);
 
 				avgMistakes += lastMistakes;
 				avgTime += lastTime;
@@ -181,9 +187,9 @@ public class StatisticSceneController
 		ObservableList<XYChart.Data> data3 = FXCollections.observableArrayList();
 		for (int i = 0; i < this.speed_list.size(); i++)
 		{
-			data1.add(new XYChart.Data(i, this.speed_list.get(i)));
-			data2.add(new XYChart.Data(i, this.mistakes_list.get(i)));
-			data3.add(new XYChart.Data(i, this.time_list.get(i)));
+			data1.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.speed_list.get(i)));
+			data2.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.mistakes_list.get(i)));
+			data3.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.time_list.get(i)));
 		}
 		datas.add(data1);
 		datas.add(data2);
@@ -199,45 +205,76 @@ public class StatisticSceneController
 
 	public void onMistakesCliked(MouseEvent mouseEvent)
 	{
-		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
-		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
+		final CategoryAxis xAxis = new CategoryAxis();
+		final NumberAxis yAxis = new NumberAxis();
+		xAxis.setLabel("Сеансы");
+
+		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
+
+		lineChart.setTitle("Статистика ошибок");
+
+		XYChart.Series series = new XYChart.Series();
+		series.setName("Ошибки (шт)");
+
+
 		for (int i = 0; i < this.mistakes_list.size(); i++)
-			data.add(new XYChart.Data(i, this.mistakes_list.get(i)));
-		datas.add(data);
+			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", mistakes_list.get(i)));
 
-		ArrayList<String> seriesNames = new ArrayList<>();
-		seriesNames.add("Ошибки (шт)");
 
-		buildGraphScene("Статистика ошибок", seriesNames, datas);
+		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+		lineChart.getData().add(series);
+		sceneManager.pushScene(graphScene);
+
 	}
 
 
 	public void onTimeCliked(MouseEvent mouseEvent)
 	{
-		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
-		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
-		for (int i = 0; i < this.time_list.size(); i++)
-			data.add(new XYChart.Data(i, this.time_list.get(i)));
-		datas.add(data);
+		final CategoryAxis xAxis = new CategoryAxis();
+		final NumberAxis yAxis = new NumberAxis();
+		xAxis.setLabel("Сеансы");
 
-		ArrayList<String> seriesNames = new ArrayList<>();
-		seriesNames.add("Время (сек)");
+		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
 
-		buildGraphScene("Статистика времени", seriesNames, datas);
+		lineChart.setTitle("Статистика времени");
+
+		XYChart.Series series = new XYChart.Series();
+		series.setName("Время (сек)");
+
+
+		for (int i = 0; i < this.mistakes_list.size(); i++)
+			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", time_list.get(i)));
+
+
+		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+		lineChart.getData().add(series);
+		sceneManager.pushScene(graphScene);
 	}
 
 	public void onSpeedCliked(MouseEvent mouseEvent)
 	{
-		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
-		ObservableList<XYChart.Data> data = FXCollections.observableArrayList();
-		for (int i = 0; i < this.speed_list.size(); i++)
-			data.add(new XYChart.Data(i, this.speed_list.get(i)));
-		datas.add(data);
+		final CategoryAxis xAxis = new CategoryAxis();
+		final NumberAxis yAxis = new NumberAxis();
+		xAxis.setLabel("Сеансы");
 
-		ArrayList<String> seriesNames = new ArrayList<>();
-		seriesNames.add("Скорость (зн/мин)");
+		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
 
-		buildGraphScene("Статистика скорости", seriesNames, datas);
+		lineChart.setTitle("Статистика скорости");
+
+		XYChart.Series series = new XYChart.Series();
+		series.setName("Скорость (зн/мин)");
+
+
+		for (int i = 0; i < this.mistakes_list.size(); i++)
+			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", speed_list.get(i)));
+
+
+		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+		lineChart.getData().add(series);
+		sceneManager.pushScene(graphScene);
 	}
 
 	private void buildGraphScene(String chartTitle, ArrayList<String> seriesNames, ArrayList<ObservableList<XYChart.Data>> datas)
