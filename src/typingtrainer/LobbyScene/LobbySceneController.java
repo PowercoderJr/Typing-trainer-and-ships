@@ -246,20 +246,18 @@ public class LobbySceneController
 	private void connect(String IP, String password)
 	{
 		stopSearching();
-		InputStream in;
-		OutputStream out;
+		DataInputStream in;
+		DataOutputStream out;
 		try
 		{
 			Socket socket = new Socket(IP, 7914);
-			in = socket.getInputStream();
-			out = socket.getOutputStream();
+			in = new DataInputStream(socket.getInputStream());
+			out = new DataOutputStream(socket.getOutputStream());
 
 			String msg = InetAddress.getLocalHost().getHostAddress() + "|" + password;
-			out.write(msg.getBytes());
+			out.writeUTF(msg);
 
-			byte[] bytes = new byte[256];
-			int length = in.read(bytes);
-			msg = new String(bytes).trim();
+			msg = in.readUTF();
 			System.out.println("\"" + msg + "\"");
 
 			if (msg.equals(PregameServerSceneController.CONNECTION_ACCEPTED_MSG))

@@ -9,9 +9,7 @@ import javafx.scene.layout.GridPane;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 
@@ -23,12 +21,6 @@ public class PregameClientSceneController
 	@FXML
 	public GridPane pane;
 	@FXML
-	public ChoiceBox langCB;
-	@FXML
-	public ChoiceBox difficultyCB;
-	@FXML
-	public CheckBox registerChb;
-	@FXML
 	public TextField messageTF;
 	@FXML
 	public TextArea chatTA;
@@ -39,7 +31,7 @@ public class PregameClientSceneController
 	private Socket socket;
 	private String username;
 	private boolean isConnected;
-	private OutputStream ostream;
+	private DataOutputStream ostream;
 
 	public void initialize()
 	{
@@ -52,11 +44,12 @@ public class PregameClientSceneController
 
 	private void handleIncomingMessage(String msg)
 	{
+		msg = msg.substring(0, msg.length() - 1);
 		System.out.println(msg);
 		String codegram = msg.substring(0, msg.indexOf(':'));
-		String content = msg.substring(msg.indexOf(':') + 1) + "\n";
+		String content = msg.substring(msg.indexOf(':') + 1);
 		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
-			chatTA.appendText(content);
+			chatTA.appendText(content + '\n');
 		else if (codegram.equals(PregameServerSceneController.DISCONNECT_CODEGRAM))
 			isConnected = false;
 	}
@@ -65,13 +58,12 @@ public class PregameClientSceneController
 	{
 		try (Socket autoClosableSocket = socket)
 		{
-			InputStream in = socket.getInputStream();
-			ostream = socket.getOutputStream();
-			byte[] bytes = new byte[256];
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			ostream = new DataOutputStream(socket.getOutputStream());
 			while (isConnected)
 			{
-				in.read(bytes);
-				handleIncomingMessage(new String(bytes).trim());
+				String receivedData = in.readUTF();
+				handleIncomingMessage(receivedData);
 			}
 		}
 		catch (IOException e)
@@ -87,8 +79,8 @@ public class PregameClientSceneController
 		{
 			try
 			{
+				ostream.writeUTF(PregameServerSceneController.DISCONNECT_CODEGRAM + ":");
 				ostream.flush();
-				ostream.write((PregameServerSceneController.DISCONNECT_CODEGRAM + ":").getBytes());
 			}
 			catch (IOException e)
 			{
@@ -127,8 +119,8 @@ public class PregameClientSceneController
 		{
 			try
 			{
+				ostream.writeUTF(PregameServerSceneController.CHAT_MSG_CODEGRAM + ":" + msg);
 				ostream.flush();
-				ostream.write((PregameServerSceneController.CHAT_MSG_CODEGRAM + ":" + msg).getBytes());
 			}
 			catch (IOException e)
 			{
