@@ -1,5 +1,8 @@
 package typingtrainer.PregameServerScene;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,13 +40,23 @@ public class PregameServerSceneController
 	public TextField messageTF;
 	@FXML
 	public TextArea chatTA;
+	@FXML
+	public Label startLabel;
+	@FXML
+	public Label opponentNameLabel;
 
 	private static String arg_serverName;
 	private static String arg_serverPassword;
 	public static final String CONNECTION_ACCEPTED_MSG = "ConnectionAccepted";
 	public static final String CONNECTION_DECLINED_MSG = "ConnectionDeclined";
+	public static final String NO_OPPONENT_YET_STR = "Здесь пусто";
 	public static final String CHAT_MSG_CODEGRAM = "CHAT_MSG";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
+	public static final String SET_NAME_CODEGRAM = "SET_NAME";
+	public static final String GET_SETTINGS_CODEGRAM = "GET_STG";
+	public static final String SETTINGS_LANG = "STG_LANG";
+	public static final String SETTINGS_DIFFICULTY = "STG_DIFF";
+	public static final String SETTINGS_REGISTER = "STG_REG";
 
 	private boolean isWaiting;
 	private MulticastSocket mcSocket;
@@ -53,6 +66,7 @@ public class PregameServerSceneController
 	private String username;
 	private String password;
 	private String opponentIP;
+	private String opponentName;
 	private DataOutputStream ostream;
 
 	public void initialize()
@@ -102,6 +116,27 @@ public class PregameServerSceneController
 		difficultyCB.getSelectionModel().select(difficulty);
 		registerChb.setSelected(register);
 
+		/*
+			http://stackoverflow.com/questions/14522680/javafx-choicebox-events
+			http://stackoverflow.com/questions/11918095/which-choicebox-event-to-choose
+		*/
+		langCB.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) ->
+		{
+			if (!opponentIP.isEmpty())
+				sendLangTextAt((int)number2);
+		});
+		difficultyCB.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) ->
+		{
+			if (!opponentIP.isEmpty())
+				sendDifficultyTextAt((int)number2);
+		});
+		//http://stackoverflow.com/questions/13726824/javafx-event-triggered-when-selecting-a-check-box
+		registerChb.selectedProperty().addListener((observable, oldValue, newValue) ->
+		{
+			if (!opponentIP.isEmpty())
+				sendRegisterOption();
+		});
+
 		//Отвечающий на поиск серверов
 		new Thread(this::answerTheSearchRequests).start();
 
@@ -111,14 +146,42 @@ public class PregameServerSceneController
 
 	private void handleIncomingMessage(String msg)
 	{
-		msg = msg.substring(0, msg.length() - 1);
-		System.out.println(msg);
+		//System.out.println(msg);
 		String codegram = msg.substring(0, msg.indexOf(':'));
 		String content = msg.substring(msg.indexOf(':') + 1);
+		System.out.println("CODEGRAM - " + codegram + "\nCONTENT - " + content);
 		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+		{
 			chatTA.appendText(content + '\n');
+		}
 		else if (codegram.equals(DISCONNECT_CODEGRAM))
+		{
 			opponentIP = "";
+			opponentName = "";
+			try
+			{
+				socket.close();
+			}
+			catch (IOException e)
+			{
+				System.out.println("IO Exception - PregameServerSceneController::handleIncomingMessage");
+				//e.printStackTrace();
+			}
+			System.out.println("Соединение разорвано");
+			startLabel.setDisable(true);
+			Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
+		}
+		else if (codegram.equals(SET_NAME_CODEGRAM))
+		{
+			opponentName = content;
+			Platform.runLater(() -> opponentNameLabel.setText(opponentName));
+		}
+		else if (codegram.equals(GET_SETTINGS_CODEGRAM))
+		{
+			sendLangTextAt(langCB.getSelectionModel().getSelectedIndex());
+			sendDifficultyTextAt(difficultyCB.getSelectionModel().getSelectedIndex());
+			sendRegisterOption();
+		}
 	}
 
 	private void answerTheSearchRequests()
@@ -191,7 +254,6 @@ public class PregameServerSceneController
 					DataOutputStream out = new DataOutputStream(localSocket.getOutputStream());
 
 					String receivedData = in.readUTF();
-					//localSocket.close();
 					//System.out.println("Получили!");
 					System.out.println("TCP Received: \"" + receivedData + "\"");
 
@@ -230,8 +292,10 @@ public class PregameServerSceneController
 
 	private void establishConnectionWithOpponent(Socket socket)
 	{
-		try (Socket autoClosableSocket = socket)
+		try
 		{
+			System.out.println("Соединение установлено");
+			startLabel.setDisable(false);
 			DataInputStream istream = new DataInputStream(socket.getInputStream());
 			ostream = new DataOutputStream(socket.getOutputStream());
 			while (!opponentIP.isEmpty())
@@ -272,7 +336,7 @@ public class PregameServerSceneController
 
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			((ManagedScene) (pane.getScene())).getManager().popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -324,21 +388,61 @@ public class PregameServerSceneController
 
 	private void sendChatMessage()
 	{
-		String msg = username + ": " + messageTF.getText() + "\n";
-		messageTF.clear();
-		chatTA.appendText(msg);
-
-		if (!opponentIP.isEmpty())
+		String msg = messageTF.getText();
+		if (!msg.trim().isEmpty())
 		{
-			try
+			msg = username + ": " + msg;
+			messageTF.clear();
+			chatTA.appendText(msg + "\n");
+
+			if (!opponentIP.isEmpty())
 			{
-				ostream.writeUTF(CHAT_MSG_CODEGRAM + ":" + msg);
-				ostream.flush();
+				try
+				{
+					ostream.writeUTF(CHAT_MSG_CODEGRAM + ":" + msg);
+					ostream.flush();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+		}
+	}
+
+	private void sendLangTextAt(int index)
+	{
+		try
+		{
+			ostream.writeUTF(SETTINGS_LANG + ":" + langCB.getItems().get(index).toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void sendDifficultyTextAt(int index)
+	{
+		try
+		{
+			ostream.writeUTF(SETTINGS_DIFFICULTY + ":" + difficultyCB.getItems().get(index).toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void sendRegisterOption()
+	{
+		try
+		{
+			ostream.writeUTF(SETTINGS_REGISTER + ":" + (registerChb.isSelected() ? "ДА" : "НЕТ"));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

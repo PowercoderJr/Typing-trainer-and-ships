@@ -9,7 +9,7 @@
     <GridPane prefHeight="40.0" prefWidth="1200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
         <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label id="joinLabel" fx:id="startLabel" disable="true" onMouseClicked="#onStartClicked" styleClass="label-button" text="СТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="startLabel" disable="true" onMouseClicked="#onStartClicked" styleClass="label-button" text="СТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -57,7 +57,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <Label text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label fx:id="opponentNameLabel" text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextArea fx:id="chatTA" editable="false" opacity="0.8" prefWidth="200.0" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
           </children>
           <columnConstraints>
