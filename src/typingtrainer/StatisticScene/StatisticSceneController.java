@@ -221,10 +221,7 @@ public class StatisticSceneController
 			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", mistakes_list.get(i)));
 
 
-		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
-		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
-		lineChart.getData().add(series);
-		sceneManager.pushScene(graphScene);
+		sceneSetter(lineChart, series);
 
 	}
 
@@ -246,11 +243,7 @@ public class StatisticSceneController
 		for (int i = 0; i < this.mistakes_list.size(); i++)
 			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", time_list.get(i)));
 
-
-		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
-		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
-		lineChart.getData().add(series);
-		sceneManager.pushScene(graphScene);
+		sceneSetter(lineChart, series);
 	}
 
 	public void onSpeedCliked(MouseEvent mouseEvent)
@@ -270,8 +263,27 @@ public class StatisticSceneController
 		for (int i = 0; i < this.mistakes_list.size(); i++)
 			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", speed_list.get(i)));
 
+		sceneSetter(lineChart, series);
+	}
+
+
+	private void sceneSetter(LineChart<String,Number> lineChart, XYChart.Series series)
+	{
+
 
 		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+		lineChart.setOnMouseClicked(event ->
+		{
+			try
+			{
+				sceneManager.popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		});
+
 		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
 		lineChart.getData().add(series);
 		sceneManager.pushScene(graphScene);
