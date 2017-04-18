@@ -53,7 +53,7 @@ public class PregameServerSceneController
 	private String username;
 	private String password;
 	private String opponentIP;
-	private OutputStream ostream;
+	private DataOutputStream ostream;
 
 	public void initialize()
 	{
@@ -111,11 +111,12 @@ public class PregameServerSceneController
 
 	private void handleIncomingMessage(String msg)
 	{
+		msg = msg.substring(0, msg.length() - 1);
 		System.out.println(msg);
 		String codegram = msg.substring(0, msg.indexOf(':'));
-		String content = msg.substring(msg.indexOf(':') + 1) + "\n";
+		String content = msg.substring(msg.indexOf(':') + 1);
 		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
-			chatTA.appendText(content);
+			chatTA.appendText(content + '\n');
 		else if (codegram.equals(DISCONNECT_CODEGRAM))
 			opponentIP = "";
 	}
@@ -186,12 +187,10 @@ public class PregameServerSceneController
 					Socket localSocket = localServerSocket.accept();
 					socket = localSocket;
 
-					InputStream in = localSocket.getInputStream();
-					OutputStream out = localSocket.getOutputStream();
+					DataInputStream in = new DataInputStream(localSocket.getInputStream());
+					DataOutputStream out = new DataOutputStream(localSocket.getOutputStream());
 
-					byte[] bytes = new byte[256];
-					int length = in.read(bytes);
-					String receivedData = new String(bytes).trim();
+					String receivedData = in.readUTF();
 					//localSocket.close();
 					//System.out.println("Получили!");
 					System.out.println("TCP Received: \"" + receivedData + "\"");
@@ -207,11 +206,11 @@ public class PregameServerSceneController
 						{
 							this.opponentIP = opponentIP;
 							new Thread(() -> establishConnectionWithOpponent(localSocket)).start();
-							out.write(CONNECTION_ACCEPTED_MSG.getBytes());
+							out.writeUTF(CONNECTION_ACCEPTED_MSG);
 						}
 						else
 						{
-							out.write(CONNECTION_DECLINED_MSG.getBytes());
+							out.writeUTF(CONNECTION_DECLINED_MSG);
 							localSocket.close();
 						}
 					}
@@ -233,13 +232,12 @@ public class PregameServerSceneController
 	{
 		try (Socket autoClosableSocket = socket)
 		{
-			InputStream in = socket.getInputStream();
-			ostream = socket.getOutputStream();
-			byte[] bytes = new byte[256];
+			DataInputStream istream = new DataInputStream(socket.getInputStream());
+			ostream = new DataOutputStream(socket.getOutputStream());
 			while (!opponentIP.isEmpty())
 			{
-				in.read(bytes);
-				handleIncomingMessage(new String(bytes).trim());
+				String receivedData = istream.readUTF();
+				handleIncomingMessage(receivedData);
 			}
 		}
 		catch (IOException e)
@@ -254,8 +252,8 @@ public class PregameServerSceneController
 		{
 			try
 			{
+				ostream.writeUTF(DISCONNECT_CODEGRAM + ":");
 				ostream.flush();
-				ostream.write((DISCONNECT_CODEGRAM + ":").getBytes());
 			}
 			catch (IOException e)
 			{
@@ -334,8 +332,8 @@ public class PregameServerSceneController
 		{
 			try
 			{
+				ostream.writeUTF(CHAT_MSG_CODEGRAM + ":" + msg);
 				ostream.flush();
-				ostream.write((CHAT_MSG_CODEGRAM + ":" + msg).getBytes());
 			}
 			catch (IOException e)
 			{
