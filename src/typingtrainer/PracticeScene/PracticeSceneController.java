@@ -22,6 +22,7 @@ import typingtrainer.Word;
 import java.awt.im.InputContext;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -109,6 +110,7 @@ public class PracticeSceneController
 
 	public void initialize()
 	{
+
 		System.out.println("Сцена практики готова!");
 		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
@@ -267,6 +269,9 @@ public class PracticeSceneController
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
 					int speed = (int) (watcher.getInitStringLength() * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+					String date = dateFormat.format( new Date() );
+
 
 					alert.setContentText("Ошибки: " + mistakes + "\r\nВремя: " + String.format("%.2f", time) +
 							" секунд\r\nСкорость: " + speed + " зн/мин");
@@ -275,7 +280,7 @@ public class PracticeSceneController
 					try
 					{
 						FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt", true);
-						st_write.write(mistakes + "\r\n" + time + "\r\n" + speed + "\r\n");
+						st_write.write(mistakes + "\r\n" + time + "\r\n" + speed + "\r\n" + date + "\r\n");
 						st_write.flush();
 						st_write.close();
 					}
