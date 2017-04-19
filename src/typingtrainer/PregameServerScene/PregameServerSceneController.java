@@ -164,7 +164,7 @@ public class PregameServerSceneController
 			}
 			catch (IOException e)
 			{
-				System.out.println("IO Exception - PregameServerSceneController::handleIncomingMessage");
+				System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::handleIncomingMessage");
 				//e.printStackTrace();
 			}
 			System.out.println("Соединение разорвано");
@@ -203,7 +203,7 @@ public class PregameServerSceneController
 				}
 				catch (SocketException e)
 				{
-					System.out.println("Socket Exception");
+					System.out.println(e.getMessage() + ": Socket Exception - PregameServerSceneController::answerTheSearchRequests");
 					//e.printStackTrace();
 					isWaiting = false;
 				}
@@ -222,12 +222,12 @@ public class PregameServerSceneController
 		}
 		catch (SocketException e)
 		{
-			System.out.println("Socket Exception");
+			System.out.println(e.getMessage() + ": Socket Exception - PregameServerSceneController::answerTheSearchRequests");
 			//e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			System.out.println("IO Exception:");
+			System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::answerTheSearchRequests");
 			e.printStackTrace();
 		}
 		finally
@@ -263,7 +263,6 @@ public class PregameServerSceneController
 						String opponentPassword = receivedData.substring(receivedData.indexOf('|') + 1);
 						System.out.println(opponentIP + " - " + opponentPassword);
 
-						out.flush();
 						if (this.opponentIP.isEmpty() && (password.isEmpty() || opponentPassword.equals(password)))
 						{
 							this.opponentIP = opponentIP;
@@ -275,18 +274,21 @@ public class PregameServerSceneController
 							out.writeUTF(CONNECTION_DECLINED_MSG);
 							localSocket.close();
 						}
+						out.flush();
 					}
 				}
 				catch (SocketTimeoutException e)
 				{
-					System.out.println("SocketTimeout Exception");
+					System.out.println(e.getMessage() + ": SocketTimeout Exception - PregameServerSceneController::answerTheConnectionRequests");
 					//e.printStackTrace();
 				}
 			}
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::answerTheConnectionRequests");
+			//e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -306,7 +308,8 @@ public class PregameServerSceneController
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::establishConnectionWithOpponent");
+			//e.printStackTrace();
 		}
 	}
 
@@ -323,6 +326,7 @@ public class PregameServerSceneController
 			{
 				e.printStackTrace();
 			}
+			opponentIP = "";
 		}
 
 		try
