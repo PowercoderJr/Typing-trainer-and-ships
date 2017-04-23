@@ -1,9 +1,14 @@
 package typingtrainer.MainScene;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.GridPane;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.SceneManager;
@@ -14,6 +19,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class MainSceneController
 {
+	@FXML
+	public ImageView logoImg;
+
 	public void initialize() throws IOException
 	{
 		System.out.println("Главная сцена готова!");

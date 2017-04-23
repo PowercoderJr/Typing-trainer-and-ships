@@ -12,7 +12,7 @@ public abstract class Word
 	public static final int LANG_COUNT = 2;
 	public static final int MAX_LEVEL = 33;
 	public enum Languages {RU, EN};
-	private String word;
+	protected String word;
 
 	public static String generateRndWord(int length, int difficulty, Languages language, boolean isShiftIncluding)
 	/** Генерирует слово из рандомных букв.

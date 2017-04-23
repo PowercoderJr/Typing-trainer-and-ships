@@ -5,10 +5,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameClientScene.PregameClientSceneController;
@@ -32,6 +38,8 @@ public class LobbySceneController
 	private long startSearchingTime;
 	private boolean isSearching;
 
+	@FXML
+	public GridPane pane;
 	@FXML
 	public TableView serversTable;
 	@FXML
@@ -182,47 +190,16 @@ public class LobbySceneController
 		sceneManager.pushScene(pregameServerScene);
 	}
 
-	public void onJoinClicked(MouseEvent mouseEvent)
+	public void onJoinClicked(MouseEvent mouseEvent) throws IOException
 	{
-		//СЕРВЕР
-		new Thread(() ->
-		{
-			System.out.println("Ожидание подключения");
-			try
-			{
-				DatagramSocket s = new DatagramSocket(7913);
-				while (true)
-				{
-					DatagramPacket p = new DatagramPacket(new byte[256], 256);
-					s.receive(p);
-					byte[] buf = p.getData();
-					System.out.println(new String(buf, 0, buf.length));
-				}
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			System.out.println("Конец ожидания");
-		}).start();
-
-		//КЛИЕНТ
-		/*
-        new Thread(() -> {
-            System.out.println("Попытка подключения");
-            try {
-                InetAddress address = InetAddress.getLocalHost();
-                DatagramSocket s = new DatagramSocket(7913, address);
-                byte[] buf = ("WAZZUP").getBytes();
-                DatagramPacket p = new DatagramPacket(buf, 0, buf.length, InetAddress.getByName("192.168.0.***"), 7913);
-                s.send(p);
-                s.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Конец подключения");
-        }).start();
-        */
+		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		//Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("GameScene/GameScene.fxml"));
+		Group root = new Group();
+		ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+		GameSceneController controller = new GameSceneController(gameScene);
+		//ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
+		sceneManager.pushScene(gameScene);
 	}
 
 	public void onRefreshClicked(MouseEvent mouseEvent)
