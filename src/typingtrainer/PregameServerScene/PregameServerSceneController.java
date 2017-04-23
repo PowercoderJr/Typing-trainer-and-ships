@@ -6,14 +6,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import typingtrainer.ManagedScene;
-import typingtrainer.ServerInfo;
-import typingtrainer.Word;
+import typingtrainer.*;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -335,7 +335,7 @@ public class PregameServerSceneController
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 		try
@@ -348,7 +348,7 @@ public class PregameServerSceneController
 		}
 	}
 
-	public void onStartClicked(MouseEvent mouseEvent)
+	public void onStartClicked(MouseEvent mouseEvent) throws IOException
 	{
 		try
 		{
@@ -356,8 +356,14 @@ public class PregameServerSceneController
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
+
+		//SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		//Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("GameScene/GameScene.fxml"));
+		//ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+		//practiceScene.getStylesheets().add("typingtrainer/GameScene/style.css");
+		//sceneManager.pushScene(practiceScene);
 	}
 
 	public static void setArg_serverName(String arg_serverName)

@@ -1,0 +1,7 @@
+@import "../main.css"
+
+.root
+{
+    -fx-background-image: url("sea_background.png");
+    -fx-font-size: 70px;
+}
