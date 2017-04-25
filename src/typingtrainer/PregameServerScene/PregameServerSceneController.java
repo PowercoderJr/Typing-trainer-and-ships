@@ -1,19 +1,18 @@
 package typingtrainer.PregameServerScene;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import typingtrainer.*;
+import typingtrainer.GameScene.GameSceneController;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -51,12 +50,14 @@ public class PregameServerSceneController
 	public static final String CONNECTION_DECLINED_MSG = "ConnectionDeclined";
 	public static final String NO_OPPONENT_YET_STR = "Здесь пусто";
 	public static final String CHAT_MSG_CODEGRAM = "CHAT_MSG";
+	public static final String START_CODEGRAM = "START";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
 	public static final String SET_NAME_CODEGRAM = "SET_NAME";
 	public static final String GET_SETTINGS_CODEGRAM = "GET_STG";
-	public static final String SETTINGS_LANG = "STG_LANG";
-	public static final String SETTINGS_DIFFICULTY = "STG_DIFF";
-	public static final String SETTINGS_REGISTER = "STG_REG";
+	public static final String SETTINGS_SERV_NAME_CODEGRAM = "STG_SENA";
+	public static final String SETTINGS_LANG_CODEGRAM = "STG_LANG";
+	public static final String SETTINGS_DIFFICULTY_CODEGRAM = "STG_DIFF";
+	public static final String SETTINGS_REGISTER_CODEGRAM = "STG_REG";
 
 	private boolean isWaiting;
 	private MulticastSocket mcSocket;
@@ -146,41 +147,45 @@ public class PregameServerSceneController
 
 	private void handleIncomingMessage(String msg)
 	{
-		//System.out.println(msg);
-		String codegram = msg.substring(0, msg.indexOf(':'));
-		String content = msg.substring(msg.indexOf(':') + 1);
-		System.out.println("CODEGRAM - " + codegram + "\nCONTENT - " + content);
-		if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+		System.out.println(msg);
+		if (msg.indexOf(':') >= 0)
 		{
-			chatTA.appendText(content + '\n');
-		}
-		else if (codegram.equals(DISCONNECT_CODEGRAM))
-		{
-			opponentIP = "";
-			opponentName = "";
-			try
+			String codegram = msg.substring(0, msg.indexOf(':'));
+			String content = msg.substring(msg.indexOf(':') + 1);
+			//System.out.println("CODEGRAM - " + codegram + "\nCONTENT - " + content);
+			if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
 			{
-				socket.close();
+				chatTA.appendText(content + '\n');
 			}
-			catch (IOException e)
+			else if (codegram.equals(DISCONNECT_CODEGRAM))
 			{
-				System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::handleIncomingMessage");
-				//e.printStackTrace();
+				opponentIP = "";
+				opponentName = "";
+				try
+				{
+					socket.close();
+				}
+				catch (IOException e)
+				{
+					System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::handleIncomingMessage");
+					//e.printStackTrace();
+				}
+				System.out.println("Соединение разорвано");
+				startLabel.setDisable(true);
+				Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
 			}
-			System.out.println("Соединение разорвано");
-			startLabel.setDisable(true);
-			Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
-		}
-		else if (codegram.equals(SET_NAME_CODEGRAM))
-		{
-			opponentName = content;
-			Platform.runLater(() -> opponentNameLabel.setText(opponentName));
-		}
-		else if (codegram.equals(GET_SETTINGS_CODEGRAM))
-		{
-			sendLangTextAt(langCB.getSelectionModel().getSelectedIndex());
-			sendDifficultyTextAt(difficultyCB.getSelectionModel().getSelectedIndex());
-			sendRegisterOption();
+			else if (codegram.equals(SET_NAME_CODEGRAM))
+			{
+				opponentName = content;
+				Platform.runLater(() -> opponentNameLabel.setText(opponentName));
+			}
+			else if (codegram.equals(GET_SETTINGS_CODEGRAM))
+			{
+				sendServerName();
+				sendLangTextAt(langCB.getSelectionModel().getSelectedIndex());
+				sendDifficultyTextAt(difficultyCB.getSelectionModel().getSelectedIndex());
+				sendRegisterOption();
+			}
 		}
 	}
 
@@ -331,7 +336,7 @@ public class PregameServerSceneController
 
 		try
 		{
-			stopAnswerers();
+			disconnect();
 		}
 		catch (IOException e)
 		{
@@ -352,7 +357,19 @@ public class PregameServerSceneController
 	{
 		try
 		{
-			stopAnswerers();
+			//disconnect();
+			opponentIP = "";
+			mcSocket.close();
+			serverSocket.close();
+			ostream.writeUTF(START_CODEGRAM + ":");
+			ostream.writeUTF("OK:");
+
+			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+			Group root = new Group();
+			ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+			GameSceneController controller = new GameSceneController(gameScene, socket);
+			gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
+			sceneManager.pushScene(gameScene);
 		}
 		catch (IOException e)
 		{
@@ -376,13 +393,13 @@ public class PregameServerSceneController
 		PregameServerSceneController.arg_serverPassword = arg_serverPassword;
 	}
 
-	private void stopAnswerers() throws IOException
+	private void disconnect() throws IOException
 	{
+		isWaiting = false; //Было внизу
 		mcSocket.close();
 		if (socket != null)
 			socket.close();
 		serverSocket.close();
-		isWaiting = false;
 	}
 
 	public void onSendClicked(MouseEvent mouseEvent)
@@ -420,11 +437,23 @@ public class PregameServerSceneController
 		}
 	}
 
+	private void sendServerName()
+	{
+		try
+		{
+			ostream.writeUTF(SETTINGS_SERV_NAME_CODEGRAM + ":" + username);
+		}
+			catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	private void sendLangTextAt(int index)
 	{
 		try
 		{
-			ostream.writeUTF(SETTINGS_LANG + ":" + langCB.getItems().get(index).toString());
+			ostream.writeUTF(SETTINGS_LANG_CODEGRAM + ":" + langCB.getItems().get(index).toString());
 		}
 		catch (IOException e)
 		{
@@ -436,7 +465,7 @@ public class PregameServerSceneController
 	{
 		try
 		{
-			ostream.writeUTF(SETTINGS_DIFFICULTY + ":" + difficultyCB.getItems().get(index).toString());
+			ostream.writeUTF(SETTINGS_DIFFICULTY_CODEGRAM + ":" + difficultyCB.getItems().get(index).toString());
 		}
 		catch (IOException e)
 		{
@@ -448,7 +477,7 @@ public class PregameServerSceneController
 	{
 		try
 		{
-			ostream.writeUTF(SETTINGS_REGISTER + ":" + (registerChb.isSelected() ? "ДА" : "НЕТ"));
+			ostream.writeUTF(SETTINGS_REGISTER_CODEGRAM + ":" + (registerChb.isSelected() ? "ДА" : "НЕТ"));
 		}
 		catch (IOException e)
 		{
