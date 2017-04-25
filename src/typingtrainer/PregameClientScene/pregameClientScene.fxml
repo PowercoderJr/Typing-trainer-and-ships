@@ -18,7 +18,7 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <Label text="ИМЯ СЕРВЕРА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+    <Label fx:id="serverNameLabel" text="ИМЯ СЕРВЕРА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
     <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
         <GridPane prefWidth="1199.0" GridPane.columnIndex="2" GridPane.rowIndex="0">

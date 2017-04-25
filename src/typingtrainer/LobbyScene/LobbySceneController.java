@@ -69,7 +69,7 @@ public class LobbySceneController
 		serversTable.setItems(servers);
 		serversTable.getColumns().addAll(nameColumn, ipColumn, passwordFlagColumn);
 
-		serversTable.setRowFactory(tv ->
+		serversTable.setRowFactory(arg ->
 		{
 			TableRow<ServerInfo> row = new TableRow<>();
 			row.setOnMouseClicked(event ->
@@ -192,14 +192,11 @@ public class LobbySceneController
 
 	public void onJoinClicked(MouseEvent mouseEvent) throws IOException
 	{
-		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		//Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("GameScene/GameScene.fxml"));
-		Group root = new Group();
-		ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
-		GameSceneController controller = new GameSceneController(gameScene);
-		//ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
-		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-		sceneManager.pushScene(gameScene);
+		if (!serversTable.getSelectionModel().isEmpty())
+		{
+			ServerInfo rowData = (ServerInfo)(serversTable.getSelectionModel().getSelectedItem());
+			connect(rowData.getIp(), passPassfield.getText());
+		}
 	}
 
 	public void onRefreshClicked(MouseEvent mouseEvent)

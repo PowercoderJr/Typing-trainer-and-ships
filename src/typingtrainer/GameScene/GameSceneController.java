@@ -15,8 +15,14 @@ import typingtrainer.Game.Game;
 import typingtrainer.Game.PvpObject;
 import typingtrainer.Game.Ship;
 import typingtrainer.ManagedScene;
+import typingtrainer.PregameServerScene.PregameServerSceneController;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.Socket;
 
 /**
  * Created by Meow on 22.04.2017.
@@ -28,11 +34,17 @@ public class GameSceneController
 	private static final int dt = 15;
 	private static final int BACKGROUND_SPEED = 2;
 
+	public static final String SHOT_CODEGRAM = "SHOT";
+	public static final String DISCONNECT_CODEGRAM = "BYE";
+
+	private Socket socket;
+	private DataOutputStream ostream;
 	private ManagedScene scene;
 	private Image bg1img, bg2img;
 	private double bg1Y, bg2Y;
 
 	private boolean isRendering;
+	private boolean isPlaying;
 
 	private EventHandler<KeyEvent> onKeyPressed = new EventHandler<KeyEvent>()
 	{
@@ -41,63 +53,37 @@ public class GameSceneController
 		{
 			if (event.getCode() == KeyCode.ESCAPE)
 			{
-				isRendering = false;
 				try
 				{
-					scene.getManager().popScene();
+					ostream.writeUTF(DISCONNECT_CODEGRAM + ":");
 				}
-				catch (InvocationTargetException e)
+				catch (IOException e)
 				{
-					System.out.println(e.getMessage());
+					e.printStackTrace();
 				}
+				disconnect();
 			}
 		}
 	};
 
-	/*@FXML
-	public Pane pane;
-	@FXML
-	public ImageView bg1ImageView;
-	@FXML
-	public ImageView bg2ImageView;*/
-
 	private Game game;
-
-	/*public void initialize() throws InterruptedException
+	public GameSceneController(ManagedScene scene, Socket socket)
 	{
-		System.out.println("Игровая сцена готова!");
-
-		game = new Game();
-		Ship ship = game.getShip(0);
-		pane.getChildren().add(ship.getImageView());
-		ship.getImageView().setX(0);
-		ship.getImageView().setY(0);
-
-		new Thread(() ->
+		System.out.println("Игровая сцена готова!" + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
+		this.socket = socket;
+		try
 		{
-			try
-			{
-				while (true)
-				{
-					updateModel();
-					updateGUI();
-					Thread.sleep(dt);
-				}
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}).start();
-	}*/
-
-	public GameSceneController(ManagedScene scene)
-	{
-		System.out.println("Игровая сцена готова!");
+			ostream = new DataOutputStream(socket.getOutputStream());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		this.scene = scene;
 		Group root = (Group) scene.getRoot();
 		Canvas canvas = new Canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 		//canvas.addEventHandler(KeyEvent.KEY_PRESSED, onKeyPressed);
+		//canvas.setOnKeyPressed(onKeyPressed);
 		canvas.setOnKeyPressed(onKeyPressed);
 		canvas.setFocusTraversable(true);
 		root.getChildren().add(canvas);
@@ -124,6 +110,45 @@ public class GameSceneController
 				e.printStackTrace();
 			}
 		}).start();
+
+		isPlaying = true;
+		new Thread(this::waitForMessages).start();
+	}
+
+	private void handleIncomingMessage(String msg)
+	{
+		System.out.println(msg);
+		if (msg.indexOf(':') >= 0)
+		{
+			final String codegram = msg.substring(0, msg.indexOf(':'));
+			final String content = msg.substring(msg.indexOf(':') + 1);
+			if (codegram.equals(PregameServerSceneController.DISCONNECT_CODEGRAM))
+			{
+				disconnect();
+				System.out.println("Соединение разорвано (из игры)");
+			}
+		}
+	}
+
+	private void waitForMessages()
+	{
+		try
+		{
+			DataInputStream istream = new DataInputStream(socket.getInputStream());
+			while (isPlaying)
+			{
+				String receivedData = istream.readUTF();
+				handleIncomingMessage(receivedData);
+			}
+		}
+		catch (EOFException e)
+		{
+			System.out.println("Bitch");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void updateModel()
@@ -184,29 +209,30 @@ public class GameSceneController
 		gc.drawImage(object.getImage(), objectX, object.getPosition().getY(), objectWidth * horizontalScale, object.getImage().getHeight() * verticalScale);
 	}
 
-	/*private void updateGUI()
+	private void disconnect()
 	{
-		//GraphicsContext?
-
-		//Scaling
-		double xScale = pane.getWidth() / DEFAULT_SCREEN_WIDTH;
-		double yScale = pane.getHeight() / DEFAULT_SCREEN_HEIGHT;
-		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
-		bg1ImageView.setFitWidth(bgSize);
-		bg1ImageView.setFitHeight(bgSize);
-		bg2ImageView.setFitWidth(bgSize);
-		bg2ImageView.setFitHeight(bgSize);
-
-		//Moving background
-		if (bg1ImageView.getY() >= pane.getHeight())
+		isRendering = false;
+		isPlaying = false;
+		try
 		{
-			ImageView buf = bg1ImageView;
-			bg1ImageView = bg2ImageView;
-			bg2ImageView = buf;
+			socket.close();
 		}
-		bg1ImageView.setY(bg1ImageView.getY() + BACKGROUND_SPEED);
-		bg2ImageView.setY(bg1ImageView.getY() - bg2ImageView.getFitHeight() + BACKGROUND_SPEED);
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 
-		//Drawing ships
-	}*/
+		Platform.runLater(() ->
+		{
+			try
+			{
+				scene.getManager().popScene();
+				scene.getManager().popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				System.out.println(e.getMessage());
+			}
+		});
+	}
 }
