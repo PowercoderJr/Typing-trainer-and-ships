@@ -3,7 +3,9 @@ package typingtrainer.PracticeScene;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -15,9 +17,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
-import typingtrainer.ManagedScene;
-import typingtrainer.PracticeWatcher;
-import typingtrainer.Word;
+import typingtrainer.*;
+import typingtrainer.CongScene.CongSceneController;
 
 import java.awt.im.InputContext;
 import java.io.*;
@@ -155,8 +156,7 @@ public class PracticeSceneController
 		}
 	}
 
-	public void onKeyPressed(KeyEvent keyEvent)
-	{
+	public void onKeyPressed(KeyEvent keyEvent) throws IOException {
 		if (!keyEvent.getCode().toString().equals("CONTROL") &&
 				!keyEvent.getCode().toString().equals("SHIFT") &&
 				!keyEvent.getCode().toString().equals("ALT") &&
@@ -262,9 +262,7 @@ public class PracticeSceneController
 					}
 
 					displayableStringLabel.setText("");
-					Alert alert = new Alert(Alert.AlertType.INFORMATION);
-					alert.setTitle("Поздравляем");
-					alert.setHeaderText(null);
+
 
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
@@ -273,9 +271,15 @@ public class PracticeSceneController
 					String date = dateFormat.format( new Date() );
 
 
-					alert.setContentText("Ошибки: " + mistakes + "\r\nВремя: " + String.format("%.2f", time) +
-							" секунд\r\nСкорость: " + speed + " зн/мин");
-					alert.showAndWait();
+					CongSceneController.SetResaults(speed,time,mistakes);
+
+
+					SceneManager sceneManager = ((ManagedScene)this.pane.getScene()).getManager();
+					Parent congSceneFXML = FXMLLoader.load(Main.class.getResource("CongScene/congScene.fxml"));
+					ManagedScene congScene = new ManagedScene(congSceneFXML, 1280, 720, sceneManager);
+					congScene.getStylesheets().add("typingtrainer/CongScene/style.css");
+					sceneManager.pushScene(congScene);
+
 
 					try
 					{
