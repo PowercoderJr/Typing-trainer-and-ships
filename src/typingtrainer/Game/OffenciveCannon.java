@@ -12,8 +12,15 @@ public class OffenciveCannon extends Cannon
 	private Label labelBefore;
 	private Label labelAfter;
 
-	public OffenciveCannon(Belonging belonging, Point2D position)
+	public OffenciveCannon(Ship parentShip, Belonging belonging, Point2D position)
 	{
-		super(belonging, position);
+		super(parentShip, belonging, position);
+	}
+
+	public void shoot(Point2D target)
+	{
+		Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + 145 - 8, position.getY() + 27 - 8));
+		cannonball.setTarget(new Point2D(1280, position.getY()));
+		getParentShip().getParentGame().getCannonballs().add(cannonball);
 	}
 }

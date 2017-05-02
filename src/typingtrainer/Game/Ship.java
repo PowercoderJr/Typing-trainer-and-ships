@@ -1,7 +1,6 @@
 package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
 /**
@@ -17,20 +16,23 @@ public class Ship extends PvpObject
 					new Point2D(0, 590)
 			};
 
+	private Game parentGame;
+
 	private int hp;
 	private DefenciveCannon defenciveCannon;
 	private OffenciveCannon[] offenciveCannons;
 
-	public Ship(Belonging belonging, Point2D position)
+	public Ship(Game parentGame, Belonging belonging, Point2D position)
 	{
 		super(belonging, position);
+		this.parentGame = parentGame;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 0, 0, 132, 720);
 		hp = 1000;
-		defenciveCannon = new DefenciveCannon(belonging, CANNON_BASE_POSITIONS[0]);
+		defenciveCannon = new DefenciveCannon(this, belonging, CANNON_BASE_POSITIONS[0]);
 		offenciveCannons = new OffenciveCannon[OFFENCIVE_CANNONS_COUNT];
 		for (int i = 0; i < OFFENCIVE_CANNONS_COUNT; ++i)
 		{
-			offenciveCannons[i] = new OffenciveCannon(belonging, CANNON_BASE_POSITIONS[i + 1]);
+			offenciveCannons[i] = new OffenciveCannon(this, belonging, CANNON_BASE_POSITIONS[i + 1]);
 		}
 	}
 
@@ -52,5 +54,10 @@ public class Ship extends PvpObject
 	public DefenciveCannon getDefenciveCannon()
 	{
 		return defenciveCannon;
+	}
+
+	public Game getParentGame()
+	{
+		return parentGame;
 	}
 }

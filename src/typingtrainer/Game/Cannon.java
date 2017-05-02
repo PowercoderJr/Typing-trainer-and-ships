@@ -13,9 +13,16 @@ import typingtrainer.Main;
  */
 public abstract class Cannon extends PvpObject
 {
-	public Cannon(Belonging belonging, Point2D position)
+	private Ship parentShip;
+	public Cannon(Ship parentShip, Belonging belonging, Point2D position)
 	{
 		super(belonging, position);
+		this.parentShip = parentShip;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 0, 150, 55);
+	}
+
+	public Ship getParentShip()
+	{
+		return parentShip;
 	}
 }

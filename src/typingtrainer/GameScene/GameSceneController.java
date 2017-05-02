@@ -2,9 +2,11 @@ package typingtrainer.GameScene;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,8 +65,37 @@ public class GameSceneController
 				}
 				disconnect();
 			}
+			else if (event.getCode() == KeyCode.SPACE)
+			{
+				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1200, Math.random() * 720)); //Рандом по Y не работает
+			}
+			else if (isPvpKey(event))
+			{
+				System.out.println(event.isShiftDown() ? "YES + SHIFT" : "yes");
+			}
 		}
 	};
+
+	private boolean isPvpKey(KeyEvent event)
+	{
+		//Проверять, не пустой ли текст
+		return (event.getCode().isLetterKey() ||
+				event.getText().charAt(0) == ',' ||
+				event.getText().charAt(0) == '[' ||
+				event.getText().charAt(0) == ';' ||
+				event.getText().charAt(0) == '.' ||
+				event.getText().charAt(0) == ']' ||
+				event.getText().charAt(0) == '\'' ||
+				event.getText().charAt(0) == '/' ||
+				event.getText().charAt(0) == '\\' ||
+				event.getText().charAt(0) == 'б' ||
+				event.getText().charAt(0) == 'х' ||
+				event.getText().charAt(0) == 'ж' ||
+				event.getText().charAt(0) == 'ю' ||
+				event.getText().charAt(0) == 'ъ' ||
+				event.getText().charAt(0) == 'э' ||
+				event.getText().charAt(0) == '.');
+	}
 
 	private Game game;
 	public GameSceneController(ManagedScene scene, Socket socket)
@@ -101,6 +132,7 @@ public class GameSceneController
 			{
 				while (isRendering)
 				{
+					game.tick(dt);
 					Platform.runLater(() -> render(gc));
 					Thread.sleep(dt);
 				}
@@ -151,11 +183,6 @@ public class GameSceneController
 		}
 	}
 
-	private void updateModel()
-	{
-		;
-	}
-
 	private void render(GraphicsContext gc)
 	{
 		double sceneWidth = scene.getWidth();
@@ -191,22 +218,37 @@ public class GameSceneController
 			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
 				renderPvpObject(gc, ship.getOffenciveCannon(j), sceneWidth, 1, yScale);
 		}
+
+		//Cannonballs
+		for (int i = 0; i < game.getCannonballs().size(); ++i)
+			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, yScale, yScale);
 	}
 
 	private void renderPvpObject(GraphicsContext gc, PvpObject object, double sceneWidth, double horizontalScale, double verticalScale)
 	{
-		double objectX, objectWidth;
+		double finalX, finalY, finalWidth, finalHeight;
 		if (object.getBelonging() == PvpObject.Belonging.FRIENDLY)
 		{
-			objectX = object.getPosition().getX();
-			objectWidth = object.getImage().getWidth();
+			finalX = object.getPosition().getX() * horizontalScale;
+			finalWidth = object.getImage().getWidth() * horizontalScale;
 		}
 		else
 		{
-			objectX = sceneWidth - object.getPosition().getX();
-			objectWidth = -object.getImage().getWidth();
+			if (object.isHorFlipable())
+			{
+				finalX = sceneWidth - object.getPosition().getX() * horizontalScale;
+				finalWidth = -object.getImage().getWidth() * horizontalScale;
+			}
+			else
+			{
+				finalX = sceneWidth - (object.getPosition().getX() + object.getImage().getWidth()) * horizontalScale;
+				finalWidth = object.getImage().getWidth() * horizontalScale;
+			}
 		}
-		gc.drawImage(object.getImage(), objectX, object.getPosition().getY(), objectWidth * horizontalScale, object.getImage().getHeight() * verticalScale);
+		finalY = object.getPosition().getY() * verticalScale;
+		finalHeight = object.getImage().getHeight() * verticalScale;
+
+		gc.drawImage(object.getImage(), finalX, finalY, finalWidth, finalHeight);
 	}
 
 	private void disconnect()
