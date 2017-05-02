@@ -11,6 +11,8 @@ public abstract class PvpObject
 	public enum Belonging {FRIENDLY, HOSTILE}
 	protected Belonging belonging;
 	protected Point2D position;
+	protected Point2D pivot;
+	protected double rotationAngle;
 	protected boolean isHorFlipable;
 	protected Image image;
 
@@ -18,6 +20,8 @@ public abstract class PvpObject
 	{
 		this.belonging = Belonging.FRIENDLY;
 		this.position = new Point2D(0, 0);
+		this.pivot = new Point2D(0, 0);
+		this.rotationAngle = 0;
 		this.isHorFlipable = true;
 	}
 
@@ -67,5 +71,25 @@ public abstract class PvpObject
 	public void setHorFlipable(boolean horFlipable)
 	{
 		isHorFlipable = horFlipable;
+	}
+
+	public Point2D getPivot()
+	{
+		return pivot;
+	}
+
+	public void setPivot(Point2D pivot)
+	{
+		this.pivot = pivot;
+	}
+
+	public double getRotationAngle()
+	{
+		return rotationAngle;
+	}
+
+	public void setRotationAngle(double rotationAngle)
+	{
+		this.rotationAngle = rotationAngle;
 	}
 }
