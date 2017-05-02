@@ -6,13 +6,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 import typingtrainer.Game.Game;
 import typingtrainer.Game.PvpObject;
 import typingtrainer.Game.Ship;
@@ -67,7 +64,11 @@ public class GameSceneController
 			}
 			else if (event.getCode() == KeyCode.SPACE)
 			{
-				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1200, Math.random() * 720)); //Рандом по Y не работает
+				game.getShip(0).getOffenciveCannon(1).shoot(new Point2D(1200, Math.random() * 720));
+			}
+			else if (event.getCode() == KeyCode.ENTER)
+			{
+				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1200, Math.random() * 720));
 			}
 			else if (isPvpKey(event))
 			{
@@ -100,7 +101,7 @@ public class GameSceneController
 	private Game game;
 	public GameSceneController(ManagedScene scene, Socket socket)
 	{
-		System.out.println("Игровая сцена готова!" + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
+		System.out.println("Игровая сцена готова!"/* + socket.getInetAddress().getHostAddress() + ":" + socket.getPort()*/);
 		this.socket = socket;
 		try
 		{
@@ -175,7 +176,7 @@ public class GameSceneController
 		}
 		catch (EOFException e)
 		{
-			System.out.println("Bitch");
+			System.out.println("GameSceneController::waitForMessages - EOFException");
 		}
 		catch (IOException e)
 		{
@@ -207,30 +208,33 @@ public class GameSceneController
 		gc.drawImage(bg1img, 0, bg1Y, bgSize, bgSize);
 		gc.drawImage(bg1img, 0, bg2Y, bgSize, bgSize);
 
+		//Cannonballs
+		for (int i = 0; i < game.getCannonballs().size(); ++i)
+			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
+
 		//Ships
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
 		{
 			Ship ship = game.getShip(i);
-			renderPvpObject(gc, ship, sceneWidth, 1, yScale);
+			renderPvpObject(gc, ship, sceneWidth, xScale, yScale);
 
 			//Cannons
-			renderPvpObject(gc, ship.getDefenciveCannon(), sceneWidth, 1, yScale);
+			renderPvpObject(gc, ship.getDefenciveCannon(), sceneWidth, xScale, yScale);
 			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
-				renderPvpObject(gc, ship.getOffenciveCannon(j), sceneWidth, 1, yScale);
+				renderPvpObject(gc, ship.getOffenciveCannon(j), sceneWidth, xScale, yScale);
 		}
-
-		//Cannonballs
-		for (int i = 0; i < game.getCannonballs().size(); ++i)
-			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, yScale, yScale);
 	}
 
+	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
 	private void renderPvpObject(GraphicsContext gc, PvpObject object, double sceneWidth, double horizontalScale, double verticalScale)
 	{
-		double finalX, finalY, finalWidth, finalHeight;
+		double finalX, finalY, finalWidth, finalHeight, finalAngle, finalPivotX, finalPivotY;
 		if (object.getBelonging() == PvpObject.Belonging.FRIENDLY)
 		{
 			finalX = object.getPosition().getX() * horizontalScale;
 			finalWidth = object.getImage().getWidth() * horizontalScale;
+			finalAngle = object.getRotationAngle();
+			finalPivotX = finalX + object.getPivot().getX() * horizontalScale;
 		}
 		else
 		{
@@ -238,17 +242,32 @@ public class GameSceneController
 			{
 				finalX = sceneWidth - object.getPosition().getX() * horizontalScale;
 				finalWidth = -object.getImage().getWidth() * horizontalScale;
+				finalAngle = -object.getRotationAngle();
+				finalPivotX = finalX - object.getPivot().getX() * horizontalScale;
 			}
 			else
 			{
 				finalX = sceneWidth - (object.getPosition().getX() + object.getImage().getWidth()) * horizontalScale;
 				finalWidth = object.getImage().getWidth() * horizontalScale;
+				finalAngle = object.getRotationAngle();
+				finalPivotX = finalX + object.getPivot().getX() * horizontalScale;
 			}
 		}
 		finalY = object.getPosition().getY() * verticalScale;
 		finalHeight = object.getImage().getHeight() * verticalScale;
+		finalPivotY = finalY + object.getPivot().getY() * verticalScale;
 
+		gc.save(); // saves the current state on stack, including the current transform
+		rotateGraphicsContext(gc, finalAngle, finalPivotX, finalPivotY);
 		gc.drawImage(object.getImage(), finalX, finalY, finalWidth, finalHeight);
+		gc.restore(); // back to original state (before rotation)
+	}
+
+	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
+	private void rotateGraphicsContext(GraphicsContext gc, double angle, double x, double y)
+	{
+		Rotate r = new Rotate(angle, x, y);
+		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 	}
 
 	private void disconnect()

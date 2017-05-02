@@ -11,9 +11,15 @@ public class Ship extends PvpObject
 	public static final int OFFENCIVE_CANNONS_COUNT = 2;
 	public static final Point2D[] CANNON_BASE_POSITIONS =
 			{
-					new Point2D(-40, 75),
-					new Point2D(10, 360),
-					new Point2D(0, 590)
+					new Point2D(-40.0, 75.0),
+					new Point2D(10.0, 360.0),
+					new Point2D(0.0, 590.0)
+			};
+	public static final Point2D[] CANNON_PIVOTS =
+			{
+					new Point2D(110.0, 25.0),
+					new Point2D(115.0, 25.0),
+					new Point2D(123.0, 25.0)
 			};
 
 	private Game parentGame;
@@ -29,10 +35,12 @@ public class Ship extends PvpObject
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 0, 0, 132, 720);
 		hp = 1000;
 		defenciveCannon = new DefenciveCannon(this, belonging, CANNON_BASE_POSITIONS[0]);
+		defenciveCannon.setPivot(CANNON_PIVOTS[0]);
 		offenciveCannons = new OffenciveCannon[OFFENCIVE_CANNONS_COUNT];
 		for (int i = 0; i < OFFENCIVE_CANNONS_COUNT; ++i)
 		{
 			offenciveCannons[i] = new OffenciveCannon(this, belonging, CANNON_BASE_POSITIONS[i + 1]);
+			offenciveCannons[i].setPivot(CANNON_PIVOTS[i + 1]);
 		}
 	}
 
