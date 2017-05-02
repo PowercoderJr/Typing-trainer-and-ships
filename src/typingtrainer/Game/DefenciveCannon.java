@@ -7,8 +7,8 @@ import javafx.geometry.Point2D;
  */
 public class DefenciveCannon extends Cannon
 {
-	public DefenciveCannon(Belonging belonging, Point2D position)
+	public DefenciveCannon(Ship parentShip, Belonging belonging, Point2D position)
 	{
-		super(belonging, position);
+		super(parentShip, belonging, position);
 	}
 }
