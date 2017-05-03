@@ -192,11 +192,21 @@ public class LobbySceneController
 
 	public void onJoinClicked(MouseEvent mouseEvent) throws IOException
 	{
+		/*
 		if (!serversTable.getSelectionModel().isEmpty())
 		{
 			ServerInfo rowData = (ServerInfo)(serversTable.getSelectionModel().getSelectedItem());
 			connect(rowData.getIp(), passPassfield.getText());
 		}
+		*/
+
+		//Для быстрого теста
+		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+		Group root = new Group();
+		ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+		GameSceneController controller = new GameSceneController(gameScene, new Socket());
+		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
+		sceneManager.pushScene(gameScene);
 	}
 
 	public void onRefreshClicked(MouseEvent mouseEvent)
