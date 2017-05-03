@@ -1,14 +1,18 @@
 package typingtrainer.Game;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Meow on 22.04.2017.
  */
-public class Animation
+public class Animation extends PvpObject
 {
-	private ImageView canvas;
 	private int framesCount;
 	private int columns;
 	private int offsetX;
@@ -16,22 +20,69 @@ public class Animation
 	private int width;
 	private int height;
 
-	public Animation(ImageView canvas, int framesCount, int columns, int offsetX, int offsetY, int width, int height)
+	private Image spriteSheet;
+	private int currFrame;
+	private boolean isCompleted;
+
+	public Animation(Belonging belonging, Point2D position, Image spriteSheet, int framesCount, int columns, int offsetX, int offsetY, int width, int height)
 	{
-		this.canvas = canvas;
+		super(belonging, position);
+		this.spriteSheet = spriteSheet;
 		this.framesCount = framesCount;
 		this.columns = columns;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		this.width = width;
 		this.height = height;
+		currFrame = 0;
+		isCompleted = false;
+		this.image = getCurrFrame();
 	}
 
-	protected void interpolate(double frac)
+	public Image getCurrFrame()
 	{
-		int index = Math.min((int) Math.floor(frac * framesCount), framesCount - 1);
-		int x = (index % columns) * width + offsetX;
-		int y = (index / columns) * height + offsetY;
-		canvas.setViewport(new Rectangle2D(x, y, width, height));
+		int x = (currFrame % columns) * width + offsetX;
+		int y = (currFrame / columns) * height + offsetY;
+		return new WritableImage(spriteSheet.getPixelReader(), x, y, width, height);
+	}
+
+	public void play(long animationDuration)
+	{
+		final long frameDuration = animationDuration / framesCount;
+		currFrame = 0;
+		isCompleted = false;
+		new Thread(() ->
+		{
+			try
+			{
+				while (currFrame < framesCount - 1)
+				{
+					Thread.sleep(frameDuration);
+					++currFrame;
+					image = getCurrFrame();
+				}
+				Thread.sleep(frameDuration);
+				isCompleted = true;
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}).start();
+	}
+
+	public boolean isCompleted()
+	{
+		return isCompleted;
+	}
+
+	public int getWidth()
+	{
+		return width;
+	}
+
+	public int getHeight()
+	{
+		return height;
 	}
 }

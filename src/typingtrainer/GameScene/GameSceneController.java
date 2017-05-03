@@ -9,6 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.transform.Rotate;
 import typingtrainer.Game.Game;
 import typingtrainer.Game.PvpObject;
@@ -16,10 +18,7 @@ import typingtrainer.Game.Ship;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
@@ -31,10 +30,12 @@ public class GameSceneController
 	private static final int DEFAULT_SCREEN_WIDTH = 1280;
 	private static final int DEFAULT_SCREEN_HEIGHT = 720;
 	private static final int dt = 15;
-	private static final int BACKGROUND_SPEED = 2;
+	public static final int BACKGROUND_SPEED = 2;
 
 	public static final String SHOT_CODEGRAM = "SHOT";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
+
+	private MediaPlayer shotMP;
 
 	private Socket socket;
 	private DataOutputStream ostream;
@@ -65,10 +66,12 @@ public class GameSceneController
 			else if (event.getCode() == KeyCode.SPACE)
 			{
 				game.getShip(0).getOffenciveCannon(1).shoot(new Point2D(1200, Math.random() * 720));
+				playShotSound();
 			}
 			else if (event.getCode() == KeyCode.ENTER)
 			{
 				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1200, Math.random() * 720));
+				playShotSound();
 			}
 			else if (isPvpKey(event))
 			{
@@ -212,6 +215,10 @@ public class GameSceneController
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
 
+		//Smoke clouds
+		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
+			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
+
 		//Ships
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
 		{
@@ -295,5 +302,27 @@ public class GameSceneController
 				System.out.println(e.getMessage());
 			}
 		});
+	}
+
+	private void playShotSound()
+	{
+		if (shotMP != null)
+		{
+			MediaPlayer buf = shotMP;
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				buf.dispose();
+			}).start();
+		}
+		shotMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/shot" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
+		shotMP.play();
 	}
 }

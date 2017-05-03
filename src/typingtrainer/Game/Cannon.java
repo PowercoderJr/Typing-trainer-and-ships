@@ -23,11 +23,15 @@ public abstract class Cannon extends PvpObject
 
 	public void shoot(Point2D target)
 	{
-		/* Через вектора, угол получается только положительный
-		double vectorX = target.getX() - (position.getX() + pivot.getX()), vectorY = target.getY() - (position.getY() + pivot.getY());
-		rotationAngle = Math.toDegrees(Math.acos(vectorX / Math.sqrt(vectorX * vectorX + vectorY * vectorY)));*/
 		rotationAngle = Math.toDegrees(Math.atan((target.getY() - position.getY() - pivot.getY()) / (target.getX() - position.getX() - pivot.getX())));
-		//Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + 145 - 8, position.getY() + 27 - 8));
+
+		double pivotToMuzzleLength = image.getWidth() - pivot.getX();
+		Animation smokeCloud = new Animation(belonging, new Point2D(position.getX() + image.getWidth() - 8, position.getY() + pivot.getY() - 30), Game.SPRITE_SHEET, 7, 2, 132, 71, 120, 60);
+		smokeCloud.setPivot(new Point2D(-pivotToMuzzleLength, smokeCloud.getHeight() / 2));
+		smokeCloud.setRotationAngle(rotationAngle);
+		getParentShip().getParentGame().getSmokeClouds().add(smokeCloud);
+
+		smokeCloud.play(1000);
 		Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + pivot.getX() - 8, position.getY() + pivot.getY()  - 8));
 		cannonball.setTarget(target);
 		getParentShip().getParentGame().getCannonballs().add(cannonball);
