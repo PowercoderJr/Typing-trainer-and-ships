@@ -14,6 +14,9 @@ import typingtrainer.Main;
  */
 public abstract class Cannon extends PvpObject
 {
+	public static final double CANNON_KNOCKBACK_STEP_DISTANCE = 20.0;
+	public static final int CANNON_KNOCKBACK_STEP_DURATION = 50;
+
 	private Ship parentShip;
 	private Point2D basePosition;
 	private Thread pushingThread;
@@ -30,13 +33,14 @@ public abstract class Cannon extends PvpObject
 		rotationAngle = Math.toDegrees(Math.atan((target.getY() - position.getY() - pivot.getY()) / (target.getX() - position.getX() - pivot.getX())));
 
 		double pivotToMuzzleLength = image.getWidth() - pivot.getX();
-		Animation smokeCloud = new Animation(belonging, new Point2D(position.getX() + image.getWidth() - 8, position.getY() + pivot.getY() - 30), Game.SPRITE_SHEET, 7, 2, 132, 71, 120, 60);
+		Animation smokeCloud = new Animation(belonging, position.add(image.getWidth() - 8, pivot.getY() - 30), Game.SPRITE_SHEET, 7, 2, 132, 71, 120, 60);
 		smokeCloud.setPivot(new Point2D(-pivotToMuzzleLength, smokeCloud.getHeight() / 2));
 		smokeCloud.setRotationAngle(rotationAngle);
 		getParentShip().getParentGame().getSmokeClouds().add(smokeCloud);
+		smokeCloud.play(500);
 
-		smokeCloud.play(1000);
-		Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + pivot.getX() - 8, position.getY() + pivot.getY()  - 8));
+		//Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + pivot.getX() - 8, position.getY() + pivot.getY() - 8));
+		Cannonball cannonball = new Cannonball(this, belonging, position.add(pivot).subtract(8, 8));
 		cannonball.setTarget(target);
 		getParentShip().getParentGame().getCannonballs().add(cannonball);
 
@@ -46,26 +50,28 @@ public abstract class Cannon extends PvpObject
 		{
 			try
 			{
+				//Определяется направление отдачи
+				double cathetA = pivot.getX();
+				double cathetB = cathetA * Math.tan(Math.toRadians(rotationAngle));
+				Point2D pointA = new Point2D(position.getX(), position.getY() + pivot.getY() - cathetB);
+				Point2D dir = pivot.add(position).subtract(pointA).normalize();
 				for (int i = 0; i < 3; ++i)
 				{
-					//Point2D backPos = new Point2D(position.getX())
-					position = position.subtract(20, 0);
-					Thread.sleep(50);
-
+					position = position.subtract(dir.getX() * CANNON_KNOCKBACK_STEP_DISTANCE, dir.getY() * CANNON_KNOCKBACK_STEP_DISTANCE);
+					Thread.sleep(CANNON_KNOCKBACK_STEP_DURATION);
 				}
+
 				double step = position.distance(basePosition) / 12;
-				Point2D dir = basePosition.subtract(position).normalize();
+				dir = basePosition.subtract(position).normalize();
 				for (int i = 0; i < 12; ++i)
 				{
-					//Point2D backPos = new Point2D(position.getX())
 					position = position.add(dir.getX() * step, dir.getY() * step);
-					Thread.sleep(50);
-					
+					Thread.sleep(CANNON_KNOCKBACK_STEP_DURATION);
 				}
 			}
 			catch (InterruptedException e)
 			{
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
 			}
 		});
 		pushingThread.start();

@@ -65,12 +65,12 @@ public class GameSceneController
 			}
 			else if (event.getCode() == KeyCode.SPACE)
 			{
-				game.getShip(0).getOffenciveCannon(1).shoot(new Point2D(1200, Math.random() * 720));
+				game.getShip(0).getOffenciveCannon(1).shoot(new Point2D(1280, 600));
 				playShotSound();
 			}
 			else if (event.getCode() == KeyCode.ENTER)
 			{
-				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1200, Math.random() * 720));
+				game.getShip(0).getOffenciveCannon(0).shoot(new Point2D(1280, Math.random() * 720));
 				playShotSound();
 			}
 			else if (isPvpKey(event))
@@ -207,7 +207,7 @@ public class GameSceneController
 			bg2Y = buf;
 		}
 		bg1Y += BACKGROUND_SPEED;
-		bg2Y = bg1Y - bg2img.getHeight() + BACKGROUND_SPEED;
+		bg2Y = bg1Y - bg2img.getHeight() + BACKGROUND_SPEED * 10 * yScale;
 		gc.drawImage(bg1img, 0, bg1Y, bgSize, bgSize);
 		gc.drawImage(bg1img, 0, bg2Y, bgSize, bgSize);
 
@@ -215,9 +215,6 @@ public class GameSceneController
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
 
-		//Smoke clouds
-		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
-			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
 
 		//Ships
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
@@ -230,6 +227,10 @@ public class GameSceneController
 			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
 				renderPvpObject(gc, ship.getOffenciveCannon(j), sceneWidth, xScale, yScale);
 		}
+
+		//Smoke clouds
+		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
+			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
 	}
 
 	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
