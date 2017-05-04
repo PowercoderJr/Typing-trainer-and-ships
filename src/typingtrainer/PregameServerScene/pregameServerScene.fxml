@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PregameServerScene.PregameServerSceneController">
@@ -57,7 +58,19 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <Label fx:id="opponentNameLabel" text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="0">
+              <children>
+                <Label fx:id="opponentNameLabel" text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <ImageView fx:id="kickImg" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0" visible="false" onMouseClicked="#onKickClicked"/>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
             <TextArea fx:id="chatTA" editable="false" opacity="0.8" prefWidth="200.0" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
           </children>
           <columnConstraints>

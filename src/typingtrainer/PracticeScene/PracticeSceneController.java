@@ -15,6 +15,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
+import typingtrainer.Main;
+import typingtrainer.MainScene.MainSceneController;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
@@ -64,7 +66,6 @@ public class PracticeSceneController
 	private volatile MediaPlayer falseNote;
 	private volatile int msToReducing;
 	private volatile boolean isTimerRunning;
-	private Image soundSprite;
 
 	private static Word.Languages paramLang;
 	private static int difficultyParam;
@@ -113,10 +114,9 @@ public class PracticeSceneController
 		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
-		soundSprite = new Image(getClass().getResourceAsStream("soundsprite.png"));
-		musicImg.setImage(soundSprite);
+		musicImg.setImage(MainSceneController.BUTTONS_SPRITESHEET);
 		musicImg.setViewport(isMusicParam ? MUSIC_ON_RECT : MUSIC_OFF_RECT);
-		soundImg.setImage(soundSprite);
+		soundImg.setImage(MainSceneController.BUTTONS_SPRITESHEET);
 		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
 	}
 

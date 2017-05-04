@@ -19,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class MainSceneController
 {
+	public static final Image BUTTONS_SPRITESHEET = new Image("typingtrainer/buttons_spritesheet.png");
+
 	@FXML
 	public ImageView logoImg;
 
