@@ -4,8 +4,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -13,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import typingtrainer.*;
 import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.MainScene.MainSceneController;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +46,8 @@ public class PregameServerSceneController
 	public Label startLabel;
 	@FXML
 	public Label opponentNameLabel;
+	@FXML
+	public ImageView kickImg;
 
 	private static String arg_serverName;
 	private static String arg_serverPassword;
@@ -86,6 +91,8 @@ public class PregameServerSceneController
 		}
 		isWaiting = true;
 		opponentIP = "";
+		kickImg.setImage(MainSceneController.BUTTONS_SPRITESHEET);
+		kickImg.setViewport(new Rectangle2D(0, 100, 100, 100));
 
 		//Автоаполнение настроек
 		ObservableList<String> levels = FXCollections.observableArrayList();
@@ -171,7 +178,7 @@ public class PregameServerSceneController
 					//e.printStackTrace();
 				}
 				System.out.println("Соединение разорвано");
-				startLabel.setDisable(true);
+				setOpponentControlsActive(false);
 				Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
 			}
 			else if (codegram.equals(SET_NAME_CODEGRAM))
@@ -302,7 +309,7 @@ public class PregameServerSceneController
 		try
 		{
 			System.out.println("Соединение установлено");
-			startLabel.setDisable(false);
+			setOpponentControlsActive(true);
 			DataInputStream istream = new DataInputStream(socket.getInputStream());
 			ostream = new DataOutputStream(socket.getOutputStream());
 			while (!opponentIP.isEmpty())
@@ -375,12 +382,6 @@ public class PregameServerSceneController
 		{
 			System.out.println(e.getMessage());
 		}
-
-		//SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		//Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("GameScene/GameScene.fxml"));
-		//ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
-		//practiceScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-		//sceneManager.pushScene(practiceScene);
 	}
 
 	public static void setArg_serverName(String arg_serverName)
@@ -483,5 +484,31 @@ public class PregameServerSceneController
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public void onKickClicked(MouseEvent mouseEvent)
+	{
+		if (!opponentIP.isEmpty())
+		{
+			try
+			{
+				ostream.writeUTF(DISCONNECT_CODEGRAM + ":");
+				ostream.flush();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			chatTA.appendText("* " + opponentName + " изгнан\n");
+			opponentIP = "";
+			Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
+			setOpponentControlsActive(false);
+		}
+	}
+
+	private void setOpponentControlsActive(boolean isOpponentJoined)
+	{
+		kickImg.setVisible(isOpponentJoined);
+		startLabel.setDisable(!isOpponentJoined);
 	}
 }
