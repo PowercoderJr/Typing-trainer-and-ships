@@ -51,6 +51,8 @@ public class PregameServerSceneController
 
 	private static String arg_serverName;
 	private static String arg_serverPassword;
+	private static final Rectangle2D KICK_IMG1 = new Rectangle2D(0, 100, 100, 100);
+	private static final Rectangle2D KICK_IMG2 = new Rectangle2D(100, 100, 100, 100);
 	public static final String CONNECTION_ACCEPTED_MSG = "ConnectionAccepted";
 	public static final String CONNECTION_DECLINED_MSG = "ConnectionDeclined";
 	public static final String NO_OPPONENT_YET_STR = "Здесь пусто";
@@ -92,7 +94,7 @@ public class PregameServerSceneController
 		isWaiting = true;
 		opponentIP = "";
 		kickImg.setImage(MainSceneController.BUTTONS_SPRITESHEET);
-		kickImg.setViewport(new Rectangle2D(0, 100, 100, 100));
+		kickImg.setViewport(KICK_IMG1);
 
 		//Автоаполнение настроек
 		ObservableList<String> levels = FXCollections.observableArrayList();
@@ -371,10 +373,26 @@ public class PregameServerSceneController
 			ostream.writeUTF(START_CODEGRAM + ":");
 			ostream.writeUTF("OK:");
 
+			Word.Languages lang;
+			switch (langCB.getSelectionModel().getSelectedIndex())
+			{
+				case 0:
+				default:
+					lang = Word.Languages.RU;
+					break;
+				case 1:
+					lang = Word.Languages.EN;
+					break;
+			}
+
+			String diffStr = difficultyCB.getSelectionModel().getSelectedItem().toString();
+			int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
+
 			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Group root = new Group();
 			ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
 			GameSceneController controller = new GameSceneController(gameScene, socket);
+			controller.setGameParams(lang, difficulty, registerChb.isSelected());
 			gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 			sceneManager.pushScene(gameScene);
 		}
@@ -510,5 +528,15 @@ public class PregameServerSceneController
 	{
 		kickImg.setVisible(isOpponentJoined);
 		startLabel.setDisable(!isOpponentJoined);
+	}
+
+	public void onKickMouseEntered(MouseEvent mouseEvent)
+	{
+		kickImg.setViewport(KICK_IMG2);
+	}
+
+	public void onKickMouseExited(MouseEvent mouseEvent)
+	{
+		kickImg.setViewport(KICK_IMG1);
 	}
 }

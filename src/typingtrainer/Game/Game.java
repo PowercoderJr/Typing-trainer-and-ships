@@ -2,11 +2,9 @@ package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
-import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.Word;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Queue;
 
 /**
  * Created by Meow on 22.04.2017.
@@ -15,14 +13,22 @@ public class Game
 {
 	public static final Image SPRITE_SHEET = new Image("typingtrainer/Game/spritesheet.png");
 	public static final int SHIPS_COUNT = 2;
+	public static final int MAX_WORD_LENGTH = 12;
 
-	Ship[] ships;
-	ArrayList<Cannonball> cannonballs;
-	ArrayList<Animation> smokeClouds;
+	private Word.Languages langParam;
+	private int difficultyParam;
+	private boolean isRegisterParam;
 
+	private Ship[] ships;
+	private ArrayList<Cannonball> cannonballs;
+	private ArrayList<Animation> smokeClouds;
 
 	public Game()
 	{
+		langParam = Word.Languages.RU;
+		difficultyParam = 2;
+		isRegisterParam = false;
+
 		ships = new Ship[SHIPS_COUNT];
 		ships[0] = new Ship(this, PvpObject.Belonging.FRIENDLY, new Point2D(0, 0));
 		ships[1] = new Ship(this, PvpObject.Belonging.HOSTILE, new Point2D(0, 0));
@@ -76,5 +82,35 @@ public class Game
 	public ArrayList<Animation> getSmokeClouds()
 	{
 		return smokeClouds;
+	}
+
+	public Word.Languages getLangParam()
+	{
+		return langParam;
+	}
+
+	public void setLangParam(Word.Languages langParam)
+	{
+		this.langParam = langParam;
+	}
+
+	public int getDifficultyParam()
+	{
+		return difficultyParam;
+	}
+
+	public void setDifficultyParam(int difficultyParam)
+	{
+		this.difficultyParam = difficultyParam;
+	}
+
+	public boolean isRegisterParam()
+	{
+		return isRegisterParam;
+	}
+
+	public void setRegisterParam(boolean registerParam)
+	{
+		isRegisterParam = registerParam;
 	}
 }

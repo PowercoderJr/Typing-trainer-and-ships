@@ -61,7 +61,7 @@
             <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="0">
               <children>
                 <Label fx:id="opponentNameLabel" text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <ImageView fx:id="kickImg" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0" visible="false" onMouseClicked="#onKickClicked"/>
+                <ImageView fx:id="kickImg" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0" visible="false" onMouseClicked="#onKickClicked" onMouseEntered="#onKickMouseEntered" onMouseExited="#onKickMouseExited"/>
               </children>
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />

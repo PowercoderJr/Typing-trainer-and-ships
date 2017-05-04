@@ -13,6 +13,7 @@ import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 import typingtrainer.SceneManager;
+import typingtrainer.Word;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -74,10 +75,27 @@ public class PregameClientSceneController
 				Platform.runLater(() ->
 				{
 					isConnected = false;
+
+					Word.Languages lang;
+					switch (langLabel.getText())
+					{
+						case "Русский":
+						default:
+							lang = Word.Languages.RU;
+							break;
+						case "English":
+							lang = Word.Languages.EN;
+							break;
+					}
+
+					String diffStr = difficultyLabel.getText();
+					int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
+
 					SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 					Group root = new Group();
 					ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
 					GameSceneController controller = new GameSceneController(gameScene, socket);
+					controller.setGameParams(lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
 					gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 					sceneManager.pushScene(gameScene);
 				});
