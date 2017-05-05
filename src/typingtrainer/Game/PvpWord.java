@@ -7,7 +7,7 @@ import typingtrainer.Word;
  */
 public class PvpWord extends Word
 {
-	int charsDone;
+	private int charsDone;
 
 	public PvpWord()
 	{
@@ -18,6 +18,12 @@ public class PvpWord extends Word
 	public PvpWord(int length, int difficulty, Languages language, boolean isShiftIncluding)
 	{
 		super(length, difficulty, language, isShiftIncluding);
+		charsDone = 0;
+	}
+
+	public PvpWord(String word)
+	{
+		super(word);
 		charsDone = 0;
 	}
 

@@ -82,6 +82,11 @@ public abstract class Word
 		word = Word.generateRndWord(length, difficulty, language, isShiftIncluding);
 	}
 
+	public Word(String word)
+	{
+		this.word = word;
+	}
+
 	public void setWord(String word)
 	{
 		this.word = word;

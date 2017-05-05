@@ -162,38 +162,37 @@ public class PregameServerSceneController
 			String codegram = msg.substring(0, msg.indexOf(':'));
 			String content = msg.substring(msg.indexOf(':') + 1);
 			//System.out.println("CODEGRAM - " + codegram + "\nCONTENT - " + content);
-			if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+			switch (codegram)
 			{
-				chatTA.appendText(content + '\n');
-			}
-			else if (codegram.equals(DISCONNECT_CODEGRAM))
-			{
-				opponentIP = "";
-				opponentName = "";
-				try
-				{
-					socket.close();
-				}
-				catch (IOException e)
-				{
-					System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::handleIncomingMessage");
-					//e.printStackTrace();
-				}
-				System.out.println("Соединение разорвано");
-				setOpponentControlsActive(false);
-				Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
-			}
-			else if (codegram.equals(SET_NAME_CODEGRAM))
-			{
-				opponentName = content;
-				Platform.runLater(() -> opponentNameLabel.setText(opponentName));
-			}
-			else if (codegram.equals(GET_SETTINGS_CODEGRAM))
-			{
-				sendServerName();
-				sendLangTextAt(langCB.getSelectionModel().getSelectedIndex());
-				sendDifficultyTextAt(difficultyCB.getSelectionModel().getSelectedIndex());
-				sendRegisterOption();
+				case PregameServerSceneController.CHAT_MSG_CODEGRAM:
+					chatTA.appendText(content + '\n');
+					break;
+				case DISCONNECT_CODEGRAM:
+					opponentIP = "";
+					opponentName = "";
+					try
+					{
+						socket.close();
+					}
+					catch (IOException e)
+					{
+						System.out.println(e.getMessage() + ": IO Exception - PregameServerSceneController::handleIncomingMessage");
+						//e.printStackTrace();
+					}
+					System.out.println("Соединение разорвано");
+					setOpponentControlsActive(false);
+					Platform.runLater(() -> opponentNameLabel.setText(NO_OPPONENT_YET_STR));
+					break;
+				case SET_NAME_CODEGRAM:
+					opponentName = content;
+					Platform.runLater(() -> opponentNameLabel.setText(opponentName));
+					break;
+				case GET_SETTINGS_CODEGRAM:
+					sendServerName();
+					sendLangTextAt(langCB.getSelectionModel().getSelectedIndex());
+					sendDifficultyTextAt(difficultyCB.getSelectionModel().getSelectedIndex());
+					sendRegisterOption();
+					break;
 			}
 		}
 	}
