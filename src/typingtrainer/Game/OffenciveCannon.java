@@ -9,8 +9,6 @@ import javafx.scene.control.Label;
 public class OffenciveCannon extends Cannon
 {
 	private PvpWord word;
-	private Label labelBefore;
-	private Label labelAfter;
 
 	public OffenciveCannon(Ship parentShip, Belonging belonging, Point2D position)
 	{
