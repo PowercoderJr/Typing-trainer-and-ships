@@ -290,16 +290,20 @@ public class GameSceneController
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
 			Cannonball cannonball = game.getCannonballs().get(i);
-			String substrBefore = cannonball.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getWord().getSubstrAfterWithSpaces();
-			double x = (cannonball.getPosition().getX() + cannonball.getImage().getWidth() / 2) * xScale, y = (cannonball.getPosition().getY() + cannonball.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
-			gc.setFill(BEFORE_FILL_COLOR);
-			gc.fillText(substrBefore, x, y);
-			gc.setStroke(BEFORE_STROKE_COLOR);
-			gc.strokeText(substrBefore, x, y);
-			gc.setFill(AFTER_FILL_COLOR);
-			gc.fillText(substrAfter, x, y);
-			gc.setStroke(AFTER_STROKE_COLOR);
-			gc.strokeText(substrAfter, x, y);
+			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE)
+			{
+				String substrBefore = cannonball.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getWord().getSubstrAfterWithSpaces();
+				double x = (sceneWidth - (cannonball.getPosition().getX() - cannonball.getImage().getWidth() / 2)) * xScale,
+						y = (cannonball.getPosition().getY() + cannonball.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
+				gc.setFill(BEFORE_FILL_COLOR);
+				gc.fillText(substrBefore, x, y);
+				gc.setStroke(BEFORE_STROKE_COLOR);
+				gc.strokeText(substrBefore, x, y);
+				gc.setFill(AFTER_FILL_COLOR);
+				gc.fillText(substrAfter, x, y);
+				gc.setStroke(AFTER_STROKE_COLOR);
+				gc.strokeText(substrAfter, x, y);
+			}
 		}
 	}
 
