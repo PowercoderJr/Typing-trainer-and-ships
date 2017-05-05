@@ -3,6 +3,7 @@ package typingtrainer.Game;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.Word;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by Meow on 22.04.2017.
  */
+
 public class Game
 {
 	public static final Image SPRITE_SHEET = new Image("typingtrainer/Game/spritesheet.png");
@@ -40,11 +42,11 @@ public class Game
 
 	public void tick(int dt)
 	{
+		//Cannonballs
 		double x, y, vectorLength, distX, distY;
 		for (int i = 0; i < cannonballs.size(); ++i)
 		{
 			Cannonball cannonball = cannonballs.get(i);
-
 			if (cannonball.getPosition().getX() > 1200)
 				cannonballs.remove(i--);
 			else
@@ -58,6 +60,7 @@ public class Game
 			}
 		}
 
+		//Smoke clouds
 		for (int i = 0; i < smokeClouds.size(); ++i)
 		{
 			Animation smokeCloud = smokeClouds.get(i);
@@ -71,31 +74,49 @@ public class Game
 		}
 	}
 
-	public boolean shootOffencive()
+	/**
+	 *
+	 * @return При успешном выстреле возвращает кодограмму с информацией о выстреле, при неудаче - пустую строку.
+	 */
+	public String shootOffenciveFriendly()
 	{
-		boolean hasShotBeenMade = false;
 		String longestSubstr = "";
-		OffenciveCannon cannonWithLongestSubstr = null;
+		int cannonWithLongestSubstrID = -1;
 		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
 		{
 			OffenciveCannon cannon = ships[0].getOffenciveCannon(i);
-			if (cannon.getWord().getCharsDone() >= MIN_WORD_LENGTH_TO_SHOOT)
+			if (cannon.getWord().getCharsDone() >= MIN_WORD_LENGTH_TO_SHOOT && cannon.getWord().getCharsDone() > longestSubstr.length())
 			{
-				if (cannon.getWord().getCharsDone() > longestSubstr.length())
-				{
-					cannonWithLongestSubstr = cannon;
-					longestSubstr = cannonWithLongestSubstr.getWord().getSubstrBefore();
-				}
-				cannon.getWord().setWord(Word.generateRndWord(Game.MAX_WORD_LENGTH, difficultyParam, langParam, isRegisterParam));
+				cannonWithLongestSubstrID = i;
+				longestSubstr = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).getWord().getSubstrBefore();
 			}
 			getShip(0).getOffenciveCannon(i).getWord().setCharsDone(0);
 		}
-		if (cannonWithLongestSubstr != null)
+		if (cannonWithLongestSubstrID != -1)
 		{
-			cannonWithLongestSubstr.shoot(new Point2D(1280, Math.random() * 720)).getWord().setWord(longestSubstr);
-			hasShotBeenMade = true;
+			Cannonball cannonball = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).shoot(new Point2D(1280, Math.random() * 720));
+			cannonball.getWord().setWord(longestSubstr);
+			ships[0].getOffenciveCannon(cannonWithLongestSubstrID).getWord().setWord(Word.generateRndWord(Game.MAX_WORD_LENGTH, difficultyParam, langParam, isRegisterParam));
+			return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
+					cannonWithLongestSubstrID + GameSceneController.SEPARATOR_CODEGRAM +
+					cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
+					cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
+					cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM + longestSubstr;
 		}
-		return hasShotBeenMade;
+		else
+			return null;
+	}
+
+	public String shootOffenciveHostile(int cannonID, Point2D target, double speed, String word)
+	{
+		Cannonball cannonball = ships[1].getOffenciveCannon(cannonID).shoot(target);
+		cannonball.getWord().setWord(word);
+		cannonball.setSpeed(speed);
+		return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
+				cannonID + GameSceneController.SEPARATOR_CODEGRAM +
+				cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
+				cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
+				cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM + word;
 	}
 
 	public boolean shootDefencive()

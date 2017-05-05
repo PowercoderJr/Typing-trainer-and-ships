@@ -10,6 +10,8 @@ import javafx.scene.image.WritableImage;
  */
 public class Cannonball extends PvpObject
 {
+	public enum Type {OFFENCIVE, DEFENCIVE};
+	private Type type;
 	private Cannon parentCannon;
 	private PvpWord word;
 	private Point2D target;
@@ -22,6 +24,10 @@ public class Cannonball extends PvpObject
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(),132, 55, 16, 16);
 		speed = 300;
 		word = new PvpWord("");
+		if (parentCannon.getClass() == OffenciveCannon.class)
+			type = Type.OFFENCIVE;
+		else if (parentCannon.getClass() == DefenciveCannon.class)
+			type = Type.DEFENCIVE;
 	}
 
 	public Point2D getTarget()
@@ -39,8 +45,18 @@ public class Cannonball extends PvpObject
 		return speed;
 	}
 
+	public void setSpeed(double speed)
+	{
+		this.speed = speed;
+	}
+
 	public PvpWord getWord()
 	{
 		return word;
+	}
+
+	public Type getType()
+	{
+		return type;
 	}
 }

@@ -39,7 +39,9 @@ public class GameSceneController
 	private static final Color AFTER_STROKE_COLOR = new Color(0, 0, 0, 1);
 	public static final int BACKGROUND_SPEED = 2;
 
-	public static final String SHOT_CODEGRAM = "SHOT";
+	public static final String SEPARATOR_CODEGRAM = "&";
+	public static final String OFFENCIVE_SHOT_CODEGRAM = "OFFSHOT";
+	public static final String DEFENCIVE_SHOT_CODEGRAM = "DEFSHOT";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
 
 	private MediaPlayer shotMP;
@@ -73,8 +75,19 @@ public class GameSceneController
 			}
 			else if (event.getCode() == KeyCode.SPACE) //Offencive
 			{
-				if (game.shootOffencive())
+				String shotInfo = game.shootOffenciveFriendly();
+				if (!shotInfo.isEmpty())
+				{
+					try
+					{
+						ostream.writeUTF(shotInfo);
+					}
+					catch (IOException e)
+					{
+						System.out.println(e.getMessage());
+					}
 					playShotSound();
+				}
 			}
 			else if (event.getCode() == KeyCode.ENTER) //Defencive
 			{
@@ -172,6 +185,15 @@ public class GameSceneController
 				case PregameServerSceneController.DISCONNECT_CODEGRAM:
 					disconnect();
 					System.out.println("Соединение разорвано (из игры)");
+					break;
+				case OFFENCIVE_SHOT_CODEGRAM:
+					String[] data = content.split(SEPARATOR_CODEGRAM);
+					int cannonID = Integer.parseInt(data[0]);
+					double targetX = Double.parseDouble(data[1]);
+					double targetY = Double.parseDouble(data[2]);
+					double speed = Double.parseDouble(data[3]);
+					game.shootOffenciveHostile(cannonID, new Point2D(targetX, targetY), speed, data[4]);
+					playShotSound();
 					break;
 			}
 		}
