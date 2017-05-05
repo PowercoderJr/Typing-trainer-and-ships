@@ -13,6 +13,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import typingtrainer.Game.*;
 import typingtrainer.ManagedScene;
@@ -31,9 +32,12 @@ public class GameSceneController
 	private static final int DEFAULT_SCREEN_WIDTH = 1280;
 	private static final int DEFAULT_SCREEN_HEIGHT = 720;
 	private static final int dt = 15;
-	private static final int MIN_WORD_LENGTH_TO_SHOOT = 3;
+	private static final int WORD_OFFSET_Y = 30;
+	private static final Color BEFORE_FILL_COLOR = new Color(1, 1, 1, 0.2);
+	private static final Color BEFORE_STROKE_COLOR = new Color(0, 0, 0, 0.2);
+	private static final Color AFTER_FILL_COLOR = new Color(1, 0, 0, 1);
+	private static final Color AFTER_STROKE_COLOR = new Color(0, 0, 0, 1);
 	public static final int BACKGROUND_SPEED = 2;
-
 
 	public static final String SHOT_CODEGRAM = "SHOT";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
@@ -69,67 +73,22 @@ public class GameSceneController
 			}
 			else if (event.getCode() == KeyCode.SPACE) //Offencive
 			{
-				boolean hasShotBeenMade = false;
-				for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
-				{
-					OffenciveCannon cannon = game.getShip(0).getOffenciveCannon(i);
-					if (!hasShotBeenMade && cannon.getWord().getCharsDone() >= MIN_WORD_LENGTH_TO_SHOOT)
-					{
-						cannon.shoot(new Point2D(1280, Math.random() * 720));
-						playShotSound();
-						hasShotBeenMade = true;
-						cannon.getWord().setWord(Word.generateRndWord(Game.MAX_WORD_LENGTH, game.getDifficultyParam(), game.getLangParam(), game.isRegisterParam()));
-					}
-					game.getShip(0).getOffenciveCannon(i).getWord().setCharsDone(0);
-				}
+				if (game.shootOffencive())
+					playShotSound();
 			}
 			else if (event.getCode() == KeyCode.ENTER) //Defencive
 			{
-				/*for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
-					game.getShip(0).getOffenciveCannon(i).getWord().setCharsDone(0);*/
-				game.getShip(0).getDefenciveCannon().shoot(new Point2D(1280, Math.random() * 720));
-				playShotSound();
-
-				for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
-					game.getShip(0).getOffenciveCannon(i).getWord().setCharsDone(0);
+				if (game.shootDefencive())
+					playShotSound();
 			}
-			else if (!event.getText().isEmpty() && isShootableKey(event))
+			else if (!event.getText().isEmpty() && isShootableChar(event))
 			{
-				char typedChar;
-				if (event.isShiftDown())
-				{
-					String[] alphabet;
-					switch (game.getLangParam())
-					{
-						case RU:
-						default:
-							alphabet = Word.ALPH_RU;
-							break;
-						case EN:
-							alphabet = Word.ALPH_EN;
-							break;
-					}
-					int symbolIndex = alphabet[0].indexOf(event.getText().charAt(0));
-					typedChar = alphabet[1].charAt(symbolIndex);
-				}
-				else
-				{
-					typedChar = event.getText().charAt(0);
-				}
-
-				for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
-				{
-					PvpWord word = game.getShip(0).getOffenciveCannon(i).getWord();
-					if (word.getCharsDone() < word.toString().length() && word.getCurrChar() == typedChar)
-						word.incCharsDone();
-					else
-						word.setCharsDone(0);
-				}
+				game.handleShootableChar(event);
 			}
 		}
 	};
 
-	private boolean isShootableKey(KeyEvent event)
+	private boolean isShootableChar(KeyEvent event)
 	{
 		//Проверять, не пустой ли текст
 		return (event.getCode().isLetterKey() ||
@@ -171,7 +130,7 @@ public class GameSceneController
 		canvas.setFocusTraversable(true);
 		root.getChildren().add(canvas);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.setFont(new Font("Courier New Bold", 32));
+		gc.setFont(new Font("Courier New Bold", 40));
 		gc.setLineWidth(1.5);
 
 		bg1img = bg2img = new Image("typingtrainer/GameScene/sea_background.png");
@@ -208,10 +167,12 @@ public class GameSceneController
 		{
 			final String codegram = msg.substring(0, msg.indexOf(':'));
 			final String content = msg.substring(msg.indexOf(':') + 1);
-			if (codegram.equals(PregameServerSceneController.DISCONNECT_CODEGRAM))
+			switch (codegram)
 			{
-				disconnect();
-				System.out.println("Соединение разорвано (из игры)");
+				case PregameServerSceneController.DISCONNECT_CODEGRAM:
+					disconnect();
+					System.out.println("Соединение разорвано (из игры)");
+					break;
 			}
 		}
 	}
@@ -278,17 +239,6 @@ public class GameSceneController
 			{
 				OffenciveCannon cannon = ship.getOffenciveCannon(j);
 				renderPvpObject(gc, cannon, sceneWidth, xScale, yScale);
-				if (cannon.getBelonging() == PvpObject.Belonging.FRIENDLY)
-				{
-					gc.setFill(new Color(0, 1, 0, 0.2));
-					gc.fillText(cannon.getWord().getSubstrBeforeWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-					gc.setStroke(new Color(0, 0, 0, 0.2));
-					gc.strokeText(cannon.getWord().getSubstrBeforeWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-					gc.setFill(new Color(1, 0, 0, 1));
-					gc.fillText(cannon.getWord().getSubstrAfterWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-					gc.setStroke(new Color(0, 0, 0, 1));
-					gc.strokeText(cannon.getWord().getSubstrAfterWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-				}
 			}
 		}
 
@@ -297,17 +247,37 @@ public class GameSceneController
 			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
 
 		//Words
-		for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
+		//Offencive cannon words
+		gc.setTextAlign(TextAlignment.LEFT);
+		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
 		{
-			OffenciveCannon cannon = game.getShip(0).getOffenciveCannon(j);
-			gc.setFill(new Color(0, 1, 0, 0.2));
-			gc.fillText(cannon.getWord().getSubstrBeforeWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-			gc.setStroke(new Color(0, 0, 0, 0.2));
-			gc.strokeText(cannon.getWord().getSubstrBeforeWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-			gc.setFill(new Color(1, 0, 0, 1));
-			gc.fillText(cannon.getWord().getSubstrAfterWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
-			gc.setStroke(new Color(0, 0, 0, 1));
-			gc.strokeText(cannon.getWord().getSubstrAfterWithSpaces(), 10 * xScale, (Ship.CANNON_BASE_POSITIONS[j + 1].getY() + cannon.getImage().getHeight() + 30) * yScale);
+			OffenciveCannon cannon = game.getShip(0).getOffenciveCannon(i);
+			String substrBefore = cannon.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannon.getWord().getSubstrAfterWithSpaces();
+			double x = 10 * xScale, y = (Ship.CANNON_BASE_POSITIONS[i + 1].getY() + cannon.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
+			gc.setFill(BEFORE_FILL_COLOR);
+			gc.fillText(substrBefore, x, y);
+			gc.setStroke(BEFORE_STROKE_COLOR);
+			gc.strokeText(substrBefore, x, y);
+			gc.setFill(AFTER_FILL_COLOR);
+			gc.fillText(substrAfter, x, y);
+			gc.setStroke(AFTER_STROKE_COLOR);
+			gc.strokeText(substrAfter, x, y);
+		}
+		//Cannonball words
+		gc.setTextAlign(TextAlignment.CENTER);
+		for (int i = 0; i < game.getCannonballs().size(); ++i)
+		{
+			Cannonball cannonball = game.getCannonballs().get(i);
+			String substrBefore = cannonball.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getWord().getSubstrAfterWithSpaces();
+			double x = (cannonball.getPosition().getX() + cannonball.getImage().getWidth() / 2) * xScale, y = (cannonball.getPosition().getY() + cannonball.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
+			gc.setFill(BEFORE_FILL_COLOR);
+			gc.fillText(substrBefore, x, y);
+			gc.setStroke(BEFORE_STROKE_COLOR);
+			gc.strokeText(substrBefore, x, y);
+			gc.setFill(AFTER_FILL_COLOR);
+			gc.fillText(substrAfter, x, y);
+			gc.setStroke(AFTER_STROKE_COLOR);
+			gc.strokeText(substrAfter, x, y);
 		}
 	}
 

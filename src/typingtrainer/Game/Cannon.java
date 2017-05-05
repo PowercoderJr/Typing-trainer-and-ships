@@ -28,7 +28,7 @@ public abstract class Cannon extends PvpObject
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 0, 150, 55);
 	}
 
-	public void shoot(Point2D target)
+	public Cannonball shoot(Point2D target)
 	{
 		rotationAngle = Math.toDegrees(Math.atan((target.getY() - position.getY() - pivot.getY()) / (target.getX() - position.getX() - pivot.getX())));
 
@@ -75,6 +75,7 @@ public abstract class Cannon extends PvpObject
 			}
 		});
 		pushingThread.start();
+		return cannonball;
 	}
 
 	public Point2D getBasePosition()

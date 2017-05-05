@@ -21,6 +21,7 @@ public class Cannonball extends PvpObject
 		this.parentCannon = parentCannon;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(),132, 55, 16, 16);
 		speed = 300;
+		word = new PvpWord("");
 	}
 
 	public Point2D getTarget()
@@ -36,5 +37,10 @@ public class Cannonball extends PvpObject
 	public double getSpeed()
 	{
 		return speed;
+	}
+
+	public PvpWord getWord()
+	{
+		return word;
 	}
 }

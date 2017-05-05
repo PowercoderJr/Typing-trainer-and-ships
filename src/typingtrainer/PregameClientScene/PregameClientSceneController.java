@@ -65,71 +65,67 @@ public class PregameClientSceneController
 		{
 			final String codegram = msg.substring(0, msg.indexOf(':'));
 			final String content = msg.substring(msg.indexOf(':') + 1);
-			if (codegram.equals(PregameServerSceneController.CHAT_MSG_CODEGRAM))
+			switch (codegram)
 			{
-				chatTA.appendText(content + '\n');
-			}
-			else if (codegram.equals(PregameServerSceneController.START_CODEGRAM))
-			{
-				/**Уязвимый участок*/
-				Platform.runLater(() ->
-				{
-					isConnected = false;
-
-					Word.Languages lang;
-					switch (langLabel.getText())
+				case PregameServerSceneController.CHAT_MSG_CODEGRAM:
+					chatTA.appendText(content + '\n');
+					break;
+				case PregameServerSceneController.START_CODEGRAM:
+					/**Уязвимый участок*/
+					Platform.runLater(() ->
 					{
-						case "Русский":
-						default:
-							lang = Word.Languages.RU;
-							break;
-						case "English":
-							lang = Word.Languages.EN;
-							break;
+						isConnected = false;
+
+						Word.Languages lang;
+						switch (langLabel.getText())
+						{
+							case "Русский":
+							default:
+								lang = Word.Languages.RU;
+								break;
+							case "English":
+								lang = Word.Languages.EN;
+								break;
+						}
+
+						String diffStr = difficultyLabel.getText();
+						int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
+
+						SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
+						Group root = new Group();
+						ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+						GameSceneController controller = new GameSceneController(gameScene, socket);
+						controller.setGameParams(lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
+						gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
+						sceneManager.pushScene(gameScene);
+					});
+					try
+					{
+						ostream.writeUTF("OK:");
 					}
-
-					String diffStr = difficultyLabel.getText();
-					int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
-
-					SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
-					Group root = new Group();
-					ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
-					GameSceneController controller = new GameSceneController(gameScene, socket);
-					controller.setGameParams(lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
-					gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-					sceneManager.pushScene(gameScene);
-				});
-				try
-				{
-					ostream.writeUTF("OK:");
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				/**--------------------------------------*/
-			}
-			else if (codegram.equals(PregameServerSceneController.DISCONNECT_CODEGRAM))
-			{
-				disconnect();
-				Platform.runLater(() -> onBackClicked(null));
-				System.out.println("Соединение разорвано");
-			}
-			else if (codegram.equals(PregameServerSceneController.SETTINGS_SERV_NAME_CODEGRAM))
-			{
-				Platform.runLater(() -> serverNameLabel.setText(content));
-			}
-			else if (codegram.equals(PregameServerSceneController.SETTINGS_LANG_CODEGRAM))
-			{
-				Platform.runLater(() -> langLabel.setText(content));
-			}
-			else if (codegram.equals(PregameServerSceneController.SETTINGS_DIFFICULTY_CODEGRAM))
-			{
-				Platform.runLater(() -> difficultyLabel.setText(content));
-			}
-			else if (codegram.equals(PregameServerSceneController.SETTINGS_REGISTER_CODEGRAM))
-			{
-				Platform.runLater(() -> registerLabel.setText(content));
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+					/**--------------------------------------*/
+					break;
+				case PregameServerSceneController.DISCONNECT_CODEGRAM:
+					disconnect();
+					Platform.runLater(() -> onBackClicked(null));
+					System.out.println("Соединение разорвано");
+					break;
+				case PregameServerSceneController.SETTINGS_SERV_NAME_CODEGRAM:
+					Platform.runLater(() -> serverNameLabel.setText(content));
+					break;
+				case PregameServerSceneController.SETTINGS_LANG_CODEGRAM:
+					Platform.runLater(() -> langLabel.setText(content));
+					break;
+				case PregameServerSceneController.SETTINGS_DIFFICULTY_CODEGRAM:
+					Platform.runLater(() -> difficultyLabel.setText(content));
+					break;
+				case PregameServerSceneController.SETTINGS_REGISTER_CODEGRAM:
+					Platform.runLater(() -> registerLabel.setText(content));
+					break;
 			}
 		}
 	}
