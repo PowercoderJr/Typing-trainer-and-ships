@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.CongScene.CongSceneController">
   <children>
     <Label fx:id="labelOption1" text="ПОЗДРАВЛЯЕМ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
@@ -9,13 +11,10 @@
       <children>
         <Label fx:id="label1" text="Время:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="label_time" text="" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-
         <Label fx:id="label3" text="Ошибки:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <Label fx:id="label_mistakes" text="" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-
         <Label fx:id="label5" text="Скорость:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <Label fx:id="label_speed" text="" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-
       </children>
       <columnConstraints>
         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="567.0" minWidth="10.0" prefWidth="567.0" />
@@ -30,10 +29,10 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+    <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="labelGo" onMouseClicked="#onGoClicked" text="ДАЛЕЕ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="mainMenuLabel" onMouseClicked="#onMenuClicked" text="В ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="nextLabel" onMouseClicked="#onNextClicked" text="ДАЛЕЕ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -43,13 +42,16 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
+    <Label fx:id="label_statisticsStatus" text="" GridPane.columnIndex="0" GridPane.rowIndex="2" />
   </children>
   <columnConstraints>
-    <ColumnConstraints halignment="RIGHT" maxWidth="1206.0" prefWidth="1199.0" />
+    <ColumnConstraints halignment="CENTER" maxWidth="1206.0" prefWidth="1199.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
-    <RowConstraints prefHeight="400.0" vgrow="SOMETIMES" />
-    <RowConstraints prefHeight="26.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="399.0" prefHeight="318.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="50.0" prefHeight="50.0" valignment="CENTER" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
   </rowConstraints>
 </GridPane>

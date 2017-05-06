@@ -1,7 +1,6 @@
 package typingtrainer.PracticeScene;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -74,39 +73,39 @@ public class PracticeSceneController
 	static boolean isMusicParam;
 	static boolean isSoundParam;
 	private static int[][] keyCoordinates = {
-			{396, 180},		//а
-			{649, 180},		//о
-			{311, 180},		//в
-			{733, 180},		//л
-			{227, 180},		//ы
-			{817, 180},		//д
-			{143, 180},		//ф
-			{901, 180},		//ж
-			{480, 180},		//п
-			{564, 180},		//р
-			{370, 93},		//к
-			{623, 93},		//г
-			{455, 93},		//е
-			{539, 93},		//н
-			{426, 268},		//м
-			{682, 268},		//ь
-			{514, 268},		//и
-			{598, 268},		//т
-			{286, 93},		//у
-			{708, 93},		//ш
-			{345, 268},		//с
-			{767, 268},		//б
-			{202, 93},		//ц
-			{792, 93},		//щ
-			{261, 268},		//ч
-			{851, 268},		//ю
-			{117, 93},		//й
-			{876, 93},		//з
-			{176, 268},		//я
-			{936, 268},		//.
-			{961, 93},		//х
-			{1045, 93},		//ъ
-			{986, 180},		//э
+			{396, 180},        //а
+			{649, 180},        //о
+			{311, 180},        //в
+			{733, 180},        //л
+			{227, 180},        //ы
+			{817, 180},        //д
+			{143, 180},        //ф
+			{901, 180},        //ж
+			{480, 180},        //п
+			{564, 180},        //р
+			{370, 93},        //к
+			{623, 93},        //г
+			{455, 93},        //е
+			{539, 93},        //н
+			{426, 268},        //м
+			{682, 268},        //ь
+			{514, 268},        //и
+			{598, 268},        //т
+			{286, 93},        //у
+			{708, 93},        //ш
+			{345, 268},        //с
+			{767, 268},        //б
+			{202, 93},        //ц
+			{792, 93},        //щ
+			{261, 268},        //ч
+			{851, 268},        //ю
+			{117, 93},        //й
+			{876, 93},        //з
+			{176, 268},        //я
+			{936, 268},        //.
+			{961, 93},        //х
+			{1045, 93},        //ъ
+			{986, 180},        //э
 	};
 
 	public void initialize()
@@ -128,7 +127,7 @@ public class PracticeSceneController
 		disposeSounds();
 		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
-		while (taskWord.length() < 200)
+		while (taskWord.length() < 10)
 			taskWord.append(" " + Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
 		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficultyParam,
@@ -156,7 +155,8 @@ public class PracticeSceneController
 		}
 	}
 
-	public void onKeyPressed(KeyEvent keyEvent) throws IOException {
+	public void onKeyPressed(KeyEvent keyEvent) throws IOException
+	{
 		if (!keyEvent.getCode().toString().equals("CONTROL") &&
 				!keyEvent.getCode().toString().equals("SHIFT") &&
 				!keyEvent.getCode().toString().equals("ALT") &&
@@ -252,34 +252,14 @@ public class PracticeSceneController
 				else
 				{
 					disposeSounds();
-					try
-					{
-						((ManagedScene) (displayableStringLabel.getScene())).getManager().popAllExceptFirst();
-					}
-					catch (InvocationTargetException e)
-					{
-						System.out.println(e.getMessage());
-					}
-
 					displayableStringLabel.setText("");
-
 
 					int mistakes = watcher.getMistakeCount();
 					double time = watcher.getFinalTime() * PracticeSceneController.SECONDS_NANOSECOND_CONTAIN;
 					int speed = (int) (watcher.getInitStringLength() * PracticeSceneController.SECONDS_MINUTE_CONTAIN / time);
+					boolean isStatisticsSaved = true;
 					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-					String date = dateFormat.format( new Date() );
-
-
-					CongSceneController.SetResaults(speed,time,mistakes);
-
-
-					SceneManager sceneManager = ((ManagedScene)this.pane.getScene()).getManager();
-					Parent congSceneFXML = FXMLLoader.load(Main.class.getResource("CongScene/congScene.fxml"));
-					ManagedScene congScene = new ManagedScene(congSceneFXML, 1280, 720, sceneManager);
-					congScene.getStylesheets().add("typingtrainer/CongScene/style.css");
-					sceneManager.pushScene(congScene);
-
+					String date = dateFormat.format(new Date());
 
 					try
 					{
@@ -290,8 +270,15 @@ public class PracticeSceneController
 					}
 					catch (IOException e)
 					{
-						new Alert(Alert.AlertType.ERROR, "Ошибка при записи статистики.", ButtonType.OK).showAndWait();
+						isStatisticsSaved = false;
 					}
+
+					CongSceneController.SetResults(speed, time, mistakes, isStatisticsSaved);
+					SceneManager sceneManager = ((ManagedScene) this.pane.getScene()).getManager();
+					Parent congSceneFXML = FXMLLoader.load(Main.class.getResource("CongScene/congScene.fxml"));
+					ManagedScene congScene = new ManagedScene(congSceneFXML, 1280, 720, sceneManager);
+					congScene.getStylesheets().add("typingtrainer/CongScene/style.css");
+					sceneManager.pushScene(congScene);
 				}
 			}
 			else
