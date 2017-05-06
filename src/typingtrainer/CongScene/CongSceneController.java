@@ -19,42 +19,35 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class CongSceneController
 {
-
 	@FXML
 	public Label label_speed;
+	@FXML
 	public Label label_mistakes;
+	@FXML
 	public Label label_time;
-
-
+	@FXML
+	public Label label_statisticsStatus;
 
 	static int mistakes;
 	static int speed;
 	static double time;
-
+	static boolean isStatisticsSaved;
 
 	public void initialize()
 	{
 		System.out.println("Сцена окончания сеанса готова!");
 
-		label_time.setText(String.format("%.2f", time) + "сек.");
-		label_mistakes.setText( String.valueOf(mistakes) + "шт.");
-		label_speed.setText( String.valueOf(speed) + "зн/мин");
+		label_time.setText(String.format("%.2f", time) + " сек");
+		label_mistakes.setText( String.valueOf(mistakes) + " шт.");
+		label_speed.setText( String.valueOf(speed) + " зн/мин");
+		label_statisticsStatus.setText(isStatisticsSaved ? "Статистика успешно записана" : "При записи статистики произошла ошибка");
 	}
 
-	public void onGoClicked(MouseEvent mouseEvent) throws IOException
-	{
-
-		SceneManager sceneManager = ((ManagedScene)(((Label)mouseEvent.getSource()).getScene())).getManager();
-		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("ModScene/modScene.fxml"));
-		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
-		practiceScene.getStylesheets().add("typingtrainer/ModScene/style.css");
-		sceneManager.pushScene(practiceScene);
-	}
-
-	public void onBackClicked(MouseEvent mouseEvent)
+	public void onNextClicked(MouseEvent mouseEvent) throws IOException
 	{
 		try
 		{
+			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
 			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
 		}
 		catch (InvocationTargetException e)
@@ -63,9 +56,22 @@ public class CongSceneController
 		}
 	}
 
-	public static void SetResaults(int n_speed, double n_time, int n_mistakes){
+	public void onMenuClicked(MouseEvent mouseEvent)
+	{
+		try
+		{
+			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
+		}
+		catch (InvocationTargetException e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void SetResults(int n_speed, double n_time, int n_mistakes, boolean n_isStatisticsSaved){
 		speed = n_speed;
 		time = n_time;
 		mistakes = n_mistakes;
+		isStatisticsSaved = n_isStatisticsSaved;
 	}
 }
