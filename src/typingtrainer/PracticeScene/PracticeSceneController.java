@@ -252,6 +252,7 @@ public class PracticeSceneController
 				else
 				{
 					disposeSounds();
+					isTimerRunning = false;
 					displayableStringLabel.setText("");
 
 					int mistakes = watcher.getMistakeCount();
@@ -446,11 +447,5 @@ public class PracticeSceneController
 	{
 		isSoundParam = !isSoundParam;
 		soundImg.setViewport(isSoundParam ? SOUND_ON_RECT : SOUND_OFF_RECT);
-	}
-
-	public void finalize() //Здесь есть какой-нибудь деструктор?
-	{
-		isTimerRunning = false;
-		System.out.println("Сцена практики уничтожена!");
 	}
 }
