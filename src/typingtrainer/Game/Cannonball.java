@@ -8,7 +8,7 @@ import javafx.scene.image.WritableImage;
 /**
  * Created by Meow on 22.04.2017.
  */
-public class Cannonball extends PvpObject
+public class Cannonball extends PvpObject implements IHavingWord
 {
 	public enum Type {OFFENCIVE, DEFENCIVE};
 	private Type type;
@@ -16,14 +16,16 @@ public class Cannonball extends PvpObject
 	private PvpWord word;
 	private Point2D target;
 	private double speed;
+	private boolean isCountershooted;
 
 	public Cannonball(Cannon parentCannon, Belonging belonging, Point2D position)
 	{
 		super(belonging, position, false);
 		this.parentCannon = parentCannon;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(),132, 55, 16, 16);
-		speed = 300;
+		speed = 30;
 		word = new PvpWord("");
+		isCountershooted = false;
 		if (parentCannon.getClass() == OffenciveCannon.class)
 			type = Type.OFFENCIVE;
 		else if (parentCannon.getClass() == DefenciveCannon.class)
@@ -37,7 +39,7 @@ public class Cannonball extends PvpObject
 
 	public void setTarget(Point2D target)
 	{
-		this.target = target;
+		this.target = target/*.subtract(image.getWidth() / 2, image.getHeight() / 2)*/;
 	}
 
 	public double getSpeed()
@@ -50,7 +52,8 @@ public class Cannonball extends PvpObject
 		this.speed = speed;
 	}
 
-	public PvpWord getWord()
+	@Override
+	public PvpWord getPvpWord()
 	{
 		return word;
 	}
@@ -58,5 +61,25 @@ public class Cannonball extends PvpObject
 	public Type getType()
 	{
 		return type;
+	}
+
+	public Point2D getDirection()
+	{
+		return target.subtract(position).normalize();
+	}
+
+	public Point2D getPositionAfterDistance(double distance)
+	{
+		return position.add(getDirection().getX() * distance, getDirection().getY() * distance);
+	}
+
+	public boolean isCountershooted()
+	{
+		return isCountershooted;
+	}
+
+	public void setCountershooted(boolean countershooted)
+	{
+		isCountershooted = countershooted;
 	}
 }
