@@ -29,8 +29,8 @@ import java.net.Socket;
  */
 public class GameSceneController
 {
-	private static final int DEFAULT_SCREEN_WIDTH = 1280;
-	private static final int DEFAULT_SCREEN_HEIGHT = 720;
+	public static final int DEFAULT_SCREEN_WIDTH = 1280;
+	public static final int DEFAULT_SCREEN_HEIGHT = 720;
 	private static final int dt = 15;
 	private static final int WORD_OFFSET_Y = 30;
 	private static final Color BEFORE_FILL_COLOR = new Color(1, 1, 1, 0.2);
@@ -88,11 +88,24 @@ public class GameSceneController
 					}
 					playShotSound();
 				}
+				game.setAllCharsDoneToZero();
 			}
 			else if (event.getCode() == KeyCode.ENTER) //Defencive
 			{
-				if (game.shootDefencive())
+				String shotInfo = game.shootDefenciveFriendly();
+				if (!shotInfo.isEmpty())
+				{
+					try
+					{
+						ostream.writeUTF(shotInfo);
+					}
+					catch (IOException e)
+					{
+						System.out.println(e.getMessage());
+					}
 					playShotSound();
+				}
+				game.setAllCharsDoneToZero();
 			}
 			else if (!event.getText().isEmpty() && isShootableChar(event))
 			{
@@ -121,6 +134,18 @@ public class GameSceneController
 				event.getText().charAt(0) == 'э' ||
 				event.getText().charAt(0) == '.');
 	}
+
+	public static Point2D mirrorRelativelyToDefaultWidth(Point2D point)
+	{
+		return new Point2D(DEFAULT_SCREEN_WIDTH - point.getX(), point.getY());
+	}
+
+	public static double mirrorRelativelyToDefaultWidth(double x)
+	{
+		return DEFAULT_SCREEN_WIDTH - x;
+	}
+
+
 
 	public GameSceneController(ManagedScene scene, Socket socket)
 	{
@@ -187,6 +212,7 @@ public class GameSceneController
 					System.out.println("Соединение разорвано (из игры)");
 					break;
 				case OFFENCIVE_SHOT_CODEGRAM:
+				{
 					String[] data = content.split(SEPARATOR_CODEGRAM);
 					int cannonID = Integer.parseInt(data[0]);
 					double targetX = Double.parseDouble(data[1]);
@@ -195,6 +221,16 @@ public class GameSceneController
 					game.shootOffenciveHostile(cannonID, new Point2D(targetX, targetY), speed, data[4]);
 					playShotSound();
 					break;
+				}
+				case DEFENCIVE_SHOT_CODEGRAM:
+				{
+					String[] data = content.split(SEPARATOR_CODEGRAM);
+					double targetX = Double.parseDouble(data[0]);
+					double targetY = Double.parseDouble(data[1]);
+					double speed = Double.parseDouble(data[2]);
+					game.shootDefenciveHostile(new Point2D(targetX, targetY), speed, data[3]);
+					playShotSound();
+				}
 			}
 		}
 	}
@@ -245,9 +281,14 @@ public class GameSceneController
 		gc.drawImage(bg1img, 0, bg2Y, bgSize, bgSize);
 
 		//Cannonballs
+		gc.setStroke(new Color(0, 0, 0, 1));
+		gc.setLineWidth(2);
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
+		{
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
-
+			//Временная огромная строка, после решения проблемы будет удалена
+			//gc.strokeLine(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY(), 					game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getTarget().getX() : game.getCannonballs().get(i).getTarget().getX(), game.getCannonballs().get(i).getTarget().getY());
+		}
 
 		//Ships
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
@@ -274,7 +315,7 @@ public class GameSceneController
 		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
 		{
 			OffenciveCannon cannon = game.getShip(0).getOffenciveCannon(i);
-			String substrBefore = cannon.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannon.getWord().getSubstrAfterWithSpaces();
+			String substrBefore = cannon.getPvpWord().getSubstrBeforeWithSpaces(), substrAfter = cannon.getPvpWord().getSubstrAfterWithSpaces();
 			double x = 10 * xScale, y = (Ship.CANNON_BASE_POSITIONS[i + 1].getY() + cannon.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
 			gc.setFill(BEFORE_FILL_COLOR);
 			gc.fillText(substrBefore, x, y);
@@ -290,9 +331,9 @@ public class GameSceneController
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
 			Cannonball cannonball = game.getCannonballs().get(i);
-			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE)
+			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE && !cannonball.isCountershooted())
 			{
-				String substrBefore = cannonball.getWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getWord().getSubstrAfterWithSpaces();
+				String substrBefore = cannonball.getPvpWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getPvpWord().getSubstrAfterWithSpaces();
 				double x = (sceneWidth - (cannonball.getPosition().getX() - cannonball.getImage().getWidth() / 2)) * xScale,
 						y = (cannonball.getPosition().getY() + cannonball.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
 				gc.setFill(BEFORE_FILL_COLOR);

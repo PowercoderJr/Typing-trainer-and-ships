@@ -39,7 +39,6 @@ public abstract class Cannon extends PvpObject
 		getParentShip().getParentGame().getSmokeClouds().add(smokeCloud);
 		smokeCloud.play(500);
 
-		//Cannonball cannonball = new Cannonball(this, belonging, new Point2D(position.getX() + pivot.getX() - 8, position.getY() + pivot.getY() - 8));
 		Cannonball cannonball = new Cannonball(this, belonging, position.add(pivot).subtract(8, 8));
 		cannonball.setTarget(target);
 		getParentShip().getParentGame().getCannonballs().add(cannonball); //Перенести ли в методы, откуда вызывается данный?
