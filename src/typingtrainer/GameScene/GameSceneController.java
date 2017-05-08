@@ -23,12 +23,31 @@ import typingtrainer.Word;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by Meow on 22.04.2017.
  */
 public class GameSceneController
 {
+	//Debug
+	public static class Line
+	{
+		double x1, y1, x2, y2;
+
+		public Line(double x1, double y1, double x2, double y2)
+		{
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+	}
+	public static final ArrayList<Line> lines = new ArrayList<>();
+	public static final ArrayList<Line> points = new ArrayList<>();
+	public static final ArrayList<Line> colPoints = new ArrayList<>();
+	//
+
 	public static final int DEFAULT_SCREEN_WIDTH = 1280;
 	public static final int DEFAULT_SCREEN_HEIGHT = 720;
 	private static final int dt = 15;
@@ -281,13 +300,12 @@ public class GameSceneController
 		gc.drawImage(bg1img, 0, bg2Y, bgSize, bgSize);
 
 		//Cannonballs
-		gc.setStroke(new Color(0, 0, 0, 1));
-		gc.setLineWidth(2);
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
-			//Временная огромная строка, после решения проблемы будет удалена
-			//gc.strokeLine(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY(), 					game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getTarget().getX() : game.getCannonballs().get(i).getTarget().getX(), game.getCannonballs().get(i).getTarget().getY());
+			//Debug
+			points.add(new Line(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY(), 0, 0));
+			//
 		}
 
 		//Ships
@@ -331,7 +349,7 @@ public class GameSceneController
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
 			Cannonball cannonball = game.getCannonballs().get(i);
-			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE && !cannonball.isCountershooted())
+			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE && cannonball.canBeCountershooted())
 			{
 				String substrBefore = cannonball.getPvpWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getPvpWord().getSubstrAfterWithSpaces();
 				double x = (sceneWidth - (cannonball.getPosition().getX() - cannonball.getImage().getWidth() / 2)) * xScale,
@@ -346,6 +364,21 @@ public class GameSceneController
 				gc.strokeText(substrAfter, x, y);
 			}
 		}
+
+		//Debug
+		/*
+		gc.setStroke(new Color(0, 0, 0, 1));
+		gc.setLineWidth(2);
+		for (int i = 0; i < lines.size(); ++i)
+			gc.strokeLine(xScale * lines.get(i).x1, yScale * lines.get(i).y1, xScale * lines.get(i).x2, yScale * lines.get(i).y2);
+		gc.setFill(new Color(0, 1, 0, 1));
+		gc.setLineWidth(1);
+		for (int i = 0; i < points.size(); ++i)
+			gc.fillOval(xScale * points.get(i).x1, yScale * points.get(i).y1, 3, 3);
+		gc.setFill(new Color(1, 0, 0, 1));
+		for (int i = 0; i < colPoints.size(); ++i)
+			gc.fillOval(xScale * colPoints.get(i).x1, yScale * colPoints.get(i).y1, 5, 5);*/
+		//
 	}
 
 	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas

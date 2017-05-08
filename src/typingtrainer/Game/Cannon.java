@@ -7,6 +7,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.Main;
 
 /**
@@ -42,6 +43,9 @@ public abstract class Cannon extends PvpObject
 		Cannonball cannonball = new Cannonball(this, belonging, position.add(pivot).subtract(8, 8));
 		cannonball.setTarget(target);
 		getParentShip().getParentGame().getCannonballs().add(cannonball); //Перенести ли в методы, откуда вызывается данный?
+		//Debug
+		GameSceneController.lines.add(new GameSceneController.Line(belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - cannonball.getPosition().getX() : cannonball.getPosition().getX(), cannonball.getPosition().getY(), belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - target.getX() : target.getX(), target.getY()));
+		//
 
 		if (pushingThread != null && pushingThread.isAlive())
 			pushingThread.interrupt();
