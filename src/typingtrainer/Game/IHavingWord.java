@@ -5,5 +5,5 @@ package typingtrainer.Game;
  */
 public interface IHavingWord
 {
-	public PvpWord getPvpWord();
+	PvpWord getPvpWord();
 }

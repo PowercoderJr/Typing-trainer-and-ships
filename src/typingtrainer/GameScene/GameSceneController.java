@@ -44,8 +44,8 @@ public class GameSceneController
 		}
 	}
 	public static final ArrayList<Line> lines = new ArrayList<>();
-	public static final ArrayList<Line> points = new ArrayList<>();
-	public static final ArrayList<Line> colPoints = new ArrayList<>();
+	public static final ArrayList<Point2D> points = new ArrayList<>();
+	public static final ArrayList<Point2D> colPoints = new ArrayList<>();
 	//
 
 	public static final int DEFAULT_SCREEN_WIDTH = 1280;
@@ -64,6 +64,8 @@ public class GameSceneController
 	public static final String DISCONNECT_CODEGRAM = "BYE";
 
 	private MediaPlayer shotMP;
+	private MediaPlayer ballsCollisionMP;
+	private MediaPlayer shipHitMP;
 
 	private Socket socket;
 	private DataOutputStream ostream;
@@ -212,6 +214,25 @@ public class GameSceneController
 				e.printStackTrace();
 			}
 		}).start();
+		new Thread(() ->
+		{
+			try
+			{
+				while (isRendering)
+				{
+					if (game.isNewBallsCollisionDetected())
+					{
+						game.setNewBallsCollisionDetected(false);
+						playBallsCollisionSound();
+					}
+					Thread.sleep(dt);
+				}
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}).start();
 
 		isPlaying = true;
 		new Thread(this::waitForMessages).start();
@@ -304,7 +325,7 @@ public class GameSceneController
 		{
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
 			//Debug
-			points.add(new Line(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY(), 0, 0));
+			points.add(new Point2D(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY()));
 			//
 		}
 
@@ -326,6 +347,10 @@ public class GameSceneController
 		//Smoke clouds
 		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
 			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
+
+		//Cannonball shards
+		for (int i = 0; i < game.getCannonballShards().size(); ++i)
+			renderPvpObject(gc, game.getCannonballShards().get(i), sceneWidth, xScale, yScale);
 
 		//Words
 		//Offencive cannon words
@@ -366,7 +391,7 @@ public class GameSceneController
 		}
 
 		//Debug
-		/*
+/*
 		gc.setStroke(new Color(0, 0, 0, 1));
 		gc.setLineWidth(2);
 		for (int i = 0; i < lines.size(); ++i)
@@ -374,10 +399,11 @@ public class GameSceneController
 		gc.setFill(new Color(0, 1, 0, 1));
 		gc.setLineWidth(1);
 		for (int i = 0; i < points.size(); ++i)
-			gc.fillOval(xScale * points.get(i).x1, yScale * points.get(i).y1, 3, 3);
+			gc.fillOval(xScale * points.get(i).getX(), yScale * points.get(i).getY(), 3, 3);
 		gc.setFill(new Color(1, 0, 0, 1));
 		for (int i = 0; i < colPoints.size(); ++i)
-			gc.fillOval(xScale * colPoints.get(i).x1, yScale * colPoints.get(i).y1, 5, 5);*/
+			gc.fillOval(xScale * colPoints.get(i).getX(), yScale * colPoints.get(i).getY(), 5, 5);
+*/
 		//
 	}
 
@@ -471,8 +497,52 @@ public class GameSceneController
 				buf.dispose();
 			}).start();
 		}
-		shotMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/shot" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
+		shotMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/shot_" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
 		shotMP.play();
+	}
+
+	private void playBallsCollisionSound()
+	{
+		if (ballsCollisionMP != null)
+		{
+			MediaPlayer buf = ballsCollisionMP;
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				buf.dispose();
+			}).start();
+		}
+		ballsCollisionMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/balls_collision_" + (int) (1 + Math.random() * 3) + ".wav").toURI().toString()));
+		ballsCollisionMP.play();
+	}
+
+	private void playShipHitSound()
+	{
+		if (shipHitMP != null)
+		{
+			MediaPlayer buf = shipHitMP;
+			new Thread(() ->
+			{
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				buf.dispose();
+			}).start();
+		}
+		shipHitMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".wav").toURI().toString()));
+		shipHitMP.play();
 	}
 
 	public void setGameParams(Word.Languages lang, int difficulty, boolean isRegister)

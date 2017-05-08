@@ -10,6 +10,7 @@ import javafx.scene.image.WritableImage;
  */
 public class Cannonball extends PvpObject implements IHavingWord
 {
+	public static final double BASE_SPEED = 300;
 	public enum Type {OFFENCIVE, DEFENCIVE};
 	private Type type;
 	private Cannon parentCannon;
@@ -24,8 +25,8 @@ public class Cannonball extends PvpObject implements IHavingWord
 		this.parentCannon = parentCannon;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(),132, 55, 16, 16);
 		pivot = new Point2D(image.getWidth() / 2, image.getHeight() / 2);
-		speed = 300;
 		word = new PvpWord("");
+		speed = 300;
 		if (parentCannon.getClass() == OffenciveCannon.class)
 			type = Type.OFFENCIVE;
 		else if (parentCannon.getClass() == DefenciveCannon.class)
@@ -51,6 +52,11 @@ public class Cannonball extends PvpObject implements IHavingWord
 	public void setSpeed(double speed)
 	{
 		this.speed = speed;
+	}
+
+	public void setSpeedAuto()
+	{
+		speed = BASE_SPEED - (word.toString().length() - Game.MIN_WORD_LENGTH_TO_SHOOT) * 20;
 	}
 
 	@Override
