@@ -16,20 +16,21 @@ public class Cannonball extends PvpObject implements IHavingWord
 	private PvpWord word;
 	private Point2D target;
 	private double speed;
-	private boolean isCountershooted;
+	private boolean canBeCountershooted;
 
 	public Cannonball(Cannon parentCannon, Belonging belonging, Point2D position)
 	{
 		super(belonging, position, false);
 		this.parentCannon = parentCannon;
 		image = new WritableImage(Game.SPRITE_SHEET.getPixelReader(),132, 55, 16, 16);
-		speed = 30;
+		pivot = new Point2D(image.getWidth() / 2, image.getHeight() / 2);
+		speed = 300;
 		word = new PvpWord("");
-		isCountershooted = false;
 		if (parentCannon.getClass() == OffenciveCannon.class)
 			type = Type.OFFENCIVE;
 		else if (parentCannon.getClass() == DefenciveCannon.class)
 			type = Type.DEFENCIVE;
+		canBeCountershooted = type == Type.OFFENCIVE;
 	}
 
 	public Point2D getTarget()
@@ -73,13 +74,13 @@ public class Cannonball extends PvpObject implements IHavingWord
 		return position.add(getDirection().getX() * distance, getDirection().getY() * distance);
 	}
 
-	public boolean isCountershooted()
+	public boolean canBeCountershooted()
 	{
-		return isCountershooted;
+		return canBeCountershooted;
 	}
 
-	public void setCountershooted(boolean countershooted)
+	public void setCanBeCountershooted(boolean canBeCountershooted)
 	{
-		isCountershooted = countershooted;
+		this.canBeCountershooted = canBeCountershooted;
 	}
 }
