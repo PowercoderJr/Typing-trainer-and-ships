@@ -3,7 +3,6 @@ package typingtrainer.Game;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.shape.Circle;
 import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.Word;
 
@@ -29,6 +28,10 @@ public class Game
 	private Ship[] ships;
 	private ArrayList<Cannonball> cannonballs;
 	private ArrayList<Animation> smokeClouds;
+	private ArrayList<Animation> cannonballShards;
+	private ArrayList<Point2D> cannonballShardsVectors;
+
+	private boolean isNewBallsCollisionDetected;
 
 	public Game()
 	{
@@ -41,6 +44,10 @@ public class Game
 		ships[1] = new Ship(this, PvpObject.Belonging.HOSTILE, new Point2D(0, 0));
 		cannonballs = new ArrayList<>();
 		smokeClouds = new ArrayList<>();
+		cannonballShards = new ArrayList<>();
+		cannonballShardsVectors = new ArrayList<>();
+
+		isNewBallsCollisionDetected = false;
 	}
 
 	public void tick(int dt)
@@ -63,6 +70,11 @@ public class Game
 						{
 							cannonballs.remove(i);
 							cannonballs.remove(j);
+							Animation cannonballShard = new Animation(cannonball.getBelonging(), cannonball.getTarget().subtract(19, 19), SPRITE_SHEET, 5, 5, 132, 311, 38, 38);
+							cannonballShards.add(cannonballShard);
+							cannonballShardsVectors.add(new Point2D(cannonball.getDirection().getX() * cannonball.getSpeed() + victim.getDirection().getX() * victim.getSpeed(), cannonball.getDirection().getY() * cannonball.getSpeed() + victim.getDirection().getY() * victim.getSpeed()));
+							isNewBallsCollisionDetected = true;
+							cannonballShard.play(200);
 							alreadyDestroyed = true;
 							if (j > i)
 								--i;
@@ -99,6 +111,23 @@ public class Game
 			else
 			{
 				//smokeCloud.setPosition(new Point2D(smokeCloud.getPosition().getX(), smokeCloud.getPosition().getY() + GameSceneController.BACKGROUND_SPEED));
+			}
+		}
+
+		//Cannonball particles
+		for (int i = 0; i < cannonballShards.size(); ++i)
+		{
+			Animation cannonballShard = cannonballShards.get(i);
+
+			if (cannonballShard.isCompleted())
+			{
+				cannonballShards.remove(i);
+				cannonballShardsVectors.remove(i--);
+			}
+			else
+			{
+				//cannonballShard.setPosition(new Point2D(cannonballShard.getPosition().getX(), cannonballShard.getPosition().getY() + GameSceneController.BACKGROUND_SPEED));
+				cannonballShard.setPosition(cannonballShard.getPosition().add(cannonballShardsVectors.get(i).getX() / 1000 * dt, cannonballShardsVectors.get(i).getY() / 1000 * dt));
 			}
 		}
 	}
@@ -139,6 +168,7 @@ public class Game
 		{
 			Cannonball cannonball = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).shoot(new Point2D(1280, Math.random() * 720));
 			cannonball.getPvpWord().setWord(longestSubstr);
+			cannonball.setSpeedAuto();
 			ships[0].getOffenciveCannon(cannonWithLongestSubstrID).getPvpWord().setWord(Word.generateRndWord(Game.MAX_WORD_LENGTH, difficultyParam, langParam, isRegisterParam));
 			return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
 					cannonWithLongestSubstrID + GameSceneController.SEPARATOR_CODEGRAM +
@@ -181,7 +211,7 @@ public class Game
 			{
 				Point2D collisionPoint = GameSceneController.mirrorRelativelyToDefaultWidth(target.getPositionAfterDistance(DEFENCIVE_ANTICIPATION_DISTANCE));
 				//Debug
-				GameSceneController.colPoints.add(new GameSceneController.Line(collisionPoint.getX(), collisionPoint.getY(), 0, 0));
+				GameSceneController.colPoints.add(new Point2D(collisionPoint.getX(), collisionPoint.getY()));
 				//
 				Cannonball cannonball = ships[0].getDefenciveCannon().shoot(collisionPoint.add(collisionPoint.normalize().getX(), collisionPoint.normalize().getY()));
 				cannonball.getPvpWord().setWord(target.getPvpWord().toString());
@@ -257,18 +287,6 @@ public class Game
 		}
 	}
 
-	private void updateWords(ArrayList<IHavingWord> a, char typedChar)
-	{
-		for (int i = 0; i < a.size(); ++i)
-		{
-			PvpWord word = a.get(i).getPvpWord();
-			if (word.getCharsDone() < word.toString().length() && word.getCurrChar() == typedChar)
-				word.incCharsDone();
-			else
-				word.setCharsDone(0);
-		}
-	}
-
 	public Ship getShip(int index)
 	{
 		return ships[index];
@@ -282,6 +300,26 @@ public class Game
 	public ArrayList<Animation> getSmokeClouds()
 	{
 		return smokeClouds;
+	}
+
+	public ArrayList<Animation> getCannonballShards()
+	{
+		return cannonballShards;
+	}
+
+	public ArrayList<Point2D> getCannonballShardsVectors()
+	{
+		return cannonballShardsVectors;
+	}
+
+	public boolean isNewBallsCollisionDetected()
+	{
+		return isNewBallsCollisionDetected;
+	}
+
+	public void setNewBallsCollisionDetected(boolean newBallsCollisionDetected)
+	{
+		isNewBallsCollisionDetected = newBallsCollisionDetected;
 	}
 
 	public Word.Languages getLangParam()
