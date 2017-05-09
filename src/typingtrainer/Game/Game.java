@@ -3,6 +3,7 @@ package typingtrainer.Game;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Polygon;
 import typingtrainer.GameScene.GameSceneController;
 import typingtrainer.Word;
 
@@ -19,7 +20,7 @@ public class Game
 	public static final int MAX_WORD_LENGTH = 12;
 	public static final int MIN_WORD_LENGTH_TO_SHOOT = 3;
 	private static final double DEFENCIVE_ANTICIPATION_DISTANCE = 100.0;
-	private static final Object CANNONBALLS_LOCK = new Object();
+	public static final Object CANNONBALLS_LOCK = new Object();
 
 	private Word.Languages langParam;
 	private int difficultyParam;
@@ -32,6 +33,7 @@ public class Game
 	private ArrayList<Point2D> cannonballShardsVectors;
 
 	private boolean isNewBallsCollisionDetected;
+	private boolean isNewShipDamageDetected;
 
 	public Game()
 	{
@@ -40,8 +42,17 @@ public class Game
 		isRegisterParam = false;
 
 		ships = new Ship[SHIPS_COUNT];
+
 		ships[0] = new Ship(this, PvpObject.Belonging.FRIENDLY, new Point2D(0, 0));
 		ships[1] = new Ship(this, PvpObject.Belonging.HOSTILE, new Point2D(0, 0));
+		double[] points = {-0, 0, -16, 0, -23, 13, -56, 71, -89, 191, -107, 330, -115, 500, -116, 617, -97, 670, -50, 720, -0, 720};
+		for (int i = 0; i < SHIPS_COUNT; ++i)
+		{
+			ships[i].setShape(new Polygon(points));
+			ships[i].getShape().setLayoutX(GameSceneController.DEFAULT_SCREEN_WIDTH);
+			ships[i].getShape().setLayoutY(0);
+		}
+
 		cannonballs = new ArrayList<>();
 		smokeClouds = new ArrayList<>();
 		cannonballShards = new ArrayList<>();
@@ -84,7 +95,19 @@ public class Game
 
 				if (!alreadyDestroyed)
 				{
-					if (cannonball.getPosition().getY() < 0 ||
+					Ship ship = null;
+					if (cannonball.getBelonging() == PvpObject.Belonging.FRIENDLY)
+						ship = ships[1];
+					else if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE)
+						ship = ships[0];
+
+					if (ship.getShape().contains(cannonball.getPosition().add(cannonball.getPivot()).subtract(GameSceneController.DEFAULT_SCREEN_WIDTH, 0)) && !cannonball.HasDamaged())
+					{
+						ship.damage(cannonball.getPvpWord().toString().length() * Cannonball.WEIGHT_DAMAGE);
+						isNewShipDamageDetected = true;
+						cannonball.setHasDamaged(true);
+					}
+					else if (cannonball.getPosition().getY() < 0 ||
 							cannonball.getPosition().getX() > GameSceneController.DEFAULT_SCREEN_WIDTH ||
 							cannonball.getPosition().getY() > GameSceneController.DEFAULT_SCREEN_HEIGHT)
 					{
@@ -320,6 +343,16 @@ public class Game
 	public void setNewBallsCollisionDetected(boolean newBallsCollisionDetected)
 	{
 		isNewBallsCollisionDetected = newBallsCollisionDetected;
+	}
+
+	public boolean isNewShipDamageDetected()
+	{
+		return isNewShipDamageDetected;
+	}
+
+	public void setNewShipDamageDetected(boolean newShipDamageDetected)
+	{
+		isNewShipDamageDetected = newShipDamageDetected;
 	}
 
 	public Word.Languages getLangParam()

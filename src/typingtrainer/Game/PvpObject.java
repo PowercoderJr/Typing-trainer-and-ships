@@ -2,6 +2,7 @@ package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Shape;
 
 /**
  * Created by Meow on 23.04.2017.
@@ -10,6 +11,7 @@ public abstract class PvpObject
 {
 	public enum Belonging {FRIENDLY, HOSTILE}
 	protected Belonging belonging;
+	protected Shape shape;
 	protected Point2D position;
 	protected Point2D pivot;
 	protected double rotationAngle;
@@ -91,5 +93,15 @@ public abstract class PvpObject
 	public void setRotationAngle(double rotationAngle)
 	{
 		this.rotationAngle = rotationAngle;
+	}
+
+	public Shape getShape()
+	{
+		return shape;
+	}
+
+	public void setShape(Shape shape)
+	{
+		this.shape = shape;
 	}
 }
