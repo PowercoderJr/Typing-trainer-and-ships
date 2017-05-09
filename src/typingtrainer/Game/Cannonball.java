@@ -10,7 +10,9 @@ import javafx.scene.image.WritableImage;
  */
 public class Cannonball extends PvpObject implements IHavingWord
 {
-	public static final double BASE_SPEED = 300;
+	public static final double BASE_SPEED = 300.0;
+	public static final double SPEED_WEIGHT_PENALTY = 20.0;
+	public static final double WEIGHT_DAMAGE = 8.0;
 	public enum Type {OFFENCIVE, DEFENCIVE};
 	private Type type;
 	private Cannon parentCannon;
@@ -18,6 +20,7 @@ public class Cannonball extends PvpObject implements IHavingWord
 	private Point2D target;
 	private double speed;
 	private boolean canBeCountershooted;
+	private boolean hasDamaged;
 
 	public Cannonball(Cannon parentCannon, Belonging belonging, Point2D position)
 	{
@@ -32,6 +35,7 @@ public class Cannonball extends PvpObject implements IHavingWord
 		else if (parentCannon.getClass() == DefenciveCannon.class)
 			type = Type.DEFENCIVE;
 		canBeCountershooted = type == Type.OFFENCIVE;
+		hasDamaged = false;
 	}
 
 	public Point2D getTarget()
@@ -56,7 +60,7 @@ public class Cannonball extends PvpObject implements IHavingWord
 
 	public void setSpeedAuto()
 	{
-		speed = BASE_SPEED - (word.toString().length() - Game.MIN_WORD_LENGTH_TO_SHOOT) * 20;
+		speed = BASE_SPEED - (word.toString().length() - Game.MIN_WORD_LENGTH_TO_SHOOT) * SPEED_WEIGHT_PENALTY;
 	}
 
 	@Override
@@ -88,5 +92,15 @@ public class Cannonball extends PvpObject implements IHavingWord
 	public void setCanBeCountershooted(boolean canBeCountershooted)
 	{
 		this.canBeCountershooted = canBeCountershooted;
+	}
+
+	public boolean HasDamaged()
+	{
+		return hasDamaged;
+	}
+
+	public void setHasDamaged(boolean hasDamaged)
+	{
+		this.hasDamaged = hasDamaged;
 	}
 }
