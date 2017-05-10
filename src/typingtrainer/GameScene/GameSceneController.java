@@ -51,13 +51,23 @@ public class GameSceneController
 
 	public static final int DEFAULT_SCREEN_WIDTH = 1280;
 	public static final int DEFAULT_SCREEN_HEIGHT = 720;
+	public static final int BACKGROUND_SPEED = 2;
 	private static final int dt = 15;
+
 	private static final int WORD_OFFSET_Y = 30;
+	private static final int PLAYER_NAME_POS_X = 135;
+	private static final int PLAYER_NAME_POS_Y = 40;
+	private static final int PLAYER_NAME_MAX_WIDTH = 260;
+	private static final int PLAYER_HP_BAR_POS_X = 5;
+	private static final int PLAYER_HP_BAR_POS_Y = 55;
+	private static final int PLAYER_HP_MAX_WIDTH = 120;
+
+
 	private static final Color BEFORE_FILL_COLOR = new Color(1, 1, 1, 0.2);
 	private static final Color BEFORE_STROKE_COLOR = new Color(0, 0, 0, 0.2);
 	private static final Color AFTER_FILL_COLOR = new Color(1, 0, 0, 1);
 	private static final Color AFTER_STROKE_COLOR = new Color(0, 0, 0, 1);
-	public static final int BACKGROUND_SPEED = 2;
+	private static final Color PLAYER_NAME_FILL_COLOR = new Color(1.0/256*123, 1.0/256*197, 1.0/256*35, 1);
 
 	public static final String SEPARATOR_CODEGRAM = "&";
 	public static final String OFFENCIVE_SHOT_CODEGRAM = "OFFSHOT";
@@ -192,7 +202,6 @@ public class GameSceneController
 		canvas.setFocusTraversable(true);
 		root.getChildren().add(canvas);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.setFont(new Font("Courier New Bold", 40));
 		gc.setLineWidth(1.5);
 
 		bgImg = bgImg = new Image("typingtrainer/GameScene/sea_background.png");
@@ -363,6 +372,7 @@ public class GameSceneController
 			renderPvpObject(gc, game.getCannonballShards().get(i), sceneWidth, xScale, yScale);
 
 		//Words
+		gc.setFont(new Font("Courier New Bold", 40));
 		//Offencive cannon words
 		gc.setTextAlign(TextAlignment.LEFT);
 		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
@@ -416,14 +426,21 @@ public class GameSceneController
 */
 		//
 		//HP bars
+		gc.setFill(PLAYER_NAME_FILL_COLOR);
+		gc.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
 		{
 			Ship ship = game.getShip(i);
 			if (ship.getHp() > 0)
 			{
-				Image hpBar = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 375, (int) (255 * ship.getHp() / Ship.BASE_HP), 26);
-				renderPlayerImage(gc, hpBarBackground, ship.getBelonging(), 5, 40, sceneWidth, xScale, yScale);
-				renderPlayerImage(gc, hpBar, ship.getBelonging(), 5, 40, sceneWidth, xScale, yScale);
+				Image hpBar = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 375, (int) (hpBarBackground.getWidth() * ship.getHp() / Ship.BASE_HP), 26);
+				renderPlayerImage(gc, hpBarBackground, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
+				renderPlayerImage(gc, hpBar, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
+
+				gc.setFont(new Font("Arial Bold", 42));
+				renderPlayerText(gc, ship.getPlayerName(), true, true, ship.getBelonging(), PLAYER_NAME_POS_X, PLAYER_NAME_POS_Y, PLAYER_NAME_MAX_WIDTH, sceneWidth, xScale, yScale);
+				gc.setFont(new Font("Arial Bold", 20));
+				renderPlayerText(gc, (int) ship.getHp() + " / " + Ship.BASE_HP, false, true, ship.getBelonging(), PLAYER_HP_BAR_POS_X + 65, PLAYER_HP_BAR_POS_Y + 21, PLAYER_HP_MAX_WIDTH, sceneWidth, xScale, yScale);
 			}
 		}
 	}
@@ -445,6 +462,26 @@ public class GameSceneController
 		finalHeight = image.getHeight() * verticalScale;
 
 		gc.drawImage(image, finalX, finalY, finalWidth, finalHeight);
+	}
+
+	private void renderPlayerText(GraphicsContext gc, String text, boolean isFillNeeded, boolean isStrokeNeeded, PvpObject.Belonging belonging, double x, double y, double maxWidth, double sceneWidth, double horizontalScale, double verticalScale)
+	{
+		double finalX, finalY, finalMaxWidth;
+		if (belonging == PvpObject.Belonging.FRIENDLY)
+		{
+			finalX = x * horizontalScale;
+		}
+		else
+		{
+			finalX = sceneWidth - x * horizontalScale;
+		}
+		finalMaxWidth = maxWidth * horizontalScale;
+		finalY = y * verticalScale;
+
+		if (isFillNeeded)
+			gc.fillText(text, finalX, finalY, finalMaxWidth);
+		if (isStrokeNeeded)
+			gc.strokeText(text, finalX, finalY, finalMaxWidth);
 	}
 
 	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
@@ -590,5 +627,11 @@ public class GameSceneController
 		game.setLangParam(lang);
 		game.setDifficultyParam(difficulty);
 		game.setRegisterParam(isRegister);
+	}
+
+	public void setPlayerNames(String p1, String p2)
+	{
+		game.getShip(0).setPlayerName(p1);
+		game.getShip(1).setPlayerName(p2);
 	}
 }
