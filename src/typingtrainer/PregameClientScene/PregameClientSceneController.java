@@ -96,6 +96,7 @@ public class PregameClientSceneController
 						ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
 						GameSceneController controller = new GameSceneController(gameScene, socket);
 						controller.setGameParams(lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
+						controller.setPlayerNames(username, serverNameLabel.getText());
 						gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 						sceneManager.pushScene(gameScene);
 					});
