@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.PregameServerScene.PregameServerSceneController">
+  <children>
+    <GridPane prefHeight="40.0" prefWidth="1200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+      <children>
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="startLabel" disable="true" onMouseClicked="#onStartClicked" styleClass="label-button" text="СТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <Label text="ОЖИДАНИЕ ОППОНЕНТА" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+      <children>
+        <GridPane alignment="TOP_LEFT" prefWidth="1199.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+          <children>
+            <Label id="labelOption2" text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <ChoiceBox fx:id="langCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <Label id="labelOption3" text="Сложность:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <ChoiceBox fx:id="difficultyCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label id="labelOption4" text="Регистр:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <CheckBox fx:id="registerChb" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="567.0" minWidth="10.0" prefWidth="224.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="568.0" minWidth="10.0" prefWidth="300.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" prefHeight="350.0" prefWidth="578.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <children>
+            <GridPane GridPane.columnIndex="0" GridPane.rowIndex="2">
+              <children>
+                <TextField fx:id="messageTF" onKeyPressed="#onMessageTFKeyPressed" opacity="0.8" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Button fx:id="sendBtn" mnemonicParsing="false" onMouseClicked="#onSendClicked" prefWidth="83.0" text="&lt;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="513.0" minWidth="10.0" prefWidth="513.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="88.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="0">
+              <children>
+                <Label fx:id="opponentNameLabel" text="Здесь пусто" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <ImageView fx:id="kickImg" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0" visible="false" onMouseClicked="#onKickClicked" onMouseEntered="#onKickMouseEntered" onMouseExited="#onKickMouseExited"/>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <TextArea fx:id="chatTA" editable="false" opacity="0.8" prefWidth="200.0" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="590.0" minWidth="10.0" prefWidth="584.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints maxHeight="113.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="285.0" minHeight="10.0" prefHeight="285.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="128.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="601.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="732.0" minWidth="10.0" prefWidth="598.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="RIGHT" maxWidth="1206.0" prefWidth="1199.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="350.0" vgrow="SOMETIMES" />
+    <RowConstraints prefHeight="70.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+</GridPane>

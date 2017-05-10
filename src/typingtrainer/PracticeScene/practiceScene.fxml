@@ -12,8 +12,8 @@
   <children>
     <GridPane alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
-        <Label fx:id="mainMenuLabel" alignment="CENTER_LEFT" onKeyPressed="#onKeyPressed" onMouseClicked="#onMainMenuLabelClicked" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-        <Label fx:id="restartLabel" onMouseClicked="#onRestartLabelClicked" text="РЕСТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Label fx:id="mainMenuLabel" onKeyPressed="#onKeyPressed" onMouseClicked="#onMainMenuLabelClicked" styleClass="label-button" text="ГЛАВНОЕ МЕНЮ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Label fx:id="restartLabel" onMouseClicked="#onRestartLabelClicked" styleClass="label-button" text="РЕСТАРТ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
         <GridPane GridPane.columnIndex="2" GridPane.rowIndex="1">
           <children>
             <ImageView fx:id="musicImg" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#onMusicImgClicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0" />

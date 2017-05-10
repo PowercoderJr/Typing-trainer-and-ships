@@ -2,6 +2,7 @@ package typingtrainer;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Paint;
 import typingtrainer.SceneManager;
 
 /**
@@ -16,6 +17,12 @@ public class ManagedScene extends Scene
 	public ManagedScene(Parent root, double width, double height, SceneManager manager)
 	{
 		super(root, width, height);
+		this.manager = manager;
+	}
+
+	public ManagedScene(Parent root, double width, double height, Paint fill, SceneManager manager)
+	{
+		super(root, width, height, fill);
 		this.manager = manager;
 	}
 

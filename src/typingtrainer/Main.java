@@ -1,13 +1,17 @@
 package typingtrainer;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main extends Application
 {
-
     @Override
     public void start(Stage primaryStage) throws Exception
 	{
@@ -21,6 +25,18 @@ public class Main extends Application
         primaryStage.setTitle("Typing trainer");
         primaryStage.setWidth(1280);
         primaryStage.setHeight(720);
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()
+        {
+            @Override
+            public void handle(WindowEvent event)
+            {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Программу следует закрыть, нажав кнопку \"ВЫХОД\" в главном меню", ButtonType.OK);
+                alert.setTitle("Привет, я - костыль!");
+                alert.setHeaderText(null);
+                alert.showAndWait();
+                event.consume();
+            }
+        });
         primaryStage.show();
     }
 

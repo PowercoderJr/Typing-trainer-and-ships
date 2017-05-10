@@ -2,10 +2,6 @@
 
 .root
 {
+    -fx-background-image: url("sea_background.png");
     -fx-font-size: 70px;
-}
-
-#logoimg
-{
-    -fx-margin: 500px;
 }

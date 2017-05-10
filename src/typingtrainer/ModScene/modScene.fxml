@@ -11,19 +11,19 @@
 
 <GridPane fx:id="pane" alignment="CENTER" minHeight="64.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="typingtrainer.ModScene.ModSceneController">
   <children>
-    <Label fx:id="labelOption1" text="НАСТРОЙКИ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
-    <GridPane alignment="TOP_LEFT" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+    <Label id="labelOption1" text="НАСТРОЙКИ" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+    <GridPane prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
       <children>
-        <Label fx:id="labelOption2" text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label text="Язык:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <ChoiceBox fx:id="langCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-        <Label fx:id="labelOption3" text="Сложность:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Сложность:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <ChoiceBox fx:id="difficultyCB" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-        <Label fx:id="labelOption4" text="Регистр:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="Регистр:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <CheckBox fx:id="registerChb" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-        <Label id="labelOption5" text="Музыка:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label text="Музыка:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <CheckBox fx:id="musicChb" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-        <Label id="labelOption6" text="Звуки:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <CheckBox fx:id="soundsChb" mnemonicParsing="false"  GridPane.columnIndex="2" GridPane.rowIndex="4" />
+        <Label text="Звуки:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <CheckBox fx:id="soundsChb" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
       </children>
       <columnConstraints>
         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="567.0" minWidth="10.0" prefWidth="567.0" />
@@ -40,8 +40,8 @@
     </GridPane>
     <GridPane prefHeight="89.0" prefWidth="1199.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
       <children>
-        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
-        <Label fx:id="labelGo" onMouseClicked="#onGoClicked" text="GO" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="backLabel" onMouseClicked="#onBackClicked" styleClass="label-button" text="НАЗАД" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+        <Label fx:id="labelGo" onMouseClicked="#onGoClicked" styleClass="label-button" text="GO" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
