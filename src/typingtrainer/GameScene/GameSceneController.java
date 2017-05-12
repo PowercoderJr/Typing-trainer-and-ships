@@ -84,10 +84,9 @@ public class GameSceneController
 	private Image bgImg;
 	private double bg1Y, bg2Y;
 	private Image hpBarBackground;
-	//private Image hpBarForeground;
 
-	private boolean isRendering;
-	private boolean isPlaying;
+	private double pregameTimer;
+	private boolean isGameProceed;
 	private Game game;
 
 	private EventHandler<KeyEvent> onKeyPressed = new EventHandler<KeyEvent>()
@@ -107,43 +106,46 @@ public class GameSceneController
 				}
 				disconnect();
 			}
-			else if (event.getCode() == KeyCode.SPACE) //Offencive
+			else if (isGameProceed)
 			{
-				String shotInfo = game.shootOffenciveFriendly();
-				if (!shotInfo.isEmpty())
+				if (event.getCode() == KeyCode.SPACE) //Offencive
 				{
-					try
+					String shotInfo = game.shootOffenciveFriendly();
+					if (!shotInfo.isEmpty())
 					{
-						ostream.writeUTF(shotInfo);
+						try
+						{
+							ostream.writeUTF(shotInfo);
+						}
+						catch (IOException e)
+						{
+							System.out.println(e.getMessage());
+						}
+						playShotSound();
 					}
-					catch (IOException e)
-					{
-						System.out.println(e.getMessage());
-					}
-					playShotSound();
+					game.setAllCharsDoneToZero();
 				}
-				game.setAllCharsDoneToZero();
-			}
-			else if (event.getCode() == KeyCode.ENTER) //Defencive
-			{
-				String shotInfo = game.shootDefenciveFriendly();
-				if (!shotInfo.isEmpty())
+				else if (event.getCode() == KeyCode.ENTER) //Defencive
 				{
-					try
+					String shotInfo = game.shootDefenciveFriendly();
+					if (!shotInfo.isEmpty())
 					{
-						ostream.writeUTF(shotInfo);
+						try
+						{
+							ostream.writeUTF(shotInfo);
+						}
+						catch (IOException e)
+						{
+							System.out.println(e.getMessage());
+						}
+						playShotSound();
 					}
-					catch (IOException e)
-					{
-						System.out.println(e.getMessage());
-					}
-					playShotSound();
+					game.setAllCharsDoneToZero();
 				}
-				game.setAllCharsDoneToZero();
-			}
-			else if (!event.getText().isEmpty() && isShootableChar(event))
-			{
-				game.handleShootableChar(event);
+				else if (!event.getText().isEmpty() && isShootableChar(event))
+				{
+					game.handleShootableChar(event);
+				}
 			}
 		}
 	};
@@ -181,7 +183,7 @@ public class GameSceneController
 
 
 
-	public GameSceneController(ManagedScene scene, Socket socket)
+	public GameSceneController(ManagedScene scene, Socket socket, Word.Languages lang, int difficulty, boolean isRegister)
 	{
 		System.out.println("Игровая сцена готова!"/* + socket.getInetAddress().getHostAddress() + ":" + socket.getPort()*/);
 		this.socket = socket;
@@ -196,65 +198,87 @@ public class GameSceneController
 		this.scene = scene;
 		Group root = (Group) scene.getRoot();
 		Canvas canvas = new Canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-		//canvas.addEventHandler(KeyEvent.KEY_PRESSED, onKeyPressed);
-		//canvas.setOnKeyPressed(onKeyPressed);
 		canvas.setOnKeyPressed(onKeyPressed);
 		canvas.setFocusTraversable(true);
 		root.getChildren().add(canvas);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.setLineWidth(1.5);
 
-		bgImg = bgImg = new Image("typingtrainer/GameScene/sea_background.png");
+		bgImg = new Image("typingtrainer/GameScene/sea_background.png");
 		bg1Y = 0.0;
 		bg2Y = 0.0;
-		game = new Game();
+		game = new Game(lang, difficulty, isRegister);
 		hpBarBackground = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 349, 255, 26);
-		//hpBarForeground = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 375, 255, 26);
 
-		isRendering = true;
+		isGameProceed = false;
 		new Thread(() ->
 		{
+			//Задержка перед стартом
 			try
 			{
-				while (isRendering)
+				pregameTimer = 3.0;
+				do
 				{
-					game.tick(dt);
-					Platform.runLater(() -> render(gc));
+					Platform.runLater(() -> renderPrepairingStage(gc, "" + (int) Math.ceil(pregameTimer)));
 					Thread.sleep(dt);
-				}
+					pregameTimer -= dt / 1000.0;
+				} while (pregameTimer > 0);
 			}
 			catch (InterruptedException e)
 			{
 				e.printStackTrace();
 			}
-		}).start();
-		new Thread(() ->
-		{
-			try
+
+			//Интерфейс
+			new Thread(() ->
 			{
-				while (isRendering)
+				try
 				{
-					if (game.isNewBallsCollisionDetected())
+					isGameProceed = true;
+					while (isGameProceed)
 					{
-						game.setNewBallsCollisionDetected(false);
-						playBallsCollisionSound();
+						game.tick(dt);
+						Platform.runLater(() -> render(gc));
+						Thread.sleep(dt);
 					}
-					if (game.isNewShipDamageDetected())
-					{
-						game.setNewShipDamageDetected(false);
-						playShipDamagedSound();
-					}
-					Thread.sleep(dt);
 				}
-			}
-			catch (InterruptedException e)
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}).start();
+
+			//Логика
+			new Thread(() ->
 			{
-				e.printStackTrace();
-			}
+				try
+				{
+					while (isGameProceed)
+					{
+						if (game.isNewBallsCollisionDetected())
+						{
+							game.setNewBallsCollisionDetected(false);
+							playBallsCollisionSound();
+						}
+						if (game.isNewShipDamageDetected())
+						{
+							game.setNewShipDamageDetected(false);
+							playShipDamagedSound();
+						}
+						Thread.sleep(dt);
+					}
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}).start();
+
+			//Ожидание сообщений
+			new Thread(this::waitForMessages).start();
+
 		}).start();
 
-		isPlaying = true;
-		new Thread(this::waitForMessages).start();
 	}
 
 	private void handleIncomingMessage(String msg)
@@ -299,7 +323,7 @@ public class GameSceneController
 		try
 		{
 			DataInputStream istream = new DataInputStream(socket.getInputStream());
-			while (isPlaying)
+			while (isGameProceed)
 			{
 				String receivedData = istream.readUTF();
 				handleIncomingMessage(receivedData);
@@ -313,6 +337,70 @@ public class GameSceneController
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void renderPrepairingStage(GraphicsContext gc, String text)
+	{
+		double sceneWidth = scene.getWidth();
+		double sceneHeight = scene.getHeight();
+
+		//Scaling
+		gc.getCanvas().setWidth(sceneWidth);
+		gc.getCanvas().setHeight(sceneHeight);
+		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
+		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
+		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
+
+		//Background
+		if (bg1Y >= sceneHeight)
+		{
+			double buf = bg1Y;
+			bg1Y = bg2Y;
+			bg2Y = buf;
+		}
+		bg1Y += BACKGROUND_SPEED;
+		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED;
+		gc.drawImage(bgImg, 0, bg1Y, bgSize, bgSize);
+		gc.drawImage(bgImg, 0, bg2Y, bgSize, bgSize);
+
+		//Ships
+		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
+		{
+			Ship ship = game.getShip(i);
+			renderPvpObject(gc, ship, sceneWidth, xScale, yScale);
+
+			//Cannons
+			renderPvpObject(gc, ship.getDefenciveCannon(), sceneWidth, xScale, yScale);
+			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
+			{
+				OffenciveCannon cannon = ship.getOffenciveCannon(j);
+				renderPvpObject(gc, cannon, sceneWidth, xScale, yScale);
+			}
+		}
+
+		//HP bars
+		gc.setFill(PLAYER_NAME_FILL_COLOR);
+		gc.setTextAlign(TextAlignment.CENTER);
+		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
+		{
+			Ship ship = game.getShip(i);
+			if (ship.getHp() > 0)
+			{
+				Image hpBar = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 375, (int) (hpBarBackground.getWidth() * ship.getHp() / Ship.BASE_HP), 26);
+				renderPlayerImage(gc, hpBarBackground, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
+				renderPlayerImage(gc, hpBar, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
+
+				gc.setFont(new Font("Arial Bold", 42));
+				renderPlayerText(gc, ship.getPlayerName(), true, true, ship.getBelonging(), PLAYER_NAME_POS_X, PLAYER_NAME_POS_Y, PLAYER_NAME_MAX_WIDTH, sceneWidth, xScale, yScale);
+				gc.setFont(new Font("Arial Bold", 20));
+				renderPlayerText(gc, (int) ship.getHp() + " / " + Ship.BASE_HP, false, true, ship.getBelonging(), PLAYER_HP_BAR_POS_X + 65, PLAYER_HP_BAR_POS_Y + 21, PLAYER_HP_MAX_WIDTH, sceneWidth, xScale, yScale);
+			}
+		}
+
+		gc.setFont(new Font("Arial Bold", 200));
+		gc.setFill(Color.WHITE);
+		gc.fillText(text, sceneWidth / 2, sceneHeight / 2);
+		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2);
 	}
 
 	private void render(GraphicsContext gc)
@@ -335,7 +423,7 @@ public class GameSceneController
 			bg2Y = buf;
 		}
 		bg1Y += BACKGROUND_SPEED;
-		bg2Y = bg1Y - bgImg.getHeight() + BACKGROUND_SPEED * 10 * yScale;
+		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED;
 		gc.drawImage(bgImg, 0, bg1Y, bgSize, bgSize);
 		gc.drawImage(bgImg, 0, bg2Y, bgSize, bgSize);
 
@@ -531,8 +619,8 @@ public class GameSceneController
 
 	private void disconnect()
 	{
-		isRendering = false;
-		isPlaying = false;
+		isGameProceed = false;
+		isGameProceed = false;
 		try
 		{
 			socket.close();
@@ -620,13 +708,6 @@ public class GameSceneController
 		}
 		shipHitMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".wav").toURI().toString()));
 		shipHitMP.play();
-	}
-
-	public void setGameParams(Word.Languages lang, int difficulty, boolean isRegister)
-	{
-		game.setLangParam(lang);
-		game.setDifficultyParam(difficulty);
-		game.setRegisterParam(isRegister);
 	}
 
 	public void setPlayerNames(String p1, String p2)

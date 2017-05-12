@@ -35,11 +35,11 @@ public class Game
 	private boolean isNewBallsCollisionDetected;
 	private boolean isNewShipDamageDetected;
 
-	public Game()
+	public Game(Word.Languages langParam, int difficultyParam, boolean isRegisterParam)
 	{
-		langParam = Word.Languages.RU;
-		difficultyParam = 2;
-		isRegisterParam = false;
+		this.langParam = langParam;
+		this.difficultyParam = difficultyParam;
+		this.isRegisterParam = isRegisterParam;
 
 		ships = new Ship[SHIPS_COUNT];
 

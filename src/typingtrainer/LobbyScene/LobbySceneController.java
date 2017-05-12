@@ -14,13 +14,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import typingtrainer.*;
 import typingtrainer.GameScene.GameSceneController;
-import typingtrainer.Main;
-import typingtrainer.ManagedScene;
 import typingtrainer.PregameClientScene.PregameClientSceneController;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
-import typingtrainer.SceneManager;
-import typingtrainer.ServerInfo;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -204,7 +201,8 @@ public class LobbySceneController
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Group root = new Group();
 		ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
-		GameSceneController controller = new GameSceneController(gameScene, new Socket());
+		GameSceneController controller = new GameSceneController(gameScene, new Socket(), Word.Languages.RU, 2, false);
+		controller.setPlayerNames("Kek", "Pek");
 		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 		sceneManager.pushScene(gameScene);
 	}

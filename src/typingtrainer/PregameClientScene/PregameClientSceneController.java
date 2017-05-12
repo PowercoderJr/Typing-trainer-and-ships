@@ -94,8 +94,7 @@ public class PregameClientSceneController
 						SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 						Group root = new Group();
 						ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
-						GameSceneController controller = new GameSceneController(gameScene, socket);
-						controller.setGameParams(lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
+						GameSceneController controller = new GameSceneController(gameScene, socket, lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
 						controller.setPlayerNames(username, serverNameLabel.getText());
 						gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 						sceneManager.pushScene(gameScene);
