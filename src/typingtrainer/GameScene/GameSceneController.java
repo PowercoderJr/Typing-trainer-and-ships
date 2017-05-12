@@ -339,19 +339,8 @@ public class GameSceneController
 		}
 	}
 
-	private void renderPrepairingStage(GraphicsContext gc, String text)
+	private void renderBackground(GraphicsContext gc, double sceneHeight, double bgSize)
 	{
-		double sceneWidth = scene.getWidth();
-		double sceneHeight = scene.getHeight();
-
-		//Scaling
-		gc.getCanvas().setWidth(sceneWidth);
-		gc.getCanvas().setHeight(sceneHeight);
-		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
-		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
-		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
-
-		//Background
 		if (bg1Y >= sceneHeight)
 		{
 			double buf = bg1Y;
@@ -359,11 +348,13 @@ public class GameSceneController
 			bg2Y = buf;
 		}
 		bg1Y += BACKGROUND_SPEED;
-		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED;
+		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED * 2;
 		gc.drawImage(bgImg, 0, bg1Y, bgSize, bgSize);
 		gc.drawImage(bgImg, 0, bg2Y, bgSize, bgSize);
+	}
 
-		//Ships
+	private void renderShips(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
 		{
 			Ship ship = game.getShip(i);
@@ -377,8 +368,10 @@ public class GameSceneController
 				renderPvpObject(gc, cannon, sceneWidth, xScale, yScale);
 			}
 		}
+	}
 
-		//HP bars
+	private void renderHpBars(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
 		gc.setFill(PLAYER_NAME_FILL_COLOR);
 		gc.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
@@ -396,38 +389,18 @@ public class GameSceneController
 				renderPlayerText(gc, (int) ship.getHp() + " / " + Ship.BASE_HP, false, true, ship.getBelonging(), PLAYER_HP_BAR_POS_X + 65, PLAYER_HP_BAR_POS_Y + 21, PLAYER_HP_MAX_WIDTH, sceneWidth, xScale, yScale);
 			}
 		}
+	}
 
+	private void renderTimer(GraphicsContext gc, String text, double sceneWidth, double sceneHeight)
+	{
 		gc.setFont(new Font("Arial Bold", 200));
 		gc.setFill(Color.WHITE);
 		gc.fillText(text, sceneWidth / 2, sceneHeight / 2);
 		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2);
 	}
 
-	private void render(GraphicsContext gc)
+	private void renderCannonballs(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
 	{
-		double sceneWidth = scene.getWidth();
-		double sceneHeight = scene.getHeight();
-
-		//Scaling
-		gc.getCanvas().setWidth(sceneWidth);
-		gc.getCanvas().setHeight(sceneHeight);
-		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
-		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
-		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
-
-		//Background
-		if (bg1Y >= sceneHeight)
-		{
-			double buf = bg1Y;
-			bg1Y = bg2Y;
-			bg2Y = buf;
-		}
-		bg1Y += BACKGROUND_SPEED;
-		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED;
-		gc.drawImage(bgImg, 0, bg1Y, bgSize, bgSize);
-		gc.drawImage(bgImg, 0, bg2Y, bgSize, bgSize);
-
-		//Cannonballs
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
 			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
@@ -435,33 +408,29 @@ public class GameSceneController
 			points.add(new Point2D(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY()));
 			//
 		}
+	}
 
-		//Ships
-		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
-		{
-			Ship ship = game.getShip(i);
-			renderPvpObject(gc, ship, sceneWidth, xScale, yScale);
-
-			//Cannons
-			renderPvpObject(gc, ship.getDefenciveCannon(), sceneWidth, xScale, yScale);
-			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
-			{
-				OffenciveCannon cannon = ship.getOffenciveCannon(j);
-				renderPvpObject(gc, cannon, sceneWidth, xScale, yScale);
-			}
-		}
-
-		//Smoke clouds
+	private void renderSmokeClouds(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
 		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
 			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
+	}
 
-		//Cannonball shards
+	private void renderCannonballShards(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
 		for (int i = 0; i < game.getCannonballShards().size(); ++i)
 			renderPvpObject(gc, game.getCannonballShards().get(i), sceneWidth, xScale, yScale);
+	}
 
-		//Words
-		gc.setFont(new Font("Courier New Bold", 40));
-		//Offencive cannon words
+	private void renderWoodenSplinters(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
+		for (int i = 0; i < game.getSplinterPiles().size(); ++i)
+			for (int j = 0; j < WoodenSplintersPile.SPLINTERS_COUNT; ++j)
+				renderPvpObject(gc, game.getSplinterPiles().get(i).getSplinter(j), sceneWidth, xScale, yScale);
+	}
+
+	private void renderOffenciveCannonWords(GraphicsContext gc, double xScale, double yScale)
+	{
 		gc.setTextAlign(TextAlignment.LEFT);
 		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
 		{
@@ -477,7 +446,10 @@ public class GameSceneController
 			gc.setStroke(AFTER_STROKE_COLOR);
 			gc.strokeText(substrAfter, x, y);
 		}
-		//Cannonball words
+	}
+
+	private void renderCannonballWords(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
+	{
 		gc.setTextAlign(TextAlignment.CENTER);
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
@@ -497,6 +469,50 @@ public class GameSceneController
 				gc.strokeText(substrAfter, x, y);
 			}
 		}
+	}
+
+	private void renderPrepairingStage(GraphicsContext gc, String text)
+	{
+		double sceneWidth = scene.getWidth();
+		double sceneHeight = scene.getHeight();
+
+		//Scaling
+		gc.getCanvas().setWidth(sceneWidth);
+		gc.getCanvas().setHeight(sceneHeight);
+		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
+		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
+		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
+
+		renderBackground(gc, sceneHeight, bgSize);
+		renderShips(gc, sceneWidth, xScale, yScale);
+		renderHpBars(gc, sceneWidth, xScale, yScale);
+		renderTimer(gc, text, sceneWidth, sceneHeight);
+	}
+
+	private void render(GraphicsContext gc)
+	{
+		double sceneWidth = scene.getWidth();
+		double sceneHeight = scene.getHeight();
+
+		//Scaling
+		gc.getCanvas().setWidth(sceneWidth);
+		gc.getCanvas().setHeight(sceneHeight);
+		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
+		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
+		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
+
+		renderBackground(gc, sceneHeight, bgSize);
+		renderWoodenSplinters(gc, sceneWidth, xScale, yScale);
+		renderCannonballs(gc, sceneWidth, xScale, yScale);
+		renderShips(gc, sceneWidth, xScale, yScale);
+		renderSmokeClouds(gc, sceneWidth, xScale, yScale);
+		renderCannonballShards(gc, sceneWidth, xScale, yScale);
+
+		gc.setFont(new Font("Courier New Bold", 40));
+		renderOffenciveCannonWords(gc, xScale, yScale);
+		renderCannonballWords(gc, sceneWidth, xScale, yScale);
+
+		renderHpBars(gc, sceneWidth, xScale, yScale);
 
 		//Debug
 /*
@@ -512,25 +528,6 @@ public class GameSceneController
 		for (int i = 0; i < colPoints.size(); ++i)
 			gc.fillOval(xScale * colPoints.get(i).getX(), yScale * colPoints.get(i).getY(), 5, 5);
 */
-		//
-		//HP bars
-		gc.setFill(PLAYER_NAME_FILL_COLOR);
-		gc.setTextAlign(TextAlignment.CENTER);
-		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
-		{
-			Ship ship = game.getShip(i);
-			if (ship.getHp() > 0)
-			{
-				Image hpBar = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 375, (int) (hpBarBackground.getWidth() * ship.getHp() / Ship.BASE_HP), 26);
-				renderPlayerImage(gc, hpBarBackground, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
-				renderPlayerImage(gc, hpBar, ship.getBelonging(), PLAYER_HP_BAR_POS_X, PLAYER_HP_BAR_POS_Y, sceneWidth, xScale, yScale);
-
-				gc.setFont(new Font("Arial Bold", 42));
-				renderPlayerText(gc, ship.getPlayerName(), true, true, ship.getBelonging(), PLAYER_NAME_POS_X, PLAYER_NAME_POS_Y, PLAYER_NAME_MAX_WIDTH, sceneWidth, xScale, yScale);
-				gc.setFont(new Font("Arial Bold", 20));
-				renderPlayerText(gc, (int) ship.getHp() + " / " + Ship.BASE_HP, false, true, ship.getBelonging(), PLAYER_HP_BAR_POS_X + 65, PLAYER_HP_BAR_POS_Y + 21, PLAYER_HP_MAX_WIDTH, sceneWidth, xScale, yScale);
-			}
-		}
 	}
 
 	private void renderPlayerImage(GraphicsContext gc, Image image, PvpObject.Belonging belonging, double x, double y, double sceneWidth, double horizontalScale, double verticalScale)

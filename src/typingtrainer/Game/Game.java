@@ -31,6 +31,7 @@ public class Game
 	private ArrayList<Animation> smokeClouds;
 	private ArrayList<Animation> cannonballShards;
 	private ArrayList<Point2D> cannonballShardsVectors;
+	private ArrayList<WoodenSplintersPile> splinterPiles;
 
 	private boolean isNewBallsCollisionDetected;
 	private boolean isNewShipDamageDetected;
@@ -57,6 +58,7 @@ public class Game
 		smokeClouds = new ArrayList<>();
 		cannonballShards = new ArrayList<>();
 		cannonballShardsVectors = new ArrayList<>();
+		splinterPiles = new ArrayList<>();
 
 		isNewBallsCollisionDetected = false;
 	}
@@ -81,7 +83,7 @@ public class Game
 						{
 							cannonballs.remove(i);
 							cannonballs.remove(j);
-							Animation cannonballShard = new Animation(cannonball.getBelonging(), cannonball.getTarget().subtract(19, 19), SPRITE_SHEET, 5, 5, 132, 311, 38, 38);
+							Animation cannonballShard = new Animation(cannonball.getBelonging(), cannonball.getTarget().subtract(19, 19).subtract(cannonball.getPivot()), SPRITE_SHEET, 5, 5, 132, 311, 38, 38);
 							cannonballShards.add(cannonballShard);
 							cannonballShardsVectors.add(new Point2D(cannonball.getDirection().getX() * cannonball.getSpeed() + victim.getDirection().getX() * victim.getSpeed(), cannonball.getDirection().getY() * cannonball.getSpeed() + victim.getDirection().getY() * victim.getSpeed()));
 							isNewBallsCollisionDetected = true;
@@ -106,6 +108,7 @@ public class Game
 						ship.damage(cannonball.getPvpWord().toString().length() * Cannonball.WEIGHT_DAMAGE);
 						isNewShipDamageDetected = true;
 						cannonball.setHasDamaged(true);
+						splinterPiles.add(new WoodenSplintersPile(ship.getBelonging(), GameSceneController.mirrorRelativelyToDefaultWidth(cannonball.getPosition())));
 					}
 					else if (cannonball.getPosition().getY() < 0 ||
 							cannonball.getPosition().getX() > GameSceneController.DEFAULT_SCREEN_WIDTH ||
@@ -151,6 +154,18 @@ public class Game
 			{
 				//cannonballShard.setPosition(new Point2D(cannonballShard.getPosition().getX(), cannonballShard.getPosition().getY() + GameSceneController.BACKGROUND_SPEED));
 				cannonballShard.setPosition(cannonballShard.getPosition().add(cannonballShardsVectors.get(i).getX() / 1000 * dt, cannonballShardsVectors.get(i).getY() / 1000 * dt));
+			}
+		}
+
+		//Wooden splinters
+		for (int i = 0; i < splinterPiles.size(); ++i)
+		{
+			WoodenSplintersPile pile = splinterPiles.get(i);
+			for (int j = 0; j < WoodenSplintersPile.SPLINTERS_COUNT; ++j)
+			{
+				WoodenSplinter splinter = pile.getSplinter(j);
+				splinter.setPosition(splinter.getPosition().add(splinter.getFlyDir().getX() * splinter.getFlySpeed() / 1000 * dt, splinter.getFlyDir().getY() * splinter.getFlySpeed() / 1000 * dt));
+				System.out.println(splinter.getPosition());
 			}
 		}
 	}
@@ -333,6 +348,11 @@ public class Game
 	public ArrayList<Point2D> getCannonballShardsVectors()
 	{
 		return cannonballShardsVectors;
+	}
+
+	public ArrayList<WoodenSplintersPile> getSplinterPiles()
+	{
+		return splinterPiles;
 	}
 
 	public boolean isNewBallsCollisionDetected()
