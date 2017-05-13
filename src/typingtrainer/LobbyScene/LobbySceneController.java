@@ -46,6 +46,7 @@ public class LobbySceneController
 	public TextField nameTextfield;
 	@FXML
 	public PasswordField passPassfield;
+
 	private TableColumn nameColumn;
 	private TableColumn ipColumn;
 	private TableColumn passwordFlagColumn;
@@ -183,7 +184,7 @@ public class LobbySceneController
 		PregameServerSceneController.setArg_serverPassword(passPassfield.getText());
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
-		ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, 1280, 720, sceneManager);
+		ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 		pregameServerScene.getStylesheets().add("typingtrainer/pregameServerScene/style.css");
 		sceneManager.pushScene(pregameServerScene);
 	}
@@ -201,7 +202,7 @@ public class LobbySceneController
 		//Для быстрого теста
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Group root = new Group();
-		ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+		ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
 		GameSceneController controller = new GameSceneController(gameScene, new Socket(), Word.Languages.RU, 2, false);
 		controller.setPlayerNames("Kek", "Pek");
 		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
@@ -250,7 +251,7 @@ public class LobbySceneController
 				PregameClientSceneController.setArg_username(nameTextfield.getText());
 				SceneManager sceneManager = ((ManagedScene) serversTable.getScene()).getManager();
 				Parent pregameClientSceneFXML = FXMLLoader.load(Main.class.getResource("PregameClientScene/pregameClientScene.fxml"));
-				ManagedScene pregameClientScene = new ManagedScene(pregameClientSceneFXML, 1280, 720, sceneManager);
+				ManagedScene pregameClientScene = new ManagedScene(pregameClientSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 				pregameClientScene.getStylesheets().add("typingtrainer/pregameClientScene/style.css");
 				sceneManager.pushScene(pregameClientScene);
 			}
@@ -262,7 +263,7 @@ public class LobbySceneController
 					InfoSceneController.setInfo("Доступ не разрешён");
 					SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 					Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-					ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+					ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 					infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
 					sceneManager.pushScene(infoScene);
 				}
@@ -281,7 +282,7 @@ public class LobbySceneController
 				InfoSceneController.setInfo("Подключение не удалось");
 				SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 				Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-				ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+				ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 				infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
 				sceneManager.pushScene(infoScene);
 			}

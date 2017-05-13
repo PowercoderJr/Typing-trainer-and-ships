@@ -12,19 +12,22 @@ import javafx.stage.WindowEvent;
 
 public class Main extends Application
 {
+	public static final int DEFAULT_SCREEN_WIDTH = 1280;
+    public static final int DEFAULT_SCREEN_HEIGHT = 720;
+
     @Override
     public void start(Stage primaryStage) throws Exception
 	{
 		SceneManager sceneManager = new SceneManager(primaryStage);
 
         Parent mainSceneFXML = FXMLLoader.load(getClass().getResource("MainScene/mainScene.fxml"));
-        ManagedScene mainScene = new ManagedScene(mainSceneFXML, 1280, 720, sceneManager);
+        ManagedScene mainScene = new ManagedScene(mainSceneFXML, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, sceneManager);
         mainScene.getStylesheets().add("typingtrainer/MainScene/style.css");
 
         sceneManager.pushScene(mainScene);
         primaryStage.setTitle("Typing trainer");
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
+        primaryStage.setWidth(DEFAULT_SCREEN_WIDTH);
+        primaryStage.setHeight(DEFAULT_SCREEN_HEIGHT);
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()
         {
             @Override

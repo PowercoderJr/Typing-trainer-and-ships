@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Polygon;
 import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.Main;
 import typingtrainer.Word;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class Game
 		for (int i = 0; i < SHIPS_COUNT; ++i)
 		{
 			ships[i].setShape(new Polygon(points));
-			ships[i].getShape().setLayoutX(GameSceneController.DEFAULT_SCREEN_WIDTH);
+			ships[i].getShape().setLayoutX(Main.DEFAULT_SCREEN_WIDTH);
 			ships[i].getShape().setLayoutY(0);
 		}
 
@@ -107,7 +108,7 @@ public class Game
 					else if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE)
 						ship = ships[0];
 
-					if (ship.getShape().contains(cannonball.getPosition().add(cannonball.getPivot()).subtract(GameSceneController.DEFAULT_SCREEN_WIDTH, 0)) && !cannonball.HasDamaged())
+					if (ship.getShape().contains(cannonball.getPosition().add(cannonball.getPivot()).subtract(Main.DEFAULT_SCREEN_WIDTH, 0)) && !cannonball.HasDamaged())
 					{
 						ship.damage(cannonball.getPvpWord().toString().length() * Cannonball.WEIGHT_DAMAGE);
 						isNewShipDamageDetected = true;
@@ -115,8 +116,8 @@ public class Game
 						splinterPiles.add(new WoodenSplintersPile(ship.getBelonging(), GameSceneController.mirrorRelativelyToDefaultWidth(cannonball.getPosition())));
 					}
 					else if (cannonball.getPosition().getY() < 0 ||
-							cannonball.getPosition().getX() > GameSceneController.DEFAULT_SCREEN_WIDTH ||
-							cannonball.getPosition().getY() > GameSceneController.DEFAULT_SCREEN_HEIGHT)
+							cannonball.getPosition().getX() > Main.DEFAULT_SCREEN_WIDTH ||
+							cannonball.getPosition().getY() > Main.DEFAULT_SCREEN_HEIGHT)
 					{
 						cannonballs.remove(i--);
 						alreadyDestroyed = true;
@@ -124,7 +125,7 @@ public class Game
 					else
 					{
 						cannonball.setPosition(cannonball.getPositionAfterDistance(cannonball.getSpeed() / 1000 * dt));
-						if (cannonball.getPositionAfterDistance(150).getX() > GameSceneController.DEFAULT_SCREEN_WIDTH - ships[0].getImage().getWidth())
+						if (cannonball.getPositionAfterDistance(150).getX() > Main.DEFAULT_SCREEN_WIDTH - ships[0].getImage().getWidth())
 							cannonball.setCanBeCountershooted(false);
 					}
 				}
@@ -172,7 +173,7 @@ public class Game
 			for (int j = 0; j < WoodenSplintersPile.SPLINTERS_COUNT; ++j)
 			{
 				splinterPiles.get(i).getSplinter(j).flyingTick(dt);
-				if (splinterPiles.get(i).getSplinter(j).getPosition().getY() - 100 < GameSceneController.DEFAULT_SCREEN_HEIGHT)
+				if (splinterPiles.get(i).getSplinter(j).getPosition().getY() - 100 < Main.DEFAULT_SCREEN_HEIGHT)
 					hasSwamAway = false;
 			}
 			if (hasSwamAway)
@@ -217,7 +218,7 @@ public class Game
 		}
 		if (cannonWithLongestSubstrID != -1)
 		{
-			Cannonball cannonball = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).shoot(new Point2D(1280, Math.random() * 720));
+			Cannonball cannonball = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).shoot(new Point2D(Main.DEFAULT_SCREEN_WIDTH, 20 + (Math.random() * Main.DEFAULT_SCREEN_HEIGHT - 20 * 2)));
 			cannonball.getPvpWord().setWord(longestSubstr);
 			cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (longestSubstr.length() - MIN_WORD_LENGTH_TO_SHOOT));
 			cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));

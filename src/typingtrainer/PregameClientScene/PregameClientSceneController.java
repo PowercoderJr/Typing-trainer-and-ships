@@ -97,7 +97,7 @@ public class PregameClientSceneController
 
 						SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 						Group root = new Group();
-						ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+						ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
 						GameSceneController controller = new GameSceneController(gameScene, socket, lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
 						controller.setPlayerNames(username, serverNameLabel.getText());
 						gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
@@ -124,7 +124,7 @@ public class PregameClientSceneController
 							InfoSceneController.setInfo("Сервер разорвал соединение");
 							SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-							ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
 							sceneManager.pushScene(infoScene);
 						}

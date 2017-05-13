@@ -39,7 +39,7 @@ public class MainSceneController
 	{
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("ModScene/modScene.fxml"));
-		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 		practiceScene.getStylesheets().add("typingtrainer/ModScene/style.css");
 		sceneManager.pushScene(practiceScene);
 	}
@@ -60,7 +60,7 @@ public class MainSceneController
 	{
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("StatisticScene/statisticScene.fxml"));
-		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 		practiceScene.getStylesheets().add("typingtrainer/statisticScene/style.css");
 		sceneManager.pushScene(practiceScene);
 	}
@@ -69,7 +69,7 @@ public class MainSceneController
 	{
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Parent lobbySceneFXML = FXMLLoader.load(Main.class.getResource("LobbyScene/lobbyScene.fxml"));
-		ManagedScene lobbyScene = new ManagedScene(lobbySceneFXML, 1280, 720, sceneManager);
+		ManagedScene lobbyScene = new ManagedScene(lobbySceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 		lobbyScene.getStylesheets().add("typingtrainer/LobbyScene/style.css");
 		sceneManager.pushScene(lobbyScene);
 	}

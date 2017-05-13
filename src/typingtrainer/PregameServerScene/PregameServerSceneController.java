@@ -389,7 +389,7 @@ public class PregameServerSceneController
 
 			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Group root = new Group();
-			ManagedScene gameScene = new ManagedScene(root, 1280, 720, Color.LIGHTBLUE, sceneManager);
+			ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
 			GameSceneController controller = new GameSceneController(gameScene, socket, lang, difficulty, registerChb.isSelected());
 			controller.setPlayerNames(username, opponentName);
 			gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");

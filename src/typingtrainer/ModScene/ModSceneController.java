@@ -113,7 +113,7 @@ public class ModSceneController
 
 			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
-			ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, 1280, 720, sceneManager);
+			ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 			practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
 			sceneManager.pushScene(practiceScene);
 		}

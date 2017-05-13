@@ -280,7 +280,7 @@ public class PracticeSceneController
 					CongSceneController.SetResults(speed, time, mistakes, isStatisticsSaved);
 					SceneManager sceneManager = ((ManagedScene) this.pane.getScene()).getManager();
 					Parent congSceneFXML = FXMLLoader.load(Main.class.getResource("CongScene/congScene.fxml"));
-					ManagedScene congScene = new ManagedScene(congSceneFXML, 1280, 720, sceneManager);
+					ManagedScene congScene = new ManagedScene(congSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
 					congScene.getStylesheets().add("typingtrainer/CongScene/style.css");
 					sceneManager.pushScene(congScene);
 				}

@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import typingtrainer.Game.*;
+import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 import typingtrainer.Word;
@@ -48,8 +49,6 @@ public class GameSceneController
 	public static final ArrayList<Point2D> colPoints = new ArrayList<>();
 	//
 
-	public static final int DEFAULT_SCREEN_WIDTH = 1280;
-	public static final int DEFAULT_SCREEN_HEIGHT = 720;
 	public static final int BACKGROUND_STEP = 2;
 	private static final int dt = 15;
 	private static final double CANCELED_TIMER_VALUE = -10;
@@ -173,12 +172,12 @@ public class GameSceneController
 
 	public static Point2D mirrorRelativelyToDefaultWidth(Point2D point)
 	{
-		return new Point2D(DEFAULT_SCREEN_WIDTH - point.getX(), point.getY());
+		return new Point2D(Main.DEFAULT_SCREEN_WIDTH - point.getX(), point.getY());
 	}
 
 	public static double mirrorRelativelyToDefaultWidth(double x)
 	{
-		return DEFAULT_SCREEN_WIDTH - x;
+		return Main.DEFAULT_SCREEN_WIDTH - x;
 	}
 
 
@@ -197,7 +196,7 @@ public class GameSceneController
 		}
 		this.scene = scene;
 		Group root = (Group) scene.getRoot();
-		Canvas canvas = new Canvas(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+		Canvas canvas = new Canvas(Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT);
 		canvas.setOnKeyPressed(onKeyPressed);
 		canvas.setFocusTraversable(true);
 		root.getChildren().add(canvas);
@@ -407,7 +406,7 @@ public class GameSceneController
 		{
 			game.getCannonballs().get(i).render(gc, sceneWidth, xScale, yScale);
 			//Debug
-			points.add(new Point2D(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY()));
+			points.add(new Point2D(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? Main.DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY()));
 			//
 		}
 	}
@@ -480,9 +479,9 @@ public class GameSceneController
 		//Scaling
 		gc.getCanvas().setWidth(sceneWidth);
 		gc.getCanvas().setHeight(sceneHeight);
-		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
-		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
-		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
+		double xScale = sceneWidth / Main.DEFAULT_SCREEN_WIDTH;
+		double yScale = sceneHeight / Main.DEFAULT_SCREEN_HEIGHT;
+		double bgSize = Main.DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
 
 		renderBackground(gc, sceneHeight, bgSize);
 		renderShips(gc, sceneWidth, xScale, yScale);
@@ -498,9 +497,9 @@ public class GameSceneController
 		//Scaling
 		gc.getCanvas().setWidth(sceneWidth);
 		gc.getCanvas().setHeight(sceneHeight);
-		double xScale = sceneWidth / DEFAULT_SCREEN_WIDTH;
-		double yScale = sceneHeight / DEFAULT_SCREEN_HEIGHT;
-		double bgSize = DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
+		double xScale = sceneWidth / Main.DEFAULT_SCREEN_WIDTH;
+		double yScale = sceneHeight / Main.DEFAULT_SCREEN_HEIGHT;
+		double bgSize = Main.DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
 
 		renderBackground(gc, sceneHeight, bgSize);
 		renderWoodenSplinters(gc, sceneWidth, xScale, yScale);
