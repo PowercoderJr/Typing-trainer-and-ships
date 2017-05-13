@@ -52,6 +52,7 @@ public class GameSceneController
 	public static final int DEFAULT_SCREEN_HEIGHT = 720;
 	public static final int BACKGROUND_STEP = 2;
 	private static final int dt = 15;
+	private static final double CANCELED_TIMER_VALUE = -10;
 
 	private static final int WORD_OFFSET_Y = 30;
 	private static final int PLAYER_NAME_POS_X = 135;
@@ -60,7 +61,6 @@ public class GameSceneController
 	private static final int PLAYER_HP_BAR_POS_X = 5;
 	private static final int PLAYER_HP_BAR_POS_Y = 55;
 	private static final int PLAYER_HP_MAX_WIDTH = 120;
-
 
 	private static final Color BEFORE_FILL_COLOR = new Color(1, 1, 1, 0.2);
 	private static final Color BEFORE_STROKE_COLOR = new Color(0, 0, 0, 0.2);
@@ -93,6 +93,7 @@ public class GameSceneController
 		@Override
 		public void handle(KeyEvent event)
 		{
+			pregameTimer = CANCELED_TIMER_VALUE;
 			if (event.getCode() == KeyCode.ESCAPE)
 			{
 				try
@@ -228,56 +229,57 @@ public class GameSceneController
 				e.printStackTrace();
 			}
 
-			//Интерфейс
-			new Thread(() ->
+			if (Math.abs(pregameTimer - CANCELED_TIMER_VALUE) < 0.001)
 			{
-				try
+				isGameProceed = true;
+				//Интерфейс
+				new Thread(() ->
 				{
-					isGameProceed = true;
-					while (isGameProceed)
+					try
 					{
-						game.tick(dt);
-						Platform.runLater(() -> render(gc));
-						Thread.sleep(dt);
+						while (isGameProceed)
+						{
+							game.tick(dt);
+							Platform.runLater(() -> render(gc));
+							Thread.sleep(dt);
+						}
 					}
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			}).start();
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}).start();
 
-			//Логика
-			new Thread(() ->
-			{
-				try
+				//Логика
+				new Thread(() ->
 				{
-					while (isGameProceed)
+					try
 					{
-						if (game.isNewBallsCollisionDetected())
+						while (isGameProceed)
 						{
-							game.setNewBallsCollisionDetected(false);
-							playBallsCollisionSound();
+							if (game.isNewBallsCollisionDetected())
+							{
+								game.setNewBallsCollisionDetected(false);
+								playBallsCollisionSound();
+							}
+							if (game.isNewShipDamageDetected())
+							{
+								game.setNewShipDamageDetected(false);
+								playShipDamagedSound();
+							}
+							Thread.sleep(dt);
 						}
-						if (game.isNewShipDamageDetected())
-						{
-							game.setNewShipDamageDetected(false);
-							playShipDamagedSound();
-						}
-						Thread.sleep(dt);
 					}
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			}).start();
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}).start();
+			}
 
 			//Ожидание сообщений
 			new Thread(this::waitForMessages).start();
-
 		}).start();
-
 	}
 
 	private void handleIncomingMessage(String msg)

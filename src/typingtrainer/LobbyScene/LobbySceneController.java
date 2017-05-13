@@ -16,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import typingtrainer.*;
 import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.PregameClientScene.PregameClientSceneController;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 
@@ -256,12 +257,38 @@ public class LobbySceneController
 			else if (msg.equals(PregameServerSceneController.CONNECTION_DECLINED_MSG))
 			{
 				socket.close();
+				try
+				{
+					InfoSceneController.setInfo("Доступ не разрешён");
+					SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
+					Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+					ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+					infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+					sceneManager.pushScene(infoScene);
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
 			}
 		}
 		catch (ConnectException e)
 		{
 			System.out.println("Connect Exception");
 			//e.printStackTrace();
+			try
+			{
+				InfoSceneController.setInfo("Подключение не удалось");
+				SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
+				Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+				ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+				infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+				sceneManager.pushScene(infoScene);
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
 		}
 		catch (IOException e)
 		{

@@ -2,7 +2,9 @@ package typingtrainer.PregameClientScene;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -10,6 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.InfoScene.InfoSceneController;
+import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 import typingtrainer.SceneManager;
@@ -111,8 +115,24 @@ public class PregameClientSceneController
 					break;
 				case PregameServerSceneController.DISCONNECT_CODEGRAM:
 					disconnect();
-					Platform.runLater(() -> onBackClicked(null));
-					System.out.println("Соединение разорвано");
+					Platform.runLater(() ->
+					{
+						onBackClicked(null);
+						System.out.println("Соединение разорвано");
+						try
+						{
+							InfoSceneController.setInfo("Сервер разорвал соединение");
+							SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
+							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+							ManagedScene infoScene = new ManagedScene(infoSceneFXML, 1280, 720, sceneManager);
+							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+							sceneManager.pushScene(infoScene);
+						}
+						catch (IOException e1)
+						{
+							e1.printStackTrace();
+						}
+					});
 					break;
 				case PregameServerSceneController.SETTINGS_SERV_NAME_CODEGRAM:
 					Platform.runLater(() -> serverNameLabel.setText(content));
