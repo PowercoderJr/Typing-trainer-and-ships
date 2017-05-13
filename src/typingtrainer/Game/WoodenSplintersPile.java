@@ -29,6 +29,7 @@ public class WoodenSplintersPile
 					new WritableImage(Game.SPRITE_SHEET.getPixelReader(),
 					SPLINTER_SPRITES_LOCATIONS[i][0], SPLINTER_SPRITES_LOCATIONS[i][1],
 					SPLINTER_SPRITES_LOCATIONS[i][2], SPLINTER_SPRITES_LOCATIONS[i][3]));
+			splinters[i].setRotationAngle(Math.random() * 360);
 		}
 	}
 

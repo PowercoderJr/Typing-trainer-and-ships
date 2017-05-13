@@ -1,8 +1,10 @@
 package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 
 /**
  * Created by Meow on 23.04.2017.
@@ -17,6 +19,7 @@ public abstract class PvpObject
 	protected double rotationAngle;
 	protected boolean isHorFlipable;
 	protected Image image;
+	protected double scale;
 
 	public PvpObject()
 	{
@@ -25,6 +28,7 @@ public abstract class PvpObject
 		this.pivot = new Point2D(0, 0);
 		this.rotationAngle = 0;
 		this.isHorFlipable = true;
+		this.scale = 1.0;
 	}
 
 	public PvpObject(Belonging belonging, Point2D position)
@@ -38,6 +42,51 @@ public abstract class PvpObject
 	{
 		this(belonging, position);
 		this.isHorFlipable = isHorFlipable;
+	}
+
+	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
+	public void render(GraphicsContext gc, double sceneWidth, double xCanvasScale, double yCanvasScale)
+	{
+		double finalX, finalY, finalWidth, finalHeight, finalAngle, finalPivotX, finalPivotY;
+		if (belonging == PvpObject.Belonging.FRIENDLY)
+		{
+			finalX = position.getX() * xCanvasScale;
+			finalWidth = image.getWidth() * xCanvasScale * scale;
+			finalAngle = rotationAngle;
+			finalPivotX = finalX + pivot.getX() * xCanvasScale;
+		}
+		else
+		{
+			if (isHorFlipable)
+			{
+				finalX = sceneWidth - position.getX() * xCanvasScale;
+				finalWidth = -image.getWidth() * xCanvasScale * scale;
+				finalAngle = -rotationAngle;
+				finalPivotX = finalX - pivot.getX() * xCanvasScale;
+			}
+			else
+			{
+				finalX = sceneWidth - (position.getX() + image.getWidth() * scale) * xCanvasScale;
+				finalWidth = image.getWidth() * xCanvasScale * scale;
+				finalAngle = rotationAngle;
+				finalPivotX = finalX + pivot.getX() * xCanvasScale;
+			}
+		}
+		finalY = position.getY() * yCanvasScale;
+		finalHeight = image.getHeight() * yCanvasScale * scale;
+		finalPivotY = finalY + pivot.getY() * yCanvasScale;
+
+		gc.save(); // saves the current state on stack, including the current transform
+		rotateGraphicsContext(gc, finalAngle, finalPivotX, finalPivotY);
+		gc.drawImage(image, finalX, finalY, finalWidth, finalHeight);
+		gc.restore(); // back to original state (before rotation)
+	}
+
+	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
+	private void rotateGraphicsContext(GraphicsContext gc, double angle, double x, double y)
+	{
+		Rotate r = new Rotate(angle, x, y);
+		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 	}
 
 	public Belonging getBelonging()
@@ -103,5 +152,17 @@ public abstract class PvpObject
 	public void setShape(Shape shape)
 	{
 		this.shape = shape;
+	}
+
+	public double getScale()
+	{
+		return scale;
+	}
+
+	public void setScale(double scale)
+	{
+		double oldScale = this.scale;
+		this.scale = scale;
+		pivot = new Point2D(pivot.getX() / oldScale * scale, pivot.getY() / oldScale * scale);
 	}
 }

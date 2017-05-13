@@ -34,6 +34,7 @@ public class Animation extends PvpObject
 		this.offsetY = offsetY;
 		this.width = width;
 		this.height = height;
+		pivot = new Point2D(width / 2, height / 2);
 		currFrame = 0;
 		isCompleted = false;
 		this.image = getCurrFrame();

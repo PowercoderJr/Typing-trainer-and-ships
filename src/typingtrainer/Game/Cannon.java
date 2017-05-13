@@ -40,14 +40,14 @@ public abstract class Cannon extends PvpObject
 		getParentShip().getParentGame().getSmokeClouds().add(smokeCloud);
 		smokeCloud.play(500);
 
-		Cannonball cannonball = new Cannonball(this, belonging, position.add(pivot).subtract(8, 8));
+		Cannonball cannonball = new Cannonball(this, belonging, position.add(pivot));
 		cannonball.setTarget(target);
 		synchronized (Game.CANNONBALLS_LOCK)
 		{
 			getParentShip().getParentGame().getCannonballs().add(cannonball); //Перенести ли в методы, откуда вызывается данный?
 		}
 		//Debug
-		GameSceneController.lines.add(new GameSceneController.Line(belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - cannonball.getPosition().getX() : cannonball.getPosition().getX(), cannonball.getPosition().getY(), belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - target.getX() : target.getX(), target.getY()));
+		//GameSceneController.lines.add(new GameSceneController.Line(belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - cannonball.getPosition().getX() : cannonball.getPosition().getX(), cannonball.getPosition().getY(), belonging == PvpObject.Belonging.HOSTILE ? GameSceneController.DEFAULT_SCREEN_WIDTH - target.getX() : target.getX(), target.getY()));
 		//
 
 		if (pushingThread != null && pushingThread.isAlive())

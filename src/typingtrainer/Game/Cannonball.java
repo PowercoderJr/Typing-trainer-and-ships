@@ -8,7 +8,7 @@ import javafx.scene.image.WritableImage;
 /**
  * Created by Meow on 22.04.2017.
  */
-public class Cannonball extends PvpObject implements IHavingWord
+public class Cannonball extends PvpObject
 {
 	public static final double BASE_SPEED = 300.0;
 	public static final double SPEED_WEIGHT_PENALTY = 20.0;
@@ -63,7 +63,6 @@ public class Cannonball extends PvpObject implements IHavingWord
 		speed = BASE_SPEED - (word.toString().length() - Game.MIN_WORD_LENGTH_TO_SHOOT) * SPEED_WEIGHT_PENALTY;
 	}
 
-	@Override
 	public PvpWord getPvpWord()
 	{
 		return word;

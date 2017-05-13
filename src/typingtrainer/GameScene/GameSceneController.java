@@ -15,7 +15,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Rotate;
 import typingtrainer.Game.*;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
@@ -51,7 +50,7 @@ public class GameSceneController
 
 	public static final int DEFAULT_SCREEN_WIDTH = 1280;
 	public static final int DEFAULT_SCREEN_HEIGHT = 720;
-	public static final int BACKGROUND_SPEED = 2;
+	public static final int BACKGROUND_STEP = 2;
 	private static final int dt = 15;
 
 	private static final int WORD_OFFSET_Y = 30;
@@ -335,7 +334,7 @@ public class GameSceneController
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -347,8 +346,8 @@ public class GameSceneController
 			bg1Y = bg2Y;
 			bg2Y = buf;
 		}
-		bg1Y += BACKGROUND_SPEED;
-		bg2Y = bg1Y - bgSize + BACKGROUND_SPEED * 2;
+		bg1Y += BACKGROUND_STEP;
+		bg2Y = bg1Y - bgSize + BACKGROUND_STEP * 2;
 		gc.drawImage(bgImg, 0, bg1Y, bgSize, bgSize);
 		gc.drawImage(bgImg, 0, bg2Y, bgSize, bgSize);
 	}
@@ -358,14 +357,14 @@ public class GameSceneController
 		for (int i = 0; i < Game.SHIPS_COUNT; ++i)
 		{
 			Ship ship = game.getShip(i);
-			renderPvpObject(gc, ship, sceneWidth, xScale, yScale);
+			ship.render(gc, sceneWidth, xScale, yScale);
 
 			//Cannons
-			renderPvpObject(gc, ship.getDefenciveCannon(), sceneWidth, xScale, yScale);
+			ship.getDefenciveCannon().render(gc, sceneWidth, xScale, yScale);
 			for (int j = 0; j < Ship.OFFENCIVE_CANNONS_COUNT; ++j)
 			{
 				OffenciveCannon cannon = ship.getOffenciveCannon(j);
-				renderPvpObject(gc, cannon, sceneWidth, xScale, yScale);
+				cannon.render(gc, sceneWidth, xScale, yScale);
 			}
 		}
 	}
@@ -395,6 +394,7 @@ public class GameSceneController
 	{
 		gc.setFont(new Font("Arial Bold", 200));
 		gc.setFill(Color.WHITE);
+		gc.setTextAlign(TextAlignment.CENTER);
 		gc.fillText(text, sceneWidth / 2, sceneHeight / 2);
 		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2);
 	}
@@ -403,7 +403,7 @@ public class GameSceneController
 	{
 		for (int i = 0; i < game.getCannonballs().size(); ++i)
 		{
-			renderPvpObject(gc, game.getCannonballs().get(i), sceneWidth, xScale, yScale);
+			game.getCannonballs().get(i).render(gc, sceneWidth, xScale, yScale);
 			//Debug
 			points.add(new Point2D(game.getCannonballs().get(i).getBelonging() == PvpObject.Belonging.HOSTILE ? DEFAULT_SCREEN_WIDTH - game.getCannonballs().get(i).getPosition().getX() : game.getCannonballs().get(i).getPosition().getX(), game.getCannonballs().get(i).getPosition().getY()));
 			//
@@ -413,38 +413,36 @@ public class GameSceneController
 	private void renderSmokeClouds(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
 	{
 		for (int i = 0; i < game.getSmokeClouds().size(); ++i)
-			renderPvpObject(gc, game.getSmokeClouds().get(i), sceneWidth, xScale, yScale);
+			game.getSmokeClouds().get(i).render(gc, sceneWidth, xScale, yScale);
 	}
 
 	private void renderCannonballShards(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
 	{
 		for (int i = 0; i < game.getCannonballShards().size(); ++i)
-			renderPvpObject(gc, game.getCannonballShards().get(i), sceneWidth, xScale, yScale);
+			game.getCannonballShards().get(i).render(gc, sceneWidth, xScale, yScale);
 	}
 
 	private void renderWoodenSplinters(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
 	{
 		for (int i = 0; i < game.getSplinterPiles().size(); ++i)
 			for (int j = 0; j < WoodenSplintersPile.SPLINTERS_COUNT; ++j)
-				renderPvpObject(gc, game.getSplinterPiles().get(i).getSplinter(j), sceneWidth, xScale, yScale);
+				game.getSplinterPiles().get(i).getSplinter(j).render(gc, sceneWidth, xScale, yScale);
 	}
 
-	private void renderOffenciveCannonWords(GraphicsContext gc, double xScale, double yScale)
+	private void renderOffenciveCannonWords(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
 	{
 		gc.setTextAlign(TextAlignment.LEFT);
 		for (int i = 0; i < Ship.OFFENCIVE_CANNONS_COUNT; ++i)
 		{
 			OffenciveCannon cannon = game.getShip(0).getOffenciveCannon(i);
 			String substrBefore = cannon.getPvpWord().getSubstrBeforeWithSpaces(), substrAfter = cannon.getPvpWord().getSubstrAfterWithSpaces();
-			double x = 10 * xScale, y = (Ship.CANNON_BASE_POSITIONS[i + 1].getY() + cannon.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
+			double x = 10, y = Ship.CANNON_BASE_POSITIONS[i + 1].getY() + cannon.getImage().getHeight() + WORD_OFFSET_Y;
 			gc.setFill(BEFORE_FILL_COLOR);
-			gc.fillText(substrBefore, x, y);
 			gc.setStroke(BEFORE_STROKE_COLOR);
-			gc.strokeText(substrBefore, x, y);
+			renderPlayerText(gc, substrBefore, true, true, cannon.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
 			gc.setFill(AFTER_FILL_COLOR);
-			gc.fillText(substrAfter, x, y);
 			gc.setStroke(AFTER_STROKE_COLOR);
-			gc.strokeText(substrAfter, x, y);
+			renderPlayerText(gc, substrAfter, true, true, cannon.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
 		}
 	}
 
@@ -457,16 +455,17 @@ public class GameSceneController
 			if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE && cannonball.getType() == Cannonball.Type.OFFENCIVE && cannonball.canBeCountershooted())
 			{
 				String substrBefore = cannonball.getPvpWord().getSubstrBeforeWithSpaces(), substrAfter = cannonball.getPvpWord().getSubstrAfterWithSpaces();
-				double x = sceneWidth - (cannonball.getPosition().getX() + cannonball.getPivot().getX()) * xScale,
-						y = (cannonball.getPosition().getY() + cannonball.getImage().getHeight() + WORD_OFFSET_Y) * yScale;
+				double x = cannonball.getPosition().getX() + cannonball.getPivot().getX();
+				double y = cannonball.getPosition().getY() + cannonball.getImage().getHeight() * cannonball.getScale() + WORD_OFFSET_Y;
+				//Debug
+				//gc.fillOval(sceneWidth - x * xScale - 2.5, (y - cannonball.getPivot().getY() - WORD_OFFSET_Y) * yScale - 2.5, 5, 5);
+				//
 				gc.setFill(BEFORE_FILL_COLOR);
-				gc.fillText(substrBefore, x, y);
 				gc.setStroke(BEFORE_STROKE_COLOR);
-				gc.strokeText(substrBefore, x, y);
+				renderPlayerText(gc, substrBefore, true, true, cannonball.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
 				gc.setFill(AFTER_FILL_COLOR);
-				gc.fillText(substrAfter, x, y);
 				gc.setStroke(AFTER_STROKE_COLOR);
-				gc.strokeText(substrAfter, x, y);
+				renderPlayerText(gc, substrAfter, true, true, cannonball.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
 			}
 		}
 	}
@@ -509,7 +508,7 @@ public class GameSceneController
 		renderCannonballShards(gc, sceneWidth, xScale, yScale);
 
 		gc.setFont(new Font("Courier New Bold", 40));
-		renderOffenciveCannonWords(gc, xScale, yScale);
+		renderOffenciveCannonWords(gc, sceneWidth, xScale, yScale);
 		renderCannonballWords(gc, sceneWidth, xScale, yScale);
 
 		renderHpBars(gc, sceneWidth, xScale, yScale);
@@ -567,51 +566,6 @@ public class GameSceneController
 			gc.fillText(text, finalX, finalY, finalMaxWidth);
 		if (isStrokeNeeded)
 			gc.strokeText(text, finalX, finalY, finalMaxWidth);
-	}
-
-	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
-	private void renderPvpObject(GraphicsContext gc, PvpObject object, double sceneWidth, double horizontalScale, double verticalScale)
-	{
-		double finalX, finalY, finalWidth, finalHeight, finalAngle, finalPivotX, finalPivotY;
-		if (object.getBelonging() == PvpObject.Belonging.FRIENDLY)
-		{
-			finalX = object.getPosition().getX() * horizontalScale;
-			finalWidth = object.getImage().getWidth() * horizontalScale;
-			finalAngle = object.getRotationAngle();
-			finalPivotX = finalX + object.getPivot().getX() * horizontalScale;
-		}
-		else
-		{
-			if (object.isHorFlipable())
-			{
-				finalX = sceneWidth - object.getPosition().getX() * horizontalScale;
-				finalWidth = -object.getImage().getWidth() * horizontalScale;
-				finalAngle = -object.getRotationAngle();
-				finalPivotX = finalX - object.getPivot().getX() * horizontalScale;
-			}
-			else
-			{
-				finalX = sceneWidth - (object.getPosition().getX() + object.getImage().getWidth()) * horizontalScale;
-				finalWidth = object.getImage().getWidth() * horizontalScale;
-				finalAngle = object.getRotationAngle();
-				finalPivotX = finalX + object.getPivot().getX() * horizontalScale;
-			}
-		}
-		finalY = object.getPosition().getY() * verticalScale;
-		finalHeight = object.getImage().getHeight() * verticalScale;
-		finalPivotY = finalY + object.getPivot().getY() * verticalScale;
-
-		gc.save(); // saves the current state on stack, including the current transform
-		rotateGraphicsContext(gc, finalAngle, finalPivotX, finalPivotY);
-		gc.drawImage(object.getImage(), finalX, finalY, finalWidth, finalHeight);
-		gc.restore(); // back to original state (before rotation)
-	}
-
-	//http://stackoverflow.com/questions/18260421/how-to-draw-image-rotated-on-javafx-canvas
-	private void rotateGraphicsContext(GraphicsContext gc, double angle, double x, double y)
-	{
-		Rotate r = new Rotate(angle, x, y);
-		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 	}
 
 	private void disconnect()

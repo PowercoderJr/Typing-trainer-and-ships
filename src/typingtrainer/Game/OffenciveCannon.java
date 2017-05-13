@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 /**
  * Created by Meow on 22.04.2017.
  */
-public class OffenciveCannon extends Cannon implements IHavingWord
+public class OffenciveCannon extends Cannon
 {
 	private PvpWord word;
 
@@ -17,7 +17,6 @@ public class OffenciveCannon extends Cannon implements IHavingWord
 		word = new PvpWord(Game.MAX_WORD_LENGTH, game.getDifficultyParam(), game.getLangParam(), game.isRegisterParam());
 	}
 
-	@Override
 	public PvpWord getPvpWord()
 	{
 		return word;

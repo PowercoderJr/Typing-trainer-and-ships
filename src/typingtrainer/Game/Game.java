@@ -19,6 +19,7 @@ public class Game
 	public static final int SHIPS_COUNT = 2;
 	public static final int MAX_WORD_LENGTH = 12;
 	public static final int MIN_WORD_LENGTH_TO_SHOOT = 3;
+	public static final double CANNONBALL_SIZE_LETTER_BONUS = 0.05;
 	private static final double DEFENCIVE_ANTICIPATION_DISTANCE = 100.0;
 	public static final Object CANNONBALLS_LOCK = new Object();
 
@@ -79,11 +80,14 @@ public class Game
 						if (victim.getType() == Cannonball.Type.OFFENCIVE &&
 								victim.getBelonging() != cannonball.getBelonging() &&
 								victim.getPvpWord().toString().equals(cannonball.getPvpWord().toString()) &&
-								GameSceneController.mirrorRelativelyToDefaultWidth(victim.getPosition().add(victim.getPivot())).distance(cannonball.getPosition().add(cannonball.getPivot())) < cannonball.getImage().getWidth() * 2)
+								GameSceneController.mirrorRelativelyToDefaultWidth(victim.getPosition().add(victim.getPivot())).distance(cannonball.getPosition().add(cannonball.getPivot())) < cannonball.getPivot().getX() * 3)
 						{
 							cannonballs.remove(i);
 							cannonballs.remove(j);
-							Animation cannonballShard = new Animation(cannonball.getBelonging(), cannonball.getTarget().subtract(19, 19).subtract(cannonball.getPivot()), SPRITE_SHEET, 5, 5, 132, 311, 38, 38);
+							System.out.println("Two cannonballs had been killed");
+							Animation cannonballShard = new Animation(cannonball.getBelonging(), cannonball.getTarget(), SPRITE_SHEET, 5, 5, 132, 311, 38, 38);
+							cannonballShard.setScale(victim.getScale());
+							cannonballShard.setPosition(cannonball.getTarget().subtract(cannonballShard.getPivot()).add(cannonball.getPivot()));
 							cannonballShards.add(cannonballShard);
 							cannonballShardsVectors.add(new Point2D(cannonball.getDirection().getX() * cannonball.getSpeed() + victim.getDirection().getX() * victim.getSpeed(), cannonball.getDirection().getY() * cannonball.getSpeed() + victim.getDirection().getY() * victim.getSpeed()));
 							isNewBallsCollisionDetected = true;
@@ -133,10 +137,13 @@ public class Game
 			Animation smokeCloud = smokeClouds.get(i);
 
 			if (smokeCloud.isCompleted())
+			{
 				smokeClouds.remove(i--);
+				System.out.println("Smoke cloud has been killed");
+			}
 			else
 			{
-				//smokeCloud.setPosition(new Point2D(smokeCloud.getPosition().getX(), smokeCloud.getPosition().getY() + GameSceneController.BACKGROUND_SPEED));
+				//smokeCloud.setPosition(new Point2D(smokeCloud.getPosition().getX(), smokeCloud.getPosition().getY() + GameSceneController.BACKGROUND_STEP));
 			}
 		}
 
@@ -149,10 +156,11 @@ public class Game
 			{
 				cannonballShards.remove(i);
 				cannonballShardsVectors.remove(i--);
+				System.out.println("Cannonball shards had been killed");
 			}
 			else
 			{
-				//cannonballShard.setPosition(new Point2D(cannonballShard.getPosition().getX(), cannonballShard.getPosition().getY() + GameSceneController.BACKGROUND_SPEED));
+				//cannonballShard.setPosition(new Point2D(cannonballShard.getPosition().getX(), cannonballShard.getPosition().getY() + GameSceneController.BACKGROUND_STEP));
 				cannonballShard.setPosition(cannonballShard.getPosition().add(cannonballShardsVectors.get(i).getX() / 1000 * dt, cannonballShardsVectors.get(i).getY() / 1000 * dt));
 			}
 		}
@@ -160,12 +168,17 @@ public class Game
 		//Wooden splinters
 		for (int i = 0; i < splinterPiles.size(); ++i)
 		{
-			WoodenSplintersPile pile = splinterPiles.get(i);
+			boolean hasSwamAway = true;
 			for (int j = 0; j < WoodenSplintersPile.SPLINTERS_COUNT; ++j)
 			{
-				WoodenSplinter splinter = pile.getSplinter(j);
-				splinter.setPosition(splinter.getPosition().add(splinter.getFlyDir().getX() * splinter.getFlySpeed() / 1000 * dt, splinter.getFlyDir().getY() * splinter.getFlySpeed() / 1000 * dt));
-				System.out.println(splinter.getPosition());
+				splinterPiles.get(i).getSplinter(j).flyingTick(dt);
+				if (splinterPiles.get(i).getSplinter(j).getPosition().getY() - 100 < GameSceneController.DEFAULT_SCREEN_HEIGHT)
+					hasSwamAway = false;
+			}
+			if (hasSwamAway)
+			{
+				splinterPiles.remove(i--);
+				System.out.println("Splinter pile has been killed");
 			}
 		}
 	}
@@ -206,6 +219,8 @@ public class Game
 		{
 			Cannonball cannonball = ships[0].getOffenciveCannon(cannonWithLongestSubstrID).shoot(new Point2D(1280, Math.random() * 720));
 			cannonball.getPvpWord().setWord(longestSubstr);
+			cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (longestSubstr.length() - MIN_WORD_LENGTH_TO_SHOOT));
+			cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 			cannonball.setSpeedAuto();
 			ships[0].getOffenciveCannon(cannonWithLongestSubstrID).getPvpWord().setWord(Word.generateRndWord(Game.MAX_WORD_LENGTH, difficultyParam, langParam, isRegisterParam));
 			return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
@@ -222,6 +237,8 @@ public class Game
 	{
 		Cannonball cannonball = ships[1].getOffenciveCannon(cannonID).shoot(target);
 		cannonball.getPvpWord().setWord(word);
+		cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
+		cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 		cannonball.setSpeed(speed);
 		return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
 				cannonID + GameSceneController.SEPARATOR_CODEGRAM +
@@ -249,10 +266,12 @@ public class Game
 			{
 				Point2D collisionPoint = GameSceneController.mirrorRelativelyToDefaultWidth(target.getPositionAfterDistance(DEFENCIVE_ANTICIPATION_DISTANCE));
 				//Debug
-				GameSceneController.colPoints.add(new Point2D(collisionPoint.getX(), collisionPoint.getY()));
+				//GameSceneController.colPoints.add(new Point2D(collisionPoint.getX(), collisionPoint.getY()));
 				//
 				Cannonball cannonball = ships[0].getDefenciveCannon().shoot(collisionPoint.add(collisionPoint.normalize().getX(), collisionPoint.normalize().getY()));
 				cannonball.getPvpWord().setWord(target.getPvpWord().toString());
+				cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (target.getPvpWord().toString().length() - MIN_WORD_LENGTH_TO_SHOOT));
+				cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 				cannonball.setSpeed(cannonball.getPosition().distance(collisionPoint) * target.getSpeed() / DEFENCIVE_ANTICIPATION_DISTANCE);
 				target.setCanBeCountershooted(false);
 				return GameSceneController.DEFENCIVE_SHOT_CODEGRAM + ":" +
@@ -270,6 +289,8 @@ public class Game
 	{
 		Cannonball cannonball = ships[1].getDefenciveCannon().shoot(target);
 		cannonball.getPvpWord().setWord(word);
+		cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
+		cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 		cannonball.setSpeed(speed);
 		//setCountershooted ?
 		return GameSceneController.DEFENCIVE_SHOT_CODEGRAM + ":" +
