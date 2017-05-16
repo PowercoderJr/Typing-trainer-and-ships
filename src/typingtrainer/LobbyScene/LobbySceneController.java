@@ -229,15 +229,33 @@ public class LobbySceneController
 
 	public void onJoinClicked(MouseEvent mouseEvent) throws IOException
 	{
-		/*
 		if (!serversTable.getSelectionModel().isEmpty())
 		{
-			ServerInfo rowData = (ServerInfo)(serversTable.getSelectionModel().getSelectedItem());
-			connect(rowData.getIp(), passPassfield.getText());
+			if (nameTextfield.getText().trim().length() > 0)
+			{
+				ServerInfo rowData = (ServerInfo)(serversTable.getSelectionModel().getSelectedItem());
+				connect(rowData.getIp(), passPassfield.getText());
+			}
+			else
+			{
+				try
+				{
+					InfoSceneController.setInfo("Укажите никнейм");
+					SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+					Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+					ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+					infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+					sceneManager.pushScene(infoScene);
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
 		}
-		*/
 
 		//Для быстрого теста
+		/*
 		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Group root = new Group();
 		ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
@@ -245,6 +263,7 @@ public class LobbySceneController
 		controller.setPlayerNames("Kek", "Pek");
 		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
 		sceneManager.pushScene(gameScene);
+		*/
 	}
 
 	public void onRefreshClicked(MouseEvent mouseEvent)
