@@ -46,7 +46,7 @@ public class WoodenSplinter extends PvpObject
 		else if (flyTime > -1000)
 		{
 			flyDir = flyDir.add(0, 0.05).normalize();
-			flySpeed = GameSceneController.BACKGROUND_STEP * 1000 / dt + (flySpeed - GameSceneController.BACKGROUND_STEP * 1000 / dt) / 2;
+			flySpeed = GameSceneController.BACKGROUND_SPEED + (flySpeed - GameSceneController.BACKGROUND_SPEED) / 2;
 			rotationSpeed /= 2;
 			flyTime -= dt;
 		}

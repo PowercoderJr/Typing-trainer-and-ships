@@ -3,6 +3,8 @@ package typingtrainer.Game;
 import javafx.geometry.Point2D;
 import javafx.scene.image.WritableImage;
 import javafx.scene.shape.Polygon;
+import typingtrainer.GameScene.GameSceneController;
+import typingtrainer.Main;
 
 /**
  * Created by Meow on 22.04.2017.
@@ -31,6 +33,8 @@ public class Ship extends PvpObject
 	private DefenciveCannon defenciveCannon;
 	private OffenciveCannon[] offenciveCannons;
 
+	private double stoppingSpeed;
+
 	public Ship(Game parentGame, Belonging belonging, Point2D position)
 	{
 		super(belonging, position);
@@ -46,6 +50,21 @@ public class Ship extends PvpObject
 			offenciveCannons[i] = new OffenciveCannon(this, belonging, CANNON_BASE_POSITIONS[i + 1]);
 			offenciveCannons[i].setPivot(CANNON_PIVOTS[i + 1]);
 		}
+		stoppingSpeed = 0;
+	}
+
+	public void stoppingTick(int dt)
+	{
+			if (stoppingSpeed < GameSceneController.BACKGROUND_SPEED)
+				stoppingSpeed += GameSceneController.BACKGROUND_SPEED * 0.003;
+			double step = stoppingSpeed / 1000 * dt;
+			position = position.add(0, step);
+			Cannon[] cannons = new Cannon[OFFENCIVE_CANNONS_COUNT + 1];
+			cannons[0] = defenciveCannon;
+			for (int i = 0; i < OFFENCIVE_CANNONS_COUNT; ++i)
+				cannons[i + 1] = offenciveCannons[i];
+			for (int i = 0; i < OFFENCIVE_CANNONS_COUNT + 1; ++i)
+				cannons[i].setPosition(cannons[i].getPosition().add(0, step));
 	}
 
 	public double getHp()

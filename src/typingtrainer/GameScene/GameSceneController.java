@@ -2,8 +2,10 @@ package typingtrainer.GameScene;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -16,9 +18,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import typingtrainer.Game.*;
+import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
+import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
 import java.io.*;
@@ -49,9 +53,9 @@ public class GameSceneController
 	public static final ArrayList<Point2D> colPoints = new ArrayList<>();
 	//
 
-	public static final int BACKGROUND_STEP = 2;
 	private static final int dt = 15;
-	private static final double CANCELED_TIMER_VALUE = -10;
+	public static final int BACKGROUND_STEP = 2;
+	public static final double BACKGROUND_SPEED = BACKGROUND_STEP * 1000.0 / dt;
 
 	private static final int WORD_OFFSET_Y = 30;
 	private static final int PLAYER_NAME_POS_X = 135;
@@ -84,7 +88,7 @@ public class GameSceneController
 	private Image hpBarBackground;
 
 	private double pregameTimer;
-	private boolean isGameProceed;
+	private boolean isSceneClosed;
 	private Game game;
 
 	private EventHandler<KeyEvent> onKeyPressed = new EventHandler<KeyEvent>()
@@ -92,7 +96,6 @@ public class GameSceneController
 		@Override
 		public void handle(KeyEvent event)
 		{
-			pregameTimer = CANCELED_TIMER_VALUE;
 			if (event.getCode() == KeyCode.ESCAPE)
 			{
 				try
@@ -103,9 +106,9 @@ public class GameSceneController
 				{
 					e.printStackTrace();
 				}
-				disconnect();
+				Platform.runLater(() ->	leave());
 			}
-			else if (isGameProceed)
+			else if (game.isGameProceed())
 			{
 				if (event.getCode() == KeyCode.SPACE) //Offencive
 				{
@@ -180,8 +183,6 @@ public class GameSceneController
 		return Main.DEFAULT_SCREEN_WIDTH - x;
 	}
 
-
-
 	public GameSceneController(ManagedScene scene, Socket socket, Word.Languages lang, int difficulty, boolean isRegister)
 	{
 		System.out.println("Игровая сцена готова!"/* + socket.getInetAddress().getHostAddress() + ":" + socket.getPort()*/);
@@ -207,9 +208,13 @@ public class GameSceneController
 		bg1Y = 0.0;
 		bg2Y = 0.0;
 		game = new Game(lang, difficulty, isRegister);
+		isSceneClosed = false;
 		hpBarBackground = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 349, 255, 26);
 
-		isGameProceed = false;
+		//Ожидание сообщений
+		new Thread(this::waitForMessages).start();
+
+		//Игра
 		new Thread(() ->
 		{
 			//Задержка перед стартом
@@ -218,7 +223,11 @@ public class GameSceneController
 				pregameTimer = 3.0;
 				do
 				{
-					Platform.runLater(() -> renderPrepairingStage(gc, "" + (int) Math.ceil(pregameTimer)));
+					Platform.runLater(() ->
+					{
+						render(gc);
+						renderBroadcastingMessage(gc, "" + (int) Math.ceil(pregameTimer), scene.getWidth(), scene.getHeight());
+					});
 					Thread.sleep(dt);
 					pregameTimer -= dt / 1000.0;
 				} while (pregameTimer > 0);
@@ -228,18 +237,31 @@ public class GameSceneController
 				e.printStackTrace();
 			}
 
-			if (Math.abs(pregameTimer - CANCELED_TIMER_VALUE) < 0.001)
+			if (!isSceneClosed)
 			{
-				isGameProceed = true;
-				//Интерфейс
+				game.setGameProceed(true);
+
+				//Интерфейс, логика
 				new Thread(() ->
 				{
 					try
 					{
-						while (isGameProceed)
+						while (game.isGameProceed())
 						{
 							game.tick(dt);
 							Platform.runLater(() -> render(gc));
+							Thread.sleep(dt);
+						}
+
+						final String winner = (game.getShip(1).getHp() < 0.001 ? game.getShip(0).getPlayerName() : game.getShip(1).getPlayerName()) + " победил!";
+						while (!isSceneClosed)
+						{
+							game.tick(dt);
+							Platform.runLater(() ->
+							{
+								render(gc);
+								renderBroadcastingMessage(gc, winner, scene.getWidth(), scene.getHeight());
+							});
 							Thread.sleep(dt);
 						}
 					}
@@ -247,14 +269,15 @@ public class GameSceneController
 					{
 						e.printStackTrace();
 					}
+
 				}).start();
 
-				//Логика
+				//Звуки столкновения
 				new Thread(() ->
 				{
 					try
 					{
-						while (isGameProceed)
+						while (!isSceneClosed)
 						{
 							if (game.isNewBallsCollisionDetected())
 							{
@@ -275,9 +298,6 @@ public class GameSceneController
 					}
 				}).start();
 			}
-
-			//Ожидание сообщений
-			new Thread(this::waitForMessages).start();
 		}).start();
 	}
 
@@ -291,8 +311,25 @@ public class GameSceneController
 			switch (codegram)
 			{
 				case PregameServerSceneController.DISCONNECT_CODEGRAM:
-					disconnect();
+					Platform.runLater(() ->
+					{
+						leave();
+						try
+						{
+							InfoSceneController.setInfo("Соперник отключился");
+							SceneManager sceneManager = scene.getManager();
+							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+							sceneManager.pushScene(infoScene);
+						}
+						catch (IOException e1)
+						{
+							e1.printStackTrace();
+						}
+					});
 					System.out.println("Соединение разорвано (из игры)");
+
 					break;
 				case OFFENCIVE_SHOT_CODEGRAM:
 				{
@@ -320,10 +357,11 @@ public class GameSceneController
 
 	private void waitForMessages()
 	{
+		System.out.println("Ждём сообщений");
 		try
 		{
 			DataInputStream istream = new DataInputStream(socket.getInputStream());
-			while (isGameProceed)
+			while (!isSceneClosed)
 			{
 				String receivedData = istream.readUTF();
 				handleIncomingMessage(receivedData);
@@ -391,13 +429,13 @@ public class GameSceneController
 		}
 	}
 
-	private void renderTimer(GraphicsContext gc, String text, double sceneWidth, double sceneHeight)
+	private void renderBroadcastingMessage(GraphicsContext gc, String text, double sceneWidth, double sceneHeight)
 	{
 		gc.setFont(new Font("Arial Bold", 200));
 		gc.setFill(Color.WHITE);
 		gc.setTextAlign(TextAlignment.CENTER);
-		gc.fillText(text, sceneWidth / 2, sceneHeight / 2);
-		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2);
+		gc.fillText(text, sceneWidth / 2, sceneHeight / 2, Main.DEFAULT_SCREEN_WIDTH - 100);
+		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2, Main.DEFAULT_SCREEN_WIDTH - 100);
 	}
 
 	private void renderCannonballs(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
@@ -471,24 +509,6 @@ public class GameSceneController
 		}
 	}
 
-	private void renderPrepairingStage(GraphicsContext gc, String text)
-	{
-		double sceneWidth = scene.getWidth();
-		double sceneHeight = scene.getHeight();
-
-		//Scaling
-		gc.getCanvas().setWidth(sceneWidth);
-		gc.getCanvas().setHeight(sceneHeight);
-		double xScale = sceneWidth / Main.DEFAULT_SCREEN_WIDTH;
-		double yScale = sceneHeight / Main.DEFAULT_SCREEN_HEIGHT;
-		double bgSize = Main.DEFAULT_SCREEN_WIDTH * Math.max(xScale, yScale);
-
-		renderBackground(gc, sceneHeight, bgSize);
-		renderShips(gc, sceneWidth, xScale, yScale);
-		renderHpBars(gc, sceneWidth, xScale, yScale);
-		renderTimer(gc, text, sceneWidth, sceneHeight);
-	}
-
 	private void render(GraphicsContext gc)
 	{
 		double sceneWidth = scene.getWidth();
@@ -507,12 +527,14 @@ public class GameSceneController
 		renderShips(gc, sceneWidth, xScale, yScale);
 		renderSmokeClouds(gc, sceneWidth, xScale, yScale);
 		renderCannonballShards(gc, sceneWidth, xScale, yScale);
-
-		gc.setFont(new Font("Courier New Bold", 40));
-		renderOffenciveCannonWords(gc, sceneWidth, xScale, yScale);
-		renderCannonballWords(gc, sceneWidth, xScale, yScale);
-
 		renderHpBars(gc, sceneWidth, xScale, yScale);
+
+		if (game.isGameProceed())
+		{
+			gc.setFont(new Font("Courier New Bold", 40));
+			renderOffenciveCannonWords(gc, sceneWidth, xScale, yScale);
+			renderCannonballWords(gc, sceneWidth, xScale, yScale);
+		}
 
 		//Debug
 /*
@@ -569,10 +591,10 @@ public class GameSceneController
 			gc.strokeText(text, finalX, finalY, finalMaxWidth);
 	}
 
-	private void disconnect()
+	private void leave()
 	{
-		isGameProceed = false;
-		isGameProceed = false;
+		game.setGameProceed(false);
+		isSceneClosed = true;
 		try
 		{
 			socket.close();
@@ -582,18 +604,15 @@ public class GameSceneController
 			e.printStackTrace();
 		}
 
-		Platform.runLater(() ->
+		try
 		{
-			try
-			{
-				scene.getManager().popScene();
-				scene.getManager().popScene();
-			}
-			catch (InvocationTargetException e)
-			{
-				System.out.println(e.getMessage());
-			}
-		});
+			scene.getManager().popScene();
+			scene.getManager().popScene();
+		}
+		catch (InvocationTargetException e)
+		{
+			System.out.println(e.getMessage());
+		}
 	}
 
 	private void playShotSound()

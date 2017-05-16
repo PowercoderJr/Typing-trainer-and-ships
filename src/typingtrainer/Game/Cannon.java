@@ -21,6 +21,7 @@ public abstract class Cannon extends PvpObject
 	private Ship parentShip;
 	private Point2D basePosition;
 	private Thread pushingThread;
+
 	public Cannon(Ship parentShip, Belonging belonging, Point2D position)
 	{
 		super(belonging, position);

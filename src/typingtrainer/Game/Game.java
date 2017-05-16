@@ -35,6 +35,7 @@ public class Game
 	private ArrayList<Point2D> cannonballShardsVectors;
 	private ArrayList<WoodenSplintersPile> splinterPiles;
 
+	private boolean isGameProceed;
 	private boolean isNewBallsCollisionDetected;
 	private boolean isNewShipDamageDetected;
 
@@ -62,7 +63,9 @@ public class Game
 		cannonballShardsVectors = new ArrayList<>();
 		splinterPiles = new ArrayList<>();
 
+		isGameProceed = false;
 		isNewBallsCollisionDetected = false;
+		isNewShipDamageDetected = false;
 	}
 
 	public void tick(int dt)
@@ -108,14 +111,19 @@ public class Game
 					else if (cannonball.getBelonging() == PvpObject.Belonging.HOSTILE)
 						ship = ships[0];
 
-					if (ship.getShape().contains(cannonball.getPosition().add(cannonball.getPivot()).subtract(Main.DEFAULT_SCREEN_WIDTH, 0)) && !cannonball.HasDamaged())
+					if (ship.getHp() > 0.001 && ship.getShape().contains(cannonball.getPosition().add(cannonball.getPivot()).subtract(Main.DEFAULT_SCREEN_WIDTH, 0)) && !cannonball.HasDamaged())
 					{
 						ship.damage(cannonball.getPvpWord().toString().length() * Cannonball.WEIGHT_DAMAGE);
 						isNewShipDamageDetected = true;
 						cannonball.setHasDamaged(true);
 						splinterPiles.add(new WoodenSplintersPile(ship.getBelonging(), GameSceneController.mirrorRelativelyToDefaultWidth(cannonball.getPosition())));
+						if (ship.getHp() < 0.01)
+						{
+							isGameProceed = false;
+							System.out.println("Ship has been destroyed");
+						}
 					}
-					else if (cannonball.getPosition().getY() < 0 ||
+					else if (cannonball.getPosition().getY() < -cannonball.getImage().getHeight() * cannonball.getScale() ||
 							cannonball.getPosition().getX() > Main.DEFAULT_SCREEN_WIDTH ||
 							cannonball.getPosition().getY() > Main.DEFAULT_SCREEN_HEIGHT)
 					{
@@ -181,6 +189,14 @@ public class Game
 				splinterPiles.remove(i--);
 				System.out.println("Splinter pile has been killed");
 			}
+		}
+
+		//Ships
+		for (int i = 0; i < SHIPS_COUNT; ++i)
+		{
+			Ship ship = ships[i];
+			if (ship.getHp() < 0.001 && ship.getPosition().getY() < Main.DEFAULT_SCREEN_HEIGHT)
+				ship.stoppingTick(dt);
 		}
 	}
 
@@ -385,6 +401,16 @@ public class Game
 	public void setNewBallsCollisionDetected(boolean newBallsCollisionDetected)
 	{
 		isNewBallsCollisionDetected = newBallsCollisionDetected;
+	}
+
+	public boolean isGameProceed()
+	{
+		return isGameProceed;
+	}
+
+	public void setGameProceed(boolean gameProceed)
+	{
+		isGameProceed = gameProceed;
 	}
 
 	public boolean isNewShipDamageDetected()
