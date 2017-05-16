@@ -75,8 +75,27 @@ public class LobbySceneController
 			{
 				if (event.getClickCount() == 2 && (!row.isEmpty()))
 				{
-					ServerInfo rowData = row.getItem();
-					connect(rowData.getIp(), passPassfield.getText());
+					if (nameTextfield.getText().trim().length() > 0)
+					{
+						ServerInfo rowData = row.getItem();
+						connect(rowData.getIp(), passPassfield.getText());
+					}
+					else
+					{
+						try
+						{
+							InfoSceneController.setInfo("Укажите никнейм");
+							SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+							sceneManager.pushScene(infoScene);
+						}
+						catch (IOException e1)
+						{
+							e1.printStackTrace();
+						}
+					}
 				}
 			});
 			return row;
@@ -179,14 +198,33 @@ public class LobbySceneController
 
 	public void onCreateClicked(MouseEvent mouseEvent) throws IOException
 	{
-		stopSearching();
-		PregameServerSceneController.setArg_serverName(nameTextfield.getText());
-		PregameServerSceneController.setArg_serverPassword(passPassfield.getText());
-		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
-		Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
-		ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-		pregameServerScene.getStylesheets().add("typingtrainer/pregameServerScene/style.css");
-		sceneManager.pushScene(pregameServerScene);
+		if (nameTextfield.getText().trim().length() > 0)
+		{
+			stopSearching();
+			PregameServerSceneController.setArg_serverName(nameTextfield.getText());
+			PregameServerSceneController.setArg_serverPassword(passPassfield.getText());
+			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
+			Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
+			ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+			pregameServerScene.getStylesheets().add("typingtrainer/pregameServerScene/style.css");
+			sceneManager.pushScene(pregameServerScene);
+		}
+		else
+		{
+			try
+			{
+				InfoSceneController.setInfo("Укажите никнейм");
+				SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+				Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
+				ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+				infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
+				sceneManager.pushScene(infoScene);
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public void onJoinClicked(MouseEvent mouseEvent) throws IOException

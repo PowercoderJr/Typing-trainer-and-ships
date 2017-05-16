@@ -86,6 +86,8 @@ public class GameSceneController
 	private Image bgImg;
 	private double bg1Y, bg2Y;
 	private Image hpBarBackground;
+	private Image spaceImg;
+	private Image enterImg;
 
 	private double pregameTimer;
 	private boolean isSceneClosed;
@@ -210,6 +212,8 @@ public class GameSceneController
 		game = new Game(lang, difficulty, isRegister);
 		isSceneClosed = false;
 		hpBarBackground = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 349, 255, 26);
+		spaceImg = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 148, 55, 70, 11);
+		enterImg = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 218, 55, 16, 14);
 
 		//Ожидание сообщений
 		new Thread(this::waitForMessages).start();
@@ -482,6 +486,14 @@ public class GameSceneController
 			gc.setFill(AFTER_FILL_COLOR);
 			gc.setStroke(AFTER_STROKE_COLOR);
 			renderPlayerText(gc, substrAfter, true, true, cannon.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
+
+			//Иконка SPACE
+			if (cannon.getPvpWord().getCharsDone() >= Game.MIN_WORD_LENGTH_TO_SHOOT)
+			{
+				x = cannon.getPosition().getX() + 68;
+				y = cannon.getPosition().getY() + cannon.getPivot().getY() - spaceImg.getHeight() / 2;
+				gc.drawImage(spaceImg, x * xScale, y * yScale, spaceImg.getWidth() * xScale, spaceImg.getHeight() * yScale);
+			}
 		}
 	}
 
@@ -505,6 +517,14 @@ public class GameSceneController
 				gc.setFill(AFTER_FILL_COLOR);
 				gc.setStroke(AFTER_STROKE_COLOR);
 				renderPlayerText(gc, substrAfter, true, true, cannonball.getBelonging(), x, y, 10000, sceneWidth, xScale, yScale);
+
+				//Иконка ENTER
+				if (cannonball.getPvpWord().getCharsDone() == cannonball.getPvpWord().toString().length())
+				{
+					x = Main.DEFAULT_SCREEN_WIDTH - cannonball.getPosition().getX() + 4;
+					y = cannonball.getPosition().getY() + cannonball.getPivot().getY() - enterImg.getHeight() / 2;
+					gc.drawImage(enterImg, x * xScale, y * yScale, enterImg.getWidth() * xScale, enterImg.getHeight() * yScale);
+				}
 			}
 		}
 	}

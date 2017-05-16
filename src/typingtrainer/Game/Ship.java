@@ -20,9 +20,9 @@ public class Ship extends PvpObject
 			};
 	public static final Point2D[] CANNON_PIVOTS =
 			{
-					new Point2D(90.0, 25.0),
-					new Point2D(115.0, 25.0),
-					new Point2D(123.0, 25.0)
+					new Point2D(90.0, 27.0),
+					new Point2D(115.0, 27.0),
+					new Point2D(123.0, 27.0)
 			};
 	public static final int BASE_HP = 1000;
 

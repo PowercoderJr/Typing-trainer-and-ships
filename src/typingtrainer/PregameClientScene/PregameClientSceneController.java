@@ -75,7 +75,7 @@ public class PregameClientSceneController
 					chatTA.appendText(content + '\n');
 					break;
 				case PregameServerSceneController.START_CODEGRAM:
-					/**Уязвимый участок*/
+					/**Уязвимый участок в случае запуска 2х клиентов на 1 компе*/
 					Platform.runLater(() ->
 					{
 						isConnected = false;
