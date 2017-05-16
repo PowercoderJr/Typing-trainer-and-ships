@@ -181,26 +181,38 @@ public class StatisticSceneController
 
 	public void onGraphClicked(MouseEvent mouseEvent)
 	{
-		ArrayList<ObservableList<XYChart.Data>> datas = new ArrayList<>();
-		ObservableList<XYChart.Data> data1 = FXCollections.observableArrayList();
-		ObservableList<XYChart.Data> data2 = FXCollections.observableArrayList();
-		ObservableList<XYChart.Data> data3 = FXCollections.observableArrayList();
-		for (int i = 0; i < this.speed_list.size(); i++)
-		{
-			data1.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.speed_list.get(i)));
-			data2.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.mistakes_list.get(i)));
-			data3.add(new XYChart.Data(i + " (" + this.date_list.get(i) + ")", this.time_list.get(i)));
+		final CategoryAxis xAxis = new CategoryAxis();
+		final NumberAxis yAxis = new NumberAxis();
+		xAxis.setLabel("Сеансы");
+
+		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
+
+		lineChart.setTitle("Статистика");
+
+		ArrayList<XYChart.Series> datas = new ArrayList<>();
+
+		XYChart.Series series = new XYChart.Series();
+		series.setName("Время (мин)");
+
+		XYChart.Series series2 = new XYChart.Series();
+		series2.setName("Ошибки (шт)");
+
+		XYChart.Series series3 = new XYChart.Series();
+		series3.setName("Скорость (зн/мин)");
+
+
+
+		for (int i = 0; i < this.mistakes_list.size(); i++) {
+			series.getData().add(new XYChart.Data((i + 1) + " (" + date_list.get(i) + ")", time_list.get(i)));
+			series2.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", mistakes_list.get(i)));
+			series3.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", speed_list.get(i)));
 		}
-		datas.add(data1);
-		datas.add(data2);
-		datas.add(data3);
+		datas.add(series);
+		datas.add(series2);
+		datas.add(series3);
 
-		ArrayList<String> seriesNames = new ArrayList<>();
-		seriesNames.add("Скорость (зн/мин)");
-		seriesNames.add("Ошибки (шт)");
-		seriesNames.add("Время (сек)");
+		sceneSetter(lineChart, datas);
 
-		buildGraphScene("Статистика", seriesNames, datas);
 	}
 
 	public void onMistakesCliked(MouseEvent mouseEvent)
@@ -259,9 +271,9 @@ public class StatisticSceneController
 		XYChart.Series series = new XYChart.Series();
 		series.setName("Скорость (зн/мин)");
 
-
 		for (int i = 0; i < this.mistakes_list.size(); i++)
-			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", speed_list.get(i)));
+            series.getData().add(new XYChart.Data((i) + " (" + date_list.get(i) + ")", speed_list.get(i)));
+
 
 		sceneSetter(lineChart, series);
 	}
@@ -288,6 +300,36 @@ public class StatisticSceneController
 		lineChart.getData().add(series);
 		sceneManager.pushScene(graphScene);
 	}
+
+	private void sceneSetter(LineChart<String,Number> lineChart, ArrayList<XYChart.Series> datas)
+	{
+
+
+		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
+		lineChart.setOnMouseClicked(event ->
+		{
+			try
+			{
+				sceneManager.popScene();
+			}
+			catch (InvocationTargetException e)
+			{
+				e.printStackTrace();
+			}
+		});
+
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+
+		for(int i = 0; i < datas.size(); i++)
+			lineChart.getData().add(datas.get(i));
+
+
+		sceneManager.pushScene(graphScene);
+	}
+
+
+
+
 
 	private void buildGraphScene(String chartTitle, ArrayList<String> seriesNames, ArrayList<ObservableList<XYChart.Data>> datas)
 	{
