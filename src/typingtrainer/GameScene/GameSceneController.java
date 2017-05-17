@@ -91,6 +91,7 @@ public class GameSceneController
 
 	private double pregameTimer;
 	private boolean isSceneClosed;
+	private boolean isEscPreccedOnce;
 	private Game game;
 
 	private EventHandler<KeyEvent> onKeyPressed = new EventHandler<KeyEvent>()
@@ -100,15 +101,34 @@ public class GameSceneController
 		{
 			if (event.getCode() == KeyCode.ESCAPE)
 			{
-				try
+				if (isEscPreccedOnce)
 				{
-					ostream.writeUTF(DISCONNECT_CODEGRAM + ":");
+					try
+					{
+						ostream.writeUTF(DISCONNECT_CODEGRAM + ":");
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+					Platform.runLater(() -> leave());
 				}
-				catch (IOException e)
+				else
 				{
-					e.printStackTrace();
+					isEscPreccedOnce = true;
+					new Thread(() ->
+					{
+						try
+						{
+							Thread.sleep(3000);
+						}
+						catch (InterruptedException e)
+						{
+							e.printStackTrace();
+						}
+						isEscPreccedOnce = false;
+					}).start();
 				}
-				Platform.runLater(() ->	leave());
 			}
 			else if (game.isGameProceed())
 			{
@@ -211,6 +231,7 @@ public class GameSceneController
 		bg2Y = 0.0;
 		game = new Game(lang, difficulty, isRegister);
 		isSceneClosed = false;
+		isEscPreccedOnce = false;
 		hpBarBackground = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 132, 349, 255, 26);
 		spaceImg = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 148, 55, 70, 11);
 		enterImg = new WritableImage(Game.SPRITE_SHEET.getPixelReader(), 218, 55, 16, 14);
@@ -230,7 +251,7 @@ public class GameSceneController
 					Platform.runLater(() ->
 					{
 						render(gc);
-						renderBroadcastingMessage(gc, "" + (int) Math.ceil(pregameTimer), scene.getWidth(), scene.getHeight());
+						renderBroadcastingMessage(gc, "" + (int) Math.ceil(pregameTimer), 200, scene.getHeight() / 2, scene.getWidth(), scene.getHeight());
 					});
 					Thread.sleep(dt);
 					pregameTimer -= dt / 1000.0;
@@ -264,7 +285,7 @@ public class GameSceneController
 							Platform.runLater(() ->
 							{
 								render(gc);
-								renderBroadcastingMessage(gc, winner, scene.getWidth(), scene.getHeight());
+								renderBroadcastingMessage(gc, winner, 100, scene.getHeight() / 2, scene.getWidth(), scene.getHeight());
 							});
 							Thread.sleep(dt);
 						}
@@ -433,13 +454,13 @@ public class GameSceneController
 		}
 	}
 
-	private void renderBroadcastingMessage(GraphicsContext gc, String text, double sceneWidth, double sceneHeight)
+	private void renderBroadcastingMessage(GraphicsContext gc, String text, int fontSize, double y, double sceneWidth, double sceneHeight)
 	{
-		gc.setFont(new Font("Arial Bold", 200));
+		gc.setFont(new Font("Arial Bold", fontSize));
 		gc.setFill(Color.WHITE);
 		gc.setTextAlign(TextAlignment.CENTER);
-		gc.fillText(text, sceneWidth / 2, sceneHeight / 2, Main.DEFAULT_SCREEN_WIDTH - 100);
-		gc.strokeText(text, sceneWidth / 2, sceneHeight / 2, Main.DEFAULT_SCREEN_WIDTH - 100);
+		gc.fillText(text, sceneWidth / 2, y, Main.DEFAULT_SCREEN_WIDTH - 100);
+		gc.strokeText(text, sceneWidth / 2, y, Main.DEFAULT_SCREEN_WIDTH - 100);
 	}
 
 	private void renderCannonballs(GraphicsContext gc, double sceneWidth, double xScale, double yScale)
@@ -554,6 +575,11 @@ public class GameSceneController
 			gc.setFont(new Font("Courier New Bold", 40));
 			renderOffenciveCannonWords(gc, sceneWidth, xScale, yScale);
 			renderCannonballWords(gc, sceneWidth, xScale, yScale);
+		}
+
+		if (isEscPreccedOnce)
+		{
+			renderBroadcastingMessage(gc, "Для выхода нажмите ESC ещё раз", 30, 70, sceneWidth, sceneHeight);
 		}
 
 		//Debug
