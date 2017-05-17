@@ -4,6 +4,8 @@ package typingtrainer.StatisticScene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -15,6 +17,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import sun.plugin2.message.Message;
+import typingtrainer.InfoScene.InfoSceneController;
+import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.SceneManager;
 
@@ -55,14 +59,12 @@ public class StatisticSceneController
 	{
 		System.out.println("Сцена статистики готова!");
 
-		try
+		try (FileReader st_read = new FileReader("statistics.txt"))
 		{
-			FileReader st_read = new FileReader("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
 			BufferedReader reader = new BufferedReader(st_read);
 			int lastMistakes = 0, lastSpeed = 0, count = 0;
 			double lastTime = 0.0, avgTime = 0.0, avgMistakes = 0.0, avgSpeed = 0.0;
 			String buf, lastDate;
-			//List<int> speed_list = new List<int>();
 
 			while ((buf = reader.readLine()) != null)
 			{
@@ -106,21 +108,12 @@ public class StatisticSceneController
 		}
 		catch (Exception e)
 		{
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Файл статистики отсутствует или повреждён. Создать вместо него новый?", ButtonType.YES, ButtonType.NO);
-			alert.setTitle("Ошибка");
-			alert.setHeaderText(null);
-			alert.showAndWait();
-			if (alert.getResult() == ButtonType.YES)
+			try (FileWriter writer = new FileWriter("statistics.txt"))
 			{
-				try
-				{
-					FileWriter writer = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
-					writer.close();
-				}
-				catch (IOException e1)
-				{
-					new Alert(Alert.AlertType.ERROR, "Ошибка при создании файла.", ButtonType.OK).showAndWait();
-				}
+			}
+			catch (IOException e1)
+			{
+				Main.pushInfoScene("Ошибка при создании файла статистики");
 			}
 
 			speed_list.clear();
@@ -144,7 +137,7 @@ public class StatisticSceneController
 	{
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -154,17 +147,12 @@ public class StatisticSceneController
 
 	public void onClearClicked(MouseEvent mouseEvent)
 	{
-		FileWriter st_write = null;
-		try
+		try (FileWriter st_write = new FileWriter("statistics.txt"))
 		{
-			st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt");
-			st_write.write("");
-			st_write.flush();
-			st_write.close();
 		}
 		catch (IOException e)
 		{
-			new Alert(Alert.AlertType.ERROR, "Ошибка при создании файла.", ButtonType.OK).showAndWait();
+			Main.pushInfoScene("Ошибка при пересоздании файла статистики");
 		}
 
 		//Общая
@@ -283,12 +271,11 @@ public class StatisticSceneController
 	{
 
 
-		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
 		lineChart.setOnMouseClicked(event ->
 		{
 			try
 			{
-				sceneManager.popScene();
+				Main.sceneManager.popScene();
 			}
 			catch (InvocationTargetException e)
 			{
@@ -296,21 +283,20 @@ public class StatisticSceneController
 			}
 		});
 
-		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, Main.sceneManager);
 		lineChart.getData().add(series);
-		sceneManager.pushScene(graphScene);
+		Main.sceneManager.pushScene(graphScene);
 	}
 
 	private void sceneSetter(LineChart<String,Number> lineChart, ArrayList<XYChart.Series> datas)
 	{
 
 
-		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
 		lineChart.setOnMouseClicked(event ->
 		{
 			try
 			{
-				sceneManager.popScene();
+				Main.sceneManager.popScene();
 			}
 			catch (InvocationTargetException e)
 			{
@@ -318,13 +304,13 @@ public class StatisticSceneController
 			}
 		});
 
-		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, sceneManager);
+		ManagedScene graphScene = new ManagedScene(lineChart, 600, 600, Main.sceneManager);
 
 		for(int i = 0; i < datas.size(); i++)
 			lineChart.getData().add(datas.get(i));
 
 
-		sceneManager.pushScene(graphScene);
+		Main.sceneManager.pushScene(graphScene);
 	}
 
 
@@ -345,12 +331,11 @@ public class StatisticSceneController
 			numberLineChart.getData().add(series);
 		}
 
-		final SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
 		numberLineChart.setOnMouseClicked(event ->
 		{
 			try
 			{
-				sceneManager.popScene();
+				Main.sceneManager.popScene();
 			}
 			catch (InvocationTargetException e)
 			{
@@ -358,7 +343,7 @@ public class StatisticSceneController
 			}
 		});
 
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, sceneManager);
-		sceneManager.pushScene(graphScene);
+		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, Main.sceneManager);
+		Main.sceneManager.pushScene(graphScene);
 	}
 }

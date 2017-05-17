@@ -18,7 +18,7 @@
     </ImageView>
     <Label fx:id="practiceModeLabel" onMouseClicked="#onPracticeModeLabelClicked" styleClass="label-button" text="ПРАКТИКА" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label fx:id="lobbyLabel" onMouseClicked="#onLobbyClicked" styleClass="label-button" text="БИТВА" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-    <Label fx:id="authorsLabel" onMouseClicked="#onLabelClicked" styleClass="label-button" text="АВТОРЫ" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    <Label fx:id="authorsLabel" onMouseClicked="#onAuthorsClicked" styleClass="label-button" text="АВТОРЫ" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     <Label fx:id="statLabel" onMouseClicked="#onStatLableClicked" styleClass="label-button" text="СТАТИСТИКА" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     <Label fx:id="exitLabel" onMouseClicked="#onExitLabelClicked" styleClass="label-button" text="ВЫХОД" GridPane.columnIndex="1" GridPane.rowIndex="5" />
   </children>

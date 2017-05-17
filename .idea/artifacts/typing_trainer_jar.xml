@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="typing-trainer:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/typing_trainer_jar</output-path>
-    <root id="archive" name="typing-trainer.jar">
-      <element id="module-output" name="typing-trainer" />
-    </root>
-  </artifact>
-</component>

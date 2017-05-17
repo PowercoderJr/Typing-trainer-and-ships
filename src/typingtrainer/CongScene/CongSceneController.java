@@ -47,8 +47,8 @@ public class CongSceneController
 	{
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -60,7 +60,7 @@ public class CongSceneController
 	{
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
+			Main.sceneManager.popAllExceptFirst();
 		}
 		catch (InvocationTargetException e)
 		{

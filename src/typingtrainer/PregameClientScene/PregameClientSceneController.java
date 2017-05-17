@@ -95,13 +95,12 @@ public class PregameClientSceneController
 						String diffStr = difficultyLabel.getText();
 						int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
 
-						SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
 						Group root = new Group();
-						ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
+						ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, Main.sceneManager);
 						GameSceneController controller = new GameSceneController(gameScene, socket, lang, difficulty, registerLabel.getText().substring(registerLabel.getText().indexOf(':') + 2).equals("ДА"));
 						controller.setPlayerNames(username, serverNameLabel.getText());
 						gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-						sceneManager.pushScene(gameScene);
+						Main.sceneManager.pushScene(gameScene);
 					});
 					try
 					{
@@ -119,19 +118,7 @@ public class PregameClientSceneController
 					{
 						onBackClicked(null);
 						System.out.println("Соединение разорвано");
-						try
-						{
-							InfoSceneController.setInfo("Сервер разорвал соединение");
-							SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
-							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-							sceneManager.pushScene(infoScene);
-						}
-						catch (IOException e1)
-						{
-							e1.printStackTrace();
-						}
+						Main.pushInfoScene("Сервер разорвал соединение");
 					});
 					break;
 				case PregameServerSceneController.SETTINGS_SERV_NAME_CODEGRAM:
@@ -194,7 +181,7 @@ public class PregameClientSceneController
 
 		try
 		{
-			((ManagedScene) (pane.getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{

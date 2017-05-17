@@ -82,19 +82,7 @@ public class LobbySceneController
 					}
 					else
 					{
-						try
-						{
-							InfoSceneController.setInfo("Укажите никнейм");
-							SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
-							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-							sceneManager.pushScene(infoScene);
-						}
-						catch (IOException e1)
-						{
-							e1.printStackTrace();
-						}
+						Main.pushInfoScene("Укажите никнейм");
 					}
 				}
 			});
@@ -126,7 +114,7 @@ public class LobbySceneController
 		stopSearching();
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -203,27 +191,14 @@ public class LobbySceneController
 			stopSearching();
 			PregameServerSceneController.setArg_serverName(nameTextfield.getText());
 			PregameServerSceneController.setArg_serverPassword(passPassfield.getText());
-			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Parent pregameServerSceneFXML = FXMLLoader.load(Main.class.getResource("PregameServerScene/pregameServerScene.fxml"));
-			ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-			pregameServerScene.getStylesheets().add("typingtrainer/pregameServerScene/style.css");
-			sceneManager.pushScene(pregameServerScene);
+			ManagedScene pregameServerScene = new ManagedScene(pregameServerSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
+			pregameServerScene.getStylesheets().add("typingtrainer/PregameServerScene/style.css");
+			Main.sceneManager.pushScene(pregameServerScene);
 		}
 		else
 		{
-			try
-			{
-				InfoSceneController.setInfo("Укажите никнейм");
-				SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
-				Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-				ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-				infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-				sceneManager.pushScene(infoScene);
-			}
-			catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
+			Main.pushInfoScene("Укажите никнейм");
 		}
 	}
 
@@ -238,31 +213,18 @@ public class LobbySceneController
 			}
 			else
 			{
-				try
-				{
-					InfoSceneController.setInfo("Укажите никнейм");
-					SceneManager sceneManager = ((ManagedScene)(pane.getScene())).getManager();
-					Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-					ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-					infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-					sceneManager.pushScene(infoScene);
-				}
-				catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
+				Main.pushInfoScene("Укажите никнейм");
 			}
 		}
 
 		//Для быстрого теста
 		/*
-		SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 		Group root = new Group();
-		ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
+		ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, Main.sceneManager);
 		GameSceneController controller = new GameSceneController(gameScene, new Socket(), Word.Languages.RU, 2, false);
 		controller.setPlayerNames("Kek", "Pek");
 		gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-		sceneManager.pushScene(gameScene);
+		Main.sceneManager.pushScene(gameScene);
 		*/
 	}
 
@@ -306,47 +268,22 @@ public class LobbySceneController
 				stopSearching();
 				PregameClientSceneController.setArg_socket(socket);
 				PregameClientSceneController.setArg_username(nameTextfield.getText());
-				SceneManager sceneManager = ((ManagedScene) serversTable.getScene()).getManager();
 				Parent pregameClientSceneFXML = FXMLLoader.load(Main.class.getResource("PregameClientScene/pregameClientScene.fxml"));
-				ManagedScene pregameClientScene = new ManagedScene(pregameClientSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-				pregameClientScene.getStylesheets().add("typingtrainer/pregameClientScene/style.css");
-				sceneManager.pushScene(pregameClientScene);
+				ManagedScene pregameClientScene = new ManagedScene(pregameClientSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
+				pregameClientScene.getStylesheets().add("typingtrainer/PregameClientScene/style.css");
+				Main.sceneManager.pushScene(pregameClientScene);
 			}
 			else if (msg.equals(PregameServerSceneController.CONNECTION_DECLINED_MSG))
 			{
 				socket.close();
-				try
-				{
-					InfoSceneController.setInfo("Доступ не разрешён");
-					SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
-					Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-					ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-					infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-					sceneManager.pushScene(infoScene);
-				}
-				catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
+				Main.pushInfoScene("Доступ не разрешён");
 			}
 		}
 		catch (ConnectException e)
 		{
 			System.out.println("Connect Exception");
 			//e.printStackTrace();
-			try
-			{
-				InfoSceneController.setInfo("Подключение не удалось");
-				SceneManager sceneManager = ((ManagedScene) (pane.getScene())).getManager();
-				Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-				ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-				infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-				sceneManager.pushScene(infoScene);
-			}
-			catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
+			Main.pushInfoScene("Подключение не удалось");
 		}
 		catch (IOException e)
 		{

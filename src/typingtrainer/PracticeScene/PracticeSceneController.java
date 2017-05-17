@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +24,7 @@ import typingtrainer.CongScene.CongSceneController;
 import java.awt.im.InputContext;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -130,16 +128,13 @@ public class PracticeSceneController
 		disposeSounds();
 		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
-		while (taskWord.length() < 10)
-			taskWord.append(" " + Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
-
-		/*StringBuffer taskWord = new StringBuffer(Word.generateRndWord(20, PracticeSceneController.difficultyParam,
-			PracticeSceneController.paramLang, PracticeSceneController.isRegisterParam));*/
+		while (taskWord.length() < 200)
+			taskWord.append(" ").append(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
 
 		watcher = new PracticeWatcher(taskWord, paramLang, difficultyParam, isRegisterParam);
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
-		music = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/practice_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));
+		music = new MediaPlayer(new Media(new File("music/practice_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));
 		msToReducing = 0;
 		isTimerRunning = false;
 	}
@@ -150,7 +145,7 @@ public class PracticeSceneController
 		isTimerRunning = false;
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popAllExceptFirst();
+			Main.sceneManager.popAllExceptFirst();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -265,10 +260,9 @@ public class PracticeSceneController
 					SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 					String date = dateFormat.format(new Date());
 
-					try
+					try (FileWriter st_write = new FileWriter("statistics.txt", true))
 					{
-						FileWriter st_write = new FileWriter("src/typingtrainer/StatisticScene/Statistics/statistic.txt", true);
-						st_write.write(mistakes + "\r\n" + time + "\r\n" + speed + "\r\n" + date + "\r\n");
+						st_write.write((mistakes + "\r\n" + time + "\r\n" + speed + "\r\n" + date + "\r\n"));
 						st_write.flush();
 						st_write.close();
 					}
@@ -278,11 +272,10 @@ public class PracticeSceneController
 					}
 
 					CongSceneController.SetResults(speed, time, mistakes, isStatisticsSaved);
-					SceneManager sceneManager = ((ManagedScene) this.pane.getScene()).getManager();
 					Parent congSceneFXML = FXMLLoader.load(Main.class.getResource("CongScene/congScene.fxml"));
-					ManagedScene congScene = new ManagedScene(congSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+					ManagedScene congScene = new ManagedScene(congSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
 					congScene.getStylesheets().add("typingtrainer/CongScene/style.css");
-					sceneManager.pushScene(congScene);
+					Main.sceneManager.pushScene(congScene);
 				}
 			}
 			else
@@ -360,7 +353,14 @@ public class PracticeSceneController
 				buf.dispose();
 			}).start();
 		}
-		falseNote = new MediaPlayer(new Media(new File("src/typingtrainer/PracticeScene/music/false_note_" + (int) (1 + Math.random() * 1) + ".mp3").toURI().toString()));
+		try
+		{
+			falseNote = new MediaPlayer(new Media(Main.class.getResource("PracticeScene/sounds/false_note_" + (int) (1 + Math.random() * 5) + ".mp3").toURI().toString()));
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
 		falseNote.play();
 	}
 

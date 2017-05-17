@@ -109,8 +109,8 @@ public class PregameServerSceneController
 		int language, difficulty;
 		boolean register;
 		try (
-				FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
-				BufferedReader reader = new BufferedReader(settings_read);)
+				FileReader settings_read = new FileReader("settings.txt");
+				BufferedReader reader = new BufferedReader(settings_read))
 		{
 			language = Integer.valueOf(reader.readLine());
 			difficulty = Integer.valueOf(reader.readLine());
@@ -353,7 +353,7 @@ public class PregameServerSceneController
 
 		try
 		{
-			((ManagedScene) (pane.getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{
@@ -387,13 +387,12 @@ public class PregameServerSceneController
 			String diffStr = difficultyCB.getSelectionModel().getSelectedItem().toString();
 			int difficulty = Integer.parseInt(diffStr.substring(0, diffStr.indexOf(' ')));
 
-			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Group root = new Group();
-			ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, sceneManager);
+			ManagedScene gameScene = new ManagedScene(root, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Color.LIGHTBLUE, Main.sceneManager);
 			GameSceneController controller = new GameSceneController(gameScene, socket, lang, difficulty, registerChb.isSelected());
 			controller.setPlayerNames(username, opponentName);
 			gameScene.getStylesheets().add("typingtrainer/GameScene/style.css");
-			sceneManager.pushScene(gameScene);
+			Main.sceneManager.pushScene(gameScene);
 		}
 		catch (IOException e)
 		{

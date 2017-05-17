@@ -3,6 +3,7 @@ package typingtrainer.InfoScene;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class InfoSceneController
 	{
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{

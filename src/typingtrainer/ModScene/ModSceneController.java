@@ -52,7 +52,7 @@ public class ModSceneController
 		int language, difficulty;
 		boolean register, music, sound;
 		try (
-				FileReader settings_read = new FileReader("src/typingtrainer/ModScene/Settings/settings.txt");
+				FileReader settings_read = new FileReader("settings.txt");
 				BufferedReader reader = new BufferedReader(settings_read);)
 		{
 			language = Integer.valueOf(reader.readLine());
@@ -99,23 +99,23 @@ public class ModSceneController
 			int mus = musicChb.isSelected() ? 1 : 0;
 			int snd = soundsChb.isSelected() ? 1 : 0;
 
-			try (FileWriter settings_wr = new FileWriter("src/typingtrainer/ModScene/Settings/settings.txt"))
+			try (FileWriter settings_wr = new FileWriter("settings.txt"))
 			{
 				settings_wr.write(lng + "\r\n" + diff + "\r\n" + reg + "\r\n" + mus + "\r\n" + snd);
 				settings_wr.flush();
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 
 			PracticeSceneController.setOptions(lang, difficulty, registerChb.isSelected(), musicChb.isSelected(), soundsChb.isSelected());
 
-			SceneManager sceneManager = ((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager();
 			Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("PracticeScene/practiceScene.fxml"));
-			ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
+			ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
 			practiceScene.getStylesheets().add("typingtrainer/PracticeScene/style.css");
-			sceneManager.pushScene(practiceScene);
+			Main.sceneManager.pushScene(practiceScene);
+
 		}
 	}
 
@@ -123,7 +123,7 @@ public class ModSceneController
 	{
 		try
 		{
-			((ManagedScene) (((Label) mouseEvent.getSource()).getScene())).getManager().popScene();
+			Main.sceneManager.popScene();
 		}
 		catch (InvocationTargetException e)
 		{

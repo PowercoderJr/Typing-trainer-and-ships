@@ -28,6 +28,7 @@ import typingtrainer.Word;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -76,9 +77,9 @@ public class GameSceneController
 	public static final String DEFENCIVE_SHOT_CODEGRAM = "DEFSHOT";
 	public static final String DISCONNECT_CODEGRAM = "BYE";
 
-	private MediaPlayer shotMP;
-	private MediaPlayer ballsCollisionMP;
-	private MediaPlayer shipHitMP;
+	private volatile MediaPlayer shotMP;
+	private volatile MediaPlayer ballsCollisionMP;
+	private volatile MediaPlayer shipHitMP;
 
 	private Socket socket;
 	private DataOutputStream ostream;
@@ -339,19 +340,7 @@ public class GameSceneController
 					Platform.runLater(() ->
 					{
 						leave();
-						try
-						{
-							InfoSceneController.setInfo("Соперник отключился");
-							SceneManager sceneManager = scene.getManager();
-							Parent infoSceneFXML = FXMLLoader.load(Main.class.getResource("InfoScene/infoScene.fxml"));
-							ManagedScene infoScene = new ManagedScene(infoSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, sceneManager);
-							infoScene.getStylesheets().add("typingtrainer/infoScene/style.css");
-							sceneManager.pushScene(infoScene);
-						}
-						catch (IOException e1)
-						{
-							e1.printStackTrace();
-						}
+						Main.pushInfoScene("Соперник отключился");
 					});
 					System.out.println("Соединение разорвано (из игры)");
 
@@ -679,7 +668,15 @@ public class GameSceneController
 				buf.dispose();
 			}).start();
 		}
-		shotMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/shot_" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
+		//shotMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/shot_" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
+		try
+		{
+			shotMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/shot_" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
 		shotMP.play();
 	}
 
@@ -701,7 +698,14 @@ public class GameSceneController
 				buf.dispose();
 			}).start();
 		}
-		ballsCollisionMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/balls_collision_" + (int) (1 + Math.random() * 3) + ".wav").toURI().toString()));
+		try
+		{
+			ballsCollisionMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/balls_collision_" + (int) (1 + Math.random() * 3) + ".wav").toURI().toString()));
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
 		ballsCollisionMP.play();
 	}
 
@@ -723,7 +727,16 @@ public class GameSceneController
 				buf.dispose();
 			}).start();
 		}
-		shipHitMP = new MediaPlayer(new Media(new File("src/typingtrainer/GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".wav").toURI().toString()));
+		try
+		{
+			shipHitMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".wav").toURI().toString()));
+			//System.out.println(shipHitMP.getMedia().getSource());
+			//При запуске через .jar воспроизводится только 3й звук
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
 		shipHitMP.play();
 	}
 

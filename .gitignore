@@ -1,4 +1,5 @@
 .idea/workspace.xml
-src/typingtrainer/StatisticScene/Statistics/*
-src/typingtrainer/ModScene/Settings/*
+.idea/artifacts/*
+statistics.txt
+settings.txt
 out/*
