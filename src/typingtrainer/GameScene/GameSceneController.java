@@ -54,7 +54,7 @@ public class GameSceneController
 	public static final ArrayList<Point2D> colPoints = new ArrayList<>();
 	//
 
-	private static final int dt = 15;
+	private static final int dt = 30;
 	public static final int BACKGROUND_STEP = 2;
 	public static final double BACKGROUND_SPEED = BACKGROUND_STEP * 1000.0 / dt;
 
@@ -352,17 +352,14 @@ public class GameSceneController
 					double targetX = Double.parseDouble(data[1]);
 					double targetY = Double.parseDouble(data[2]);
 					double speed = Double.parseDouble(data[3]);
-					game.shootOffenciveHostile(cannonID, new Point2D(targetX, targetY), speed, data[4]);
+					game.shootOffenciveHostile(cannonID, new Point2D(targetX, targetY), speed, data[4], data[5]);
 					playShotSound();
 					break;
 				}
 				case DEFENCIVE_SHOT_CODEGRAM:
 				{
 					String[] data = content.split(SEPARATOR_CODEGRAM);
-					double targetX = Double.parseDouble(data[0]);
-					double targetY = Double.parseDouble(data[1]);
-					double speed = Double.parseDouble(data[2]);
-					game.shootDefenciveHostile(new Point2D(targetX, targetY), speed, data[3]);
+					game.shootDefenciveHostile(data[0], data[1], data[2]);
 					playShotSound();
 				}
 			}

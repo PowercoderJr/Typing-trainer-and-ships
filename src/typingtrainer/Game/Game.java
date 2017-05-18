@@ -244,25 +244,27 @@ public class Game
 					cannonWithLongestSubstrID + GameSceneController.SEPARATOR_CODEGRAM +
 					cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
 					cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
-					cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM + longestSubstr;
+					cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM +
+					cannonball.getId() + GameSceneController.SEPARATOR_CODEGRAM + longestSubstr;
 		}
 		else
 			return "";
 	}
 
-	public String shootOffenciveHostile(int cannonID, Point2D target, double speed, String word)
+	public String shootOffenciveHostile(int cannonID, Point2D target, double speed, String cannonballID, String word)
 	{
 		Cannonball cannonball = ships[1].getOffenciveCannon(cannonID).shoot(target);
 		cannonball.getPvpWord().setWord(word);
 		cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
 		cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 		cannonball.setSpeed(speed);
+		cannonball.setId(cannonballID);
 		return GameSceneController.OFFENCIVE_SHOT_CODEGRAM + ":" +
 				cannonID + GameSceneController.SEPARATOR_CODEGRAM +
 				cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
 				cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
 				cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM +
-				word;
+				cannonball.getId() + GameSceneController.SEPARATOR_CODEGRAM + word;
 	}
 
 	public String shootDefenciveFriendly()
@@ -285,16 +287,16 @@ public class Game
 				//Debug
 				//GameSceneController.colPoints.add(new Point2D(collisionPoint.getX(), collisionPoint.getY()));
 				//
-				Cannonball cannonball = ships[0].getDefenciveCannon().shoot(collisionPoint.add(collisionPoint.normalize().getX(), collisionPoint.normalize().getY()));
+				Cannonball cannonball = ships[0].getDefenciveCannon().shoot(collisionPoint);
 				cannonball.getPvpWord().setWord(target.getPvpWord().toString());
 				cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (target.getPvpWord().toString().length() - MIN_WORD_LENGTH_TO_SHOOT));
 				cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
 				cannonball.setSpeed(cannonball.getPosition().distance(collisionPoint) * target.getSpeed() / DEFENCIVE_ANTICIPATION_DISTANCE);
 				target.setCanBeCountershooted(false);
+				target.setTarget(target.getPositionAfterDistance(DEFENCIVE_ANTICIPATION_DISTANCE));
 				return GameSceneController.DEFENCIVE_SHOT_CODEGRAM + ":" +
-						cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
-						cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
-						cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM +
+						cannonball.getId() + GameSceneController.SEPARATOR_CODEGRAM +
+						target.getId() + GameSceneController.SEPARATOR_CODEGRAM +
 						cannonball.getPvpWord().toString();
 			}
 			else
@@ -302,9 +304,9 @@ public class Game
 		}
 	}
 
-	public String shootDefenciveHostile(Point2D target, double speed, String word)
+	public String shootDefenciveHostile(String cannonballID, String targetID, String word)
 	{
-		Cannonball cannonball = ships[1].getDefenciveCannon().shoot(target);
+		/*Cannonball cannonball = ships[1].getDefenciveCannon().shoot(target);
 		cannonball.getPvpWord().setWord(word);
 		cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
 		cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
@@ -314,7 +316,38 @@ public class Game
 				cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
 				cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
 				cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM +
-				cannonball.getPvpWord().toString();
+				cannonball.getPvpWord().toString();*/
+
+		synchronized (CANNONBALLS_LOCK)
+		{
+			Cannonball target = null;
+			for (int i = 0; i < cannonballs.size() && target == null; ++i)
+			{
+				Cannonball cannonball = cannonballs.get(i);
+				if (cannonball.getId().equals(targetID))
+					target = cannonball;
+			}
+			if (target != null)
+			{
+				Point2D collisionPoint = GameSceneController.mirrorRelativelyToDefaultWidth(target.getPositionAfterDistance(DEFENCIVE_ANTICIPATION_DISTANCE));
+				//Debug
+				//GameSceneController.colPoints.add(new Point2D(collisionPoint.getX(), collisionPoint.getY()));
+				//
+				Cannonball cannonball = ships[1].getDefenciveCannon().shoot(collisionPoint);
+				cannonball.getPvpWord().setWord(word);
+				cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
+				cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
+				cannonball.setSpeed(cannonball.getPosition().distance(collisionPoint) * target.getSpeed() / DEFENCIVE_ANTICIPATION_DISTANCE);
+				target.setCanBeCountershooted(false);
+				target.setTarget(target.getPositionAfterDistance(DEFENCIVE_ANTICIPATION_DISTANCE));
+				return GameSceneController.DEFENCIVE_SHOT_CODEGRAM + ":" +
+						cannonball.getId() + GameSceneController.SEPARATOR_CODEGRAM +
+						target.getId() + GameSceneController.SEPARATOR_CODEGRAM +
+						cannonball.getPvpWord().toString();
+			}
+			else
+				return "";
+		}
 	}
 
 	public void handleShootableChar(KeyEvent event)

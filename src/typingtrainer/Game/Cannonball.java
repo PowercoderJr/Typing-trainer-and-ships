@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import typingtrainer.Word;
 
 /**
  * Created by Meow on 22.04.2017.
@@ -21,6 +22,7 @@ public class Cannonball extends PvpObject
 	private double speed;
 	private boolean canBeCountershooted;
 	private boolean hasDamaged;
+	private String id;
 
 	public Cannonball(Cannon parentCannon, Belonging belonging, Point2D position)
 	{
@@ -36,6 +38,7 @@ public class Cannonball extends PvpObject
 			type = Type.DEFENCIVE;
 		canBeCountershooted = type == Type.OFFENCIVE;
 		hasDamaged = false;
+		id = Word.generateRndWord(10, 33, Word.Languages.EN, true);
 	}
 
 	public Point2D getTarget()
@@ -101,5 +104,15 @@ public class Cannonball extends PvpObject
 	public void setHasDamaged(boolean hasDamaged)
 	{
 		this.hasDamaged = hasDamaged;
+	}
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
 	}
 }
