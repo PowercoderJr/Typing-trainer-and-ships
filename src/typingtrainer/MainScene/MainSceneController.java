@@ -3,16 +3,11 @@ package typingtrainer.MainScene;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.GridPane;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
-import typingtrainer.SceneManager;
-
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -31,10 +26,10 @@ public class MainSceneController
 
 	public void onPracticeModeLabelClicked(MouseEvent mouseEvent) throws IOException
 	{
-		Parent practiceSceneFXML = FXMLLoader.load(Main.class.getResource("ModScene/modScene.fxml"));
-		ManagedScene practiceScene = new ManagedScene(practiceSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
-		practiceScene.getStylesheets().add("typingtrainer/ModScene/style.css");
-		Main.sceneManager.pushScene(practiceScene);
+		Parent modSceneFXML = FXMLLoader.load(Main.class.getResource("ModScene/modScene.fxml"));
+		ManagedScene modScene = new ManagedScene(modSceneFXML, Main.DEFAULT_SCREEN_WIDTH, Main.DEFAULT_SCREEN_HEIGHT, Main.sceneManager);
+		modScene.getStylesheets().add("typingtrainer/ModScene/style.css");
+		Main.sceneManager.pushScene(modScene);
 	}
 
 	public void onExitLabelClicked(MouseEvent mouseEvent)

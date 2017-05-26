@@ -2,10 +2,8 @@ package typingtrainer.GameScene;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -18,11 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import typingtrainer.Game.*;
-import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
-import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
 import java.io.*;

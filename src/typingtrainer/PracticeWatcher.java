@@ -14,12 +14,19 @@ public class PracticeWatcher
 	private int difficulty;
 	private boolean register;
 
-	public PracticeWatcher(StringBuffer taskString, Word.Languages lang, int difficulty, boolean register)
+	public PracticeWatcher(Word.Languages lang, int difficulty, boolean register)
 	{
-		this.taskString = taskString;
 		this.lang = lang;
 		this.difficulty = difficulty;
 		this.register = register;
+		restart();
+	}
+
+	public void restart()
+	{
+		taskString = new StringBuffer(Word.generateRndWord((int) (1 + Math.random() * 15), difficulty, lang, register));
+		while (taskString.length() < 200)
+			taskString.append(" ").append(Word.generateRndWord((int) (1 + Math.random() * 15), difficulty, lang, register));
 		initStringLength = taskString.length();
 		mistakeCount = 0;
 	}

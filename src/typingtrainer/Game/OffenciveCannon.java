@@ -1,7 +1,6 @@
 package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
-import javafx.scene.control.Label;
 
 /**
  * Created by Meow on 22.04.2017.

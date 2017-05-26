@@ -27,7 +27,6 @@ import java.net.*;
 
 // 7913 - для поиска
 // 7914 - для попытки соединения
-// 7915 - для оппонента
 public class PregameServerSceneController
 {
 	@FXML

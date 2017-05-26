@@ -1,31 +1,19 @@
 package typingtrainer.StatisticScene;
 
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import sun.plugin2.message.Message;
-import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
-import typingtrainer.SceneManager;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 
 /**
  * Created by Никитка on 12.03.2017.
@@ -188,8 +176,6 @@ public class StatisticSceneController
 		XYChart.Series series3 = new XYChart.Series();
 		series3.setName("Скорость (зн/мин)");
 
-
-
 		for (int i = 0; i < this.mistakes_list.size(); i++) {
 			series.getData().add(new XYChart.Data((i + 1) + " (" + date_list.get(i) + ")", time_list.get(i)));
 			series2.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", mistakes_list.get(i)));
@@ -200,7 +186,6 @@ public class StatisticSceneController
 		datas.add(series3);
 
 		sceneSetter(lineChart, datas);
-
 	}
 
 	public void onMistakesCliked(MouseEvent mouseEvent)
@@ -216,15 +201,11 @@ public class StatisticSceneController
 		XYChart.Series series = new XYChart.Series();
 		series.setName("Ошибки (шт)");
 
-
 		for (int i = 0; i < this.mistakes_list.size(); i++)
 			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", mistakes_list.get(i)));
 
-
 		sceneSetter(lineChart, series);
-
 	}
-
 
 	public void onTimeCliked(MouseEvent mouseEvent)
 	{
@@ -233,12 +214,10 @@ public class StatisticSceneController
 		xAxis.setLabel("Сеансы");
 
 		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-
 		lineChart.setTitle("Статистика времени");
 
 		XYChart.Series series = new XYChart.Series();
 		series.setName("Время (сек)");
-
 
 		for (int i = 0; i < this.mistakes_list.size(); i++)
 			series.getData().add(new XYChart.Data((i+1) + " (" + date_list.get(i) + ")", time_list.get(i)));
@@ -253,7 +232,6 @@ public class StatisticSceneController
 		xAxis.setLabel("Сеансы");
 
 		final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-
 		lineChart.setTitle("Статистика скорости");
 
 		XYChart.Series series = new XYChart.Series();
@@ -262,15 +240,11 @@ public class StatisticSceneController
 		for (int i = 0; i < this.mistakes_list.size(); i++)
             series.getData().add(new XYChart.Data((i) + " (" + date_list.get(i) + ")", speed_list.get(i)));
 
-
 		sceneSetter(lineChart, series);
 	}
 
-
 	private void sceneSetter(LineChart<String,Number> lineChart, XYChart.Series series)
 	{
-
-
 		lineChart.setOnMouseClicked(event ->
 		{
 			try
@@ -290,8 +264,6 @@ public class StatisticSceneController
 
 	private void sceneSetter(LineChart<String,Number> lineChart, ArrayList<XYChart.Series> datas)
 	{
-
-
 		lineChart.setOnMouseClicked(event ->
 		{
 			try
@@ -309,41 +281,6 @@ public class StatisticSceneController
 		for(int i = 0; i < datas.size(); i++)
 			lineChart.getData().add(datas.get(i));
 
-
-		Main.sceneManager.pushScene(graphScene);
-	}
-
-
-
-
-
-	private void buildGraphScene(String chartTitle, ArrayList<String> seriesNames, ArrayList<ObservableList<XYChart.Data>> datas)
-	{
-		LineChart<Number, Number> numberLineChart = new LineChart<Number, Number>(new NumberAxis(), new NumberAxis());
-		numberLineChart.setTitle(chartTitle);
-		XYChart.Series series;
-		for (int i = 0; i < datas.size(); ++i)
-		{
-			series = new XYChart.Series();
-			if (i < seriesNames.size())
-				series.setName(seriesNames.get(i));
-			series.setData(datas.get(i));
-			numberLineChart.getData().add(series);
-		}
-
-		numberLineChart.setOnMouseClicked(event ->
-		{
-			try
-			{
-				Main.sceneManager.popScene();
-			}
-			catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-		});
-
-		ManagedScene graphScene = new ManagedScene(numberLineChart, 600, 600, Main.sceneManager);
 		Main.sceneManager.pushScene(graphScene);
 	}
 }

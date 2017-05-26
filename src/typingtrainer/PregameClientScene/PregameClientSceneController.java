@@ -2,9 +2,7 @@ package typingtrainer.PregameClientScene;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,11 +10,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import typingtrainer.GameScene.GameSceneController;
-import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
-import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
 import java.io.*;

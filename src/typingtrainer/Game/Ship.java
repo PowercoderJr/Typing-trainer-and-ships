@@ -2,9 +2,7 @@ package typingtrainer.Game;
 
 import javafx.geometry.Point2D;
 import javafx.scene.image.WritableImage;
-import javafx.scene.shape.Polygon;
 import typingtrainer.GameScene.GameSceneController;
-import typingtrainer.Main;
 
 /**
  * Created by Meow on 22.04.2017.

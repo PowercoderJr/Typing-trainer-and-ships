@@ -1,14 +1,7 @@
 package typingtrainer.Game;
 
-import com.sun.javafx.geom.Vec2d;
-import com.sun.javafx.geom.Vec2f;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import typingtrainer.GameScene.GameSceneController;
-import typingtrainer.Main;
 
 /**
  * Created by Meow on 22.04.2017.
@@ -83,11 +76,6 @@ public abstract class Cannon extends PvpObject
 		});
 		pushingThread.start();
 		return cannonball;
-	}
-
-	public Point2D getBasePosition()
-	{
-		return basePosition;
 	}
 
 	public Ship getParentShip()

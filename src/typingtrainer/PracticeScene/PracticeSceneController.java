@@ -18,7 +18,6 @@ import typingtrainer.MainScene.MainSceneController;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeWatcher;
 import typingtrainer.Word;
-import typingtrainer.*;
 import typingtrainer.CongScene.CongSceneController;
 
 import java.awt.im.InputContext;
@@ -114,6 +113,7 @@ public class PracticeSceneController
 	{
 
 		System.out.println("Сцена практики готова!");
+		watcher = new PracticeWatcher(paramLang, difficultyParam, isRegisterParam);
 		restart();
 		InputContext InCon = java.awt.im.InputContext.getInstance();
 		InCon.selectInputMethod(new Locale("en", "US"));
@@ -126,12 +126,7 @@ public class PracticeSceneController
 	private void restart()
 	{
 		disposeSounds();
-		StringBuffer taskWord = new StringBuffer(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
-
-		while (taskWord.length() < 200)
-			taskWord.append(" ").append(Word.generateRndWord((int) (1 + Math.random() * 15), difficultyParam, paramLang, isRegisterParam));
-
-		watcher = new PracticeWatcher(taskWord, paramLang, difficultyParam, isRegisterParam);
+		watcher.restart();
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
 		music = new MediaPlayer(new Media(new File("music/practice_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));

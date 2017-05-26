@@ -60,44 +60,4 @@ public class WoodenSplinter extends PvpObject
 		flyTime -= dt;
 		position = position.add(flyDir.getX() * flySpeed / 1000 * dt, flyDir.getY() * flySpeed / 1000 * dt);
 	}
-
-	public double getRotationSpeed()
-	{
-		return rotationSpeed;
-	}
-
-	public void setRotationSpeed(double rotationSpeed)
-	{
-		this.rotationSpeed = rotationSpeed;
-	}
-
-	public double getFlySpeed()
-	{
-		return flySpeed;
-	}
-
-	public void setFlySpeed(double flySpeed)
-	{
-		this.flySpeed = flySpeed;
-	}
-
-	public double getFlyTime()
-	{
-		return flyTime;
-	}
-
-	public void setFlyTime(double flyTime)
-	{
-		this.flyTime = flyTime;
-	}
-
-	public Point2D getFlyDir()
-	{
-		return flyDir;
-	}
-
-	public void setFlyDir(Point2D flyDir)
-	{
-		this.flyDir = flyDir;
-	}
 }

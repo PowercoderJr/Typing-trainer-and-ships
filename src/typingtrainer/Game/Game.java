@@ -306,18 +306,6 @@ public class Game
 
 	public String shootDefenciveHostile(String cannonballID, String targetID, String word)
 	{
-		/*Cannonball cannonball = ships[1].getDefenciveCannon().shoot(target);
-		cannonball.getPvpWord().setWord(word);
-		cannonball.setScale(1 + CANNONBALL_SIZE_LETTER_BONUS * (word.length() - MIN_WORD_LENGTH_TO_SHOOT));
-		cannonball.setPosition(cannonball.getPosition().subtract(cannonball.getPivot()));
-		cannonball.setSpeed(speed);
-		//setCountershooted ?
-		return GameSceneController.DEFENCIVE_SHOT_CODEGRAM + ":" +
-				cannonball.getTarget().getX() + GameSceneController.SEPARATOR_CODEGRAM +
-				cannonball.getTarget().getY() + GameSceneController.SEPARATOR_CODEGRAM +
-				cannonball.getSpeed() + GameSceneController.SEPARATOR_CODEGRAM +
-				cannonball.getPvpWord().toString();*/
-
 		synchronized (CANNONBALLS_LOCK)
 		{
 			Cannonball target = null;

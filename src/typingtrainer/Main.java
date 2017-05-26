@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import typingtrainer.InfoScene.InfoSceneController;
@@ -45,7 +44,7 @@ public class Main extends Application
         mainScene.getStylesheets().add("typingtrainer/MainScene/style.css");
 
         sceneManager.pushScene(mainScene);
-        primaryStage.setTitle("Typing trainer");
+        primaryStage.setTitle("Клавотренажёр и корабли");
         primaryStage.setWidth(DEFAULT_SCREEN_WIDTH);
         primaryStage.setHeight(DEFAULT_SCREEN_HEIGHT);
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()

@@ -3,7 +3,6 @@ package typingtrainer;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Paint;
-import typingtrainer.SceneManager;
 
 /**
  * Created by Meow on 25.02.2017.

@@ -5,27 +5,22 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
 import typingtrainer.ManagedScene;
 import typingtrainer.PracticeScene.PracticeSceneController;
-import typingtrainer.SceneManager;
 import typingtrainer.Word;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 /**
  * Created by Никитка on 28.02.2017.
  */
 public class ModSceneController
 {
-
 	@FXML
 	public ChoiceBox langCB;
 	@FXML

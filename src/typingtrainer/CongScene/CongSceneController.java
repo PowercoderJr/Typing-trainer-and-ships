@@ -1,15 +1,9 @@
 package typingtrainer.CongScene;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import typingtrainer.Main;
-import typingtrainer.ManagedScene;
-import typingtrainer.SceneManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,10 +22,10 @@ public class CongSceneController
 	@FXML
 	public Label label_statisticsStatus;
 
-	static int mistakes;
-	static int speed;
-	static double time;
-	static boolean isStatisticsSaved;
+	private static int mistakes;
+	private static int speed;
+	private static double time;
+	private static boolean isStatisticsSaved;
 
 	public void initialize()
 	{

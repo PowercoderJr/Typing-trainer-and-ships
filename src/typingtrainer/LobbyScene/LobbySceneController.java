@@ -5,18 +5,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import typingtrainer.*;
-import typingtrainer.GameScene.GameSceneController;
-import typingtrainer.InfoScene.InfoSceneController;
 import typingtrainer.PregameClientScene.PregameClientSceneController;
 import typingtrainer.PregameServerScene.PregameServerSceneController;
 
@@ -30,12 +24,6 @@ import java.net.*;
 
 public class LobbySceneController
 {
-	private static final double NANOSECONDS_IN_MILLISECOND = 1e+6;
-	private static final int SEARCHING_TIMEOUT = 5000;
-	private static final int CONNECTING_TIMEOUT = 10000;
-	private long startSearchingTime;
-	private boolean isSearching;
-
 	@FXML
 	public GridPane pane;
 	@FXML
@@ -47,12 +35,17 @@ public class LobbySceneController
 	@FXML
 	public PasswordField passPassfield;
 
+	private static final double NANOSECONDS_IN_MILLISECOND = 1e+6;
+	private static final int SEARCHING_TIMEOUT = 5000;
+	private static final int CONNECTING_TIMEOUT = 10000;
+	private long startSearchingTime;
+	private boolean isSearching;
+
 	private TableColumn nameColumn;
 	private TableColumn ipColumn;
 	private TableColumn passwordFlagColumn;
-	private ServerSocket serverSocket; //Используется для получения информации о сервере
-
 	private ObservableList<ServerInfo> servers = FXCollections.observableArrayList();
+	private ServerSocket serverSocket; //Используется для получения информации о сервере
 
 	public void initialize()
 	{
