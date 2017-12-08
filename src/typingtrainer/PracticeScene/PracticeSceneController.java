@@ -129,7 +129,27 @@ public class PracticeSceneController
 		watcher.restart();
 		updHighlights();
 		displayableStringLabel.setText(watcher.getDisplayableString());
-		music = new MediaPlayer(new Media(new File("music/practice_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));
+
+		music = null;
+		File musicFolder = new File("music");
+		if (musicFolder.exists())
+		{
+			File musicFiles[] = musicFolder.listFiles(new FilenameFilter()
+			{
+				@Override
+				public boolean accept(File dir, String name)
+				{
+					return name.toLowerCase().endsWith(".mp3");
+				}
+			});
+			if (musicFiles.length > 0)
+				music = new MediaPlayer(new Media(musicFiles[(int) (Math.random() * musicFiles.length)].toURI().toString()));
+		}
+		if (music == null)
+		{
+			isMusicParam = false;
+			musicImg.setVisible(false);
+		}
 		msToReducing = 0;
 		isTimerRunning = false;
 	}
@@ -277,7 +297,8 @@ public class PracticeSceneController
 			{
 				if (isSoundParam)
 					playBadMusic();
-				music.pause();
+				if (music != null)
+					music.pause();
 				watcher.addMistake();
 			}
 		}
@@ -285,7 +306,8 @@ public class PracticeSceneController
 
 	private void playGoodMusic()
 	{
-		music.play();
+		if (music != null)
+			music.play();
 		if (msToReducing > 0)
 			msToReducing = VOLUME_REDUCING_DELAY;
 		else
@@ -438,7 +460,8 @@ public class PracticeSceneController
 	{
 		isMusicParam = !isMusicParam;
 		musicImg.setViewport(isMusicParam ? MUSIC_ON_RECT : MUSIC_OFF_RECT);
-		music.pause();
+		if (music != null)
+			music.pause();
 	}
 
 	public void onSoundImgClicked(MouseEvent mouseEvent)

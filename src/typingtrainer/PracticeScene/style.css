@@ -10,6 +10,7 @@
     -fx-font-family: "Courier New";
     -fx-font-weight: 400;
     -fx-font-size: 80px;
+    -fx-text-fill: white;
 }
 
 #keyboardpane

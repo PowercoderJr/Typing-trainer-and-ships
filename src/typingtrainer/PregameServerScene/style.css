@@ -1,4 +1,5 @@
 @import "../main.css"
+@import "../ModScene/style.css"
 
 .root
 {
@@ -9,14 +10,8 @@
 {
     -fx-font-size: 30px;
     -fx-font-weight: 400;
-    -fx-font-color: white;
+    -fx-font-color: #CCCCCC;
     -fx-effect: dropshadow( gaussian, black, 0, 0, 0, 0);
-}
-
-#difficultyCB .label
-{
-    -fx-font-weight: 300;
-    -fx-font-family: "Courier New";
 }
 
 #chatTA, #messageTF, #sendBtn
