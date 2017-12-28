@@ -52,11 +52,12 @@ public class Main extends Application
             @Override
             public void handle(WindowEvent event)
             {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Программу следует закрыть, нажав кнопку \"ВЫХОД\" в главном меню", ButtonType.OK);
+                /*Alert alert = new Alert(Alert.AlertType.INFORMATION, "Программу следует закрыть, нажав кнопку \"ВЫХОД\" в главном меню", ButtonType.OK);
                 alert.setTitle("Привет, я - костыль!");
                 alert.setHeaderText(null);
                 alert.showAndWait();
-                event.consume();
+                event.consume();*/
+                System.exit(0);
             }
         });
         primaryStage.show();

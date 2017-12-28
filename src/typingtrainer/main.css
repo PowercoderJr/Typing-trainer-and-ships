@@ -10,7 +10,7 @@
     -fx-alignment: top-center;
     -fx-font-family: "Arial Bold";
     -fx-font-weight: 900;
-    -fx-font-color: white;
+    -fx-text-fill: #444444;
     -fx-effect: dropshadow( gaussian, black, 2, 1, 0, 0);
 }
 

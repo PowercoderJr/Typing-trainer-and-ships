@@ -693,7 +693,7 @@ public class GameSceneController
 		}
 		try
 		{
-			ballsCollisionMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/balls_collision_" + (int) (1 + Math.random() * 3) + ".wav").toURI().toString()));
+			ballsCollisionMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/balls_collision_" + (int) (1 + Math.random() * 3) + ".mp3").toURI().toString()));
 		}
 		catch (URISyntaxException e)
 		{
@@ -722,9 +722,7 @@ public class GameSceneController
 		}
 		try
 		{
-			shipHitMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".wav").toURI().toString()));
-			//System.out.println(shipHitMP.getMedia().getSource());
-			//При запуске через .jar воспроизводится только 3й звук
+			shipHitMP = new MediaPlayer(new Media(Main.class.getResource("GameScene/sounds/ship_hit_" + (int) (1 + Math.random() * 6) + ".mp3").toURI().toString()));
 		}
 		catch (URISyntaxException e)
 		{
